@@ -1,0 +1,406 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+@layer utilities {
+  .hover\:decoration-2:hover {
+    text-decoration-thickness: 2px;
+  }
+}
+
+body {
+  background-color: #ffffff;
+}
+
+/* ── Light mode fixes ──────────────────────────────────────────────────────── */
+/* text-gray-200 (#e5e7eb) on bg-white is near-invisible; override to readable */
+.bg-white.text-gray-200 { color: #111827; }
+
+/* ── Dark mode overrides ───────────────────────────────────────────────────── */
+/* Uses .dark class on <html> (next-themes). Two-class selectors (0-2-0)       */
+/* have higher specificity than single Tailwind utilities (0-1-0).             */
+
+.dark body { background-color: #0a0a0a; }
+
+/* Backgrounds */
+.dark .bg-white          { background-color: #18181b; }
+.dark .bg-gray-50        { background-color: #111113; }
+.dark .bg-gray-100       { background-color: #27272a; }
+.dark .bg-gray-200       { background-color: #3f3f46; }
+
+/* Text */
+.dark .text-gray-900     { color: #fafafa; }
+.dark .text-gray-800     { color: #e4e4e7; }
+.dark .text-gray-700     { color: #d4d4d8; }
+.dark .text-gray-600     { color: #a1a1aa; }
+.dark .text-gray-500     { color: #a1a1aa; }
+.dark .text-gray-400     { color: #71717a; }
+
+/* Borders */
+.dark .border-gray-100   { border-color: rgba(255,255,255,0.05); }
+.dark .border-gray-200   { border-color: rgba(255,255,255,0.08); }
+.dark .border-gray-300   { border-color: rgba(255,255,255,0.12); }
+.dark .border-gray-400   { border-color: rgba(255,255,255,0.18); }
+.dark .border-gray-900   { border-color: rgba(255,255,255,0.18); }
+
+/* Divide utilities */
+.dark .divide-gray-200 > :not([hidden]) ~ :not([hidden]) { border-color: rgba(255,255,255,0.08); }
+
+/* Hover border overrides */
+.dark .hover\:border-gray-300:hover  { border-color: rgba(255,255,255,0.18); }
+.dark .hover\:border-gray-900:hover  { border-color: rgba(255,255,255,0.4); }
+
+/* Hover background overrides */
+.dark .hover\:bg-gray-50:hover       { background-color: rgba(255,255,255,0.05); }
+.dark .hover\:bg-gray-100:hover      { background-color: rgba(255,255,255,0.08); }
+
+/* Category tints */
+.dark .bg-amber-50       { background-color: rgba(251,191,36,0.07); }
+.dark .border-amber-100  { border-color: rgba(251,191,36,0.15); }
+.dark .bg-amber-100      { background-color: rgba(251,191,36,0.15); }
+.dark .border-amber-200  { border-color: rgba(251,191,36,0.25); }
+.dark .text-amber-700    { color: #fbbf24; }
+
+.dark .bg-teal-50        { background-color: rgba(20,184,166,0.07); }
+.dark .border-teal-100   { border-color: rgba(20,184,166,0.15); }
+.dark .bg-teal-100       { background-color: rgba(20,184,166,0.15); }
+.dark .border-teal-200   { border-color: rgba(20,184,166,0.25); }
+.dark .text-teal-700     { color: #2dd4bf; }
+
+.dark .bg-indigo-50      { background-color: rgba(99,102,241,0.07); }
+.dark .border-indigo-100 { border-color: rgba(99,102,241,0.15); }
+.dark .bg-indigo-100     { background-color: rgba(99,102,241,0.15); }
+.dark .border-indigo-200 { border-color: rgba(99,102,241,0.25); }
+.dark .text-indigo-700   { color: #818cf8; }
+
+.dark .bg-emerald-50     { background-color: rgba(16,185,129,0.07); }
+.dark .border-emerald-100{ border-color: rgba(16,185,129,0.15); }
+.dark .bg-emerald-100    { background-color: rgba(16,185,129,0.15); }
+.dark .border-emerald-200{ border-color: rgba(16,185,129,0.25); }
+.dark .text-emerald-700  { color: #34d399; }
+
+.dark .bg-rose-50        { background-color: rgba(244,63,94,0.07); }
+.dark .border-rose-100   { border-color: rgba(244,63,94,0.15); }
+.dark .bg-rose-100       { background-color: rgba(244,63,94,0.15); }
+.dark .border-rose-200   { border-color: rgba(244,63,94,0.25); }
+.dark .text-rose-700     { color: #fb7185; }
+
+.dark .bg-sky-50         { background-color: rgba(14,165,233,0.07); }
+.dark .border-sky-100    { border-color: rgba(14,165,233,0.15); }
+.dark .bg-sky-100        { background-color: rgba(14,165,233,0.15); }
+.dark .border-sky-200    { border-color: rgba(14,165,233,0.25); }
+.dark .text-sky-700      { color: #38bdf8; }
+
+.dark .bg-fuchsia-50     { background-color: rgba(217,70,239,0.07); }
+.dark .border-fuchsia-100{ border-color: rgba(217,70,239,0.15); }
+.dark .bg-fuchsia-100    { background-color: rgba(217,70,239,0.15); }
+.dark .border-fuchsia-200{ border-color: rgba(217,70,239,0.25); }
+.dark .text-fuchsia-700  { color: #e879f9; }
+
+.dark .bg-violet-50      { background-color: rgba(139,92,246,0.07); }
+.dark .border-violet-100 { border-color: rgba(139,92,246,0.15); }
+.dark .bg-violet-100     { background-color: rgba(139,92,246,0.15); }
+.dark .border-violet-200 { border-color: rgba(139,92,246,0.25); }
+.dark .text-violet-700   { color: #a78bfa; }
+
+.dark .bg-red-50         { background-color: rgba(239,68,68,0.07); }
+.dark .border-red-100    { border-color: rgba(239,68,68,0.15); }
+.dark .bg-red-100        { background-color: rgba(239,68,68,0.15); }
+.dark .border-red-200    { border-color: rgba(239,68,68,0.25); }
+.dark .text-red-700      { color: #f87171; }
+
+/* Backdrop for images with an alpha channel — without it a transparent result
+   is indistinguishable from a white one. */
+.checkerboard {
+  background-color: #ffffff;
+  background-image:
+    linear-gradient(45deg, #e5e7eb 25%, transparent 25%, transparent 75%, #e5e7eb 75%),
+    linear-gradient(45deg, #e5e7eb 25%, transparent 25%, transparent 75%, #e5e7eb 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+}
+
+.dark .checkerboard {
+  background-color: #18181b;
+  background-image:
+    linear-gradient(45deg, #27272a 25%, transparent 25%, transparent 75%, #27272a 75%),
+    linear-gradient(45deg, #27272a 25%, transparent 25%, transparent 75%, #27272a 75%);
+}
+
+/* Form elements */
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
+.dark textarea,
+.dark select {
+  background-color: #18181b;
+  color: #fafafa;
+  border-color: rgba(255,255,255,0.12);
+}
+.dark input::placeholder,
+.dark textarea::placeholder { color: #52525b; }
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus { border-color: rgba(255,255,255,0.35); }
+
+/* JWT editor's Encoded box: the textarea is a see-through layer over the colour-coded
+   highlight div behind it. The .dark form rules above (0-1-1) outrank the utility
+   classes, so the transparency needs a two-class selector to survive dark mode — and
+   the caret needs its own colour, since it can't inherit a transparent one. */
+.jwt-encoded-input,
+.dark .jwt-encoded-input {
+  background-color: transparent;
+  color: transparent;
+}
+.jwt-encoded-input { caret-color: #111827; }
+.dark .jwt-encoded-input { caret-color: #fafafa; }
+/* Header/payload/signature colours picked for a white field are too dim on the dark
+   one — lift them to the 400 shades, as the palette overrides above do. */
+.dark .jwt-encoded-view .text-red-500     { color: #f87171; }
+.dark .jwt-encoded-view .text-fuchsia-600 { color: #e879f9; }
+.dark .jwt-encoded-view .text-sky-600     { color: #38bdf8; }
+
+/* Hero buttons — fixed appearance in both light and dark mode */
+.hero-btn-solid {
+  background-color: #111827;
+  color: #ffffff;
+  transition: background-color 150ms;
+}
+.hero-btn-solid:hover { background-color: #374151; }
+
+.hero-btn-outline {
+  color: #1f2937;
+  border: 1px solid #111827;
+  background-color: transparent;
+  transition: background-color 150ms, color 150ms;
+}
+.hero-btn-outline:hover { background-color: #111827; color: #ffffff; }
+
+/* Dark mode: hero buttons stay the same */
+.dark .hero-btn-solid { background-color: #111827; color: #ffffff; }
+.dark .hero-btn-solid:hover { background-color: #374151; }
+.dark .hero-btn-outline { color: #1f2937; border-color: #111827; background-color: transparent; }
+.dark .hero-btn-outline:hover { background-color: #111827; color: #ffffff; }
+
+.example-highlight {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Countdown "time's up" state — pulses the panel to catch a glance from
+   across the room. Respects reduced-motion by falling back to the static
+   highlight the border/background classes already provide. */
+@keyframes timer-finished-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+.timer-finished {
+  animation: timer-finished-pulse 1s ease-in-out 3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timer-finished { animation: none; }
+}
+
+/* MODAL START */
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 20;
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+.modal {
+  position: fixed;
+  top: 20vh;
+  right: 40%;
+  width: fit-content;
+  background-color: white;
+  padding: 1rem;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  z-index: 30;
+  animation: slide-down 300ms ease-out forwards;
+}
+
+.backdrop-search {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 20;
+  background-color: rgba(175, 174, 174, 0.75);
+}
+
+.modal-search {
+  position: fixed;
+  top: 10vh;
+  right: 5%;
+  width: 90%;
+  height: 80%;
+  background-color: rgba(5, 5, 10, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1rem;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  z-index: 30;
+  animation: slide-down 300ms ease-out forwards;
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-3rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.close {
+  /* color: $lightTextColor; */
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 9;
+}
+
+/* MODAL END */
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  background-color: #3FE4D4; /* teal-200 */
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  background-color: #3FE4D4; /* teal-200 */
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for Firefox */
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;  /* Internet Explorer and Edge */
+}
+
+@keyframes colorCycle {
+  0%, 100% { color: #4ade80; }
+  20% { color: #22d3ee; }
+  40% { color: #60a5fa; }
+  60% { color: #c084fc; }
+  80% { color: #fb923c; }
+}
+
+.color-name {
+  color: white;
+  transition: color 0.3s;
+}
+
+.color-name:hover {
+  animation: colorCycle 1.5s linear infinite;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: fit-content;
+  padding: 5px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Indeterminate progress bar — a segment sweeps across to show a long, no-ETA
+   computation (e.g. the sign2n GCD) is actively working rather than frozen. */
+@keyframes indeterminate-sweep {
+  0% { left: -40%; }
+  100% { left: 100%; }
+}
+
+.indeterminate-bar {
+  position: relative;
+  overflow: hidden;
+}
+
+.indeterminate-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40%;
+  background: currentColor;
+  animation: indeterminate-sweep 1.2s ease-in-out infinite;
+}
+
+/* ── Logo animations (Components/Navigation/Logo.tsx) ─────────────────────── */
+@keyframes logo-steam {
+  0%   { transform: translateY(4px) scaleY(.5); opacity: 0; }
+  35%  { opacity: .8; }
+  100% { transform: translateY(-12px) scaleY(1.2); opacity: 0; }
+}

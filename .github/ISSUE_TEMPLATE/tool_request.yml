@@ -1,0 +1,68 @@
+name: Tool request
+description: Suggest a tool DevOven does not have yet
+labels: [tool request]
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Check `/search` on the site first. There are over 550 tools and the
+        naming is not always what you would guess.
+
+  - type: input
+    id: name
+    attributes:
+      label: What would it be called
+      placeholder: CBOR to JSON
+    validations:
+      required: true
+
+  - type: textarea
+    id: transform
+    attributes:
+      label: What goes in, what comes out
+      description: >
+        Give a concrete example of both. Tools here take something and turn it
+        into something else.
+      placeholder: |
+        In:  a3016474657374...
+        Out: {"1": "test", ...}
+    validations:
+      required: true
+
+  - type: textarea
+    id: reason
+    attributes:
+      label: When you last needed it
+      description: >
+        The real situation, not the general case. Tools that came from an actual
+        annoyance tend to be better designed than tools that came from a list.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Which category it belongs in
+      options:
+        - encoding
+        - hashing
+        - converting
+        - tools
+        - text
+        - network
+        - image
+        - audio
+        - pdf
+        - not sure
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Before you submit
+      options:
+        - label: This can run entirely in the browser, with no server and no third-party API.
+          required: true
+        - label: This is not a lookup table or a cheat sheet. Those are not being added right now.
+          required: true
