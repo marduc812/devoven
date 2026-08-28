@@ -73,7 +73,7 @@ export function DateFormatConverter() {
     <div className="flex items-center gap-3 flex-wrap">
       <label className="text-gray-400 text-sm">Output format:</label>
       <select
-        className="bg-white text-gray-200 border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:border-white/25"
+        className="bg-white text-gray-900 border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:border-white/25"
         value={format}
         onChange={(e) => setFormat(e.target.value as DateOutputFormat)}
       >

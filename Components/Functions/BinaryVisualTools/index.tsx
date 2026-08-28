@@ -46,7 +46,7 @@ export const BinaryVisual = () => {
               <div className="flex flex-wrap gap-3">
                 {charBinaries.map((cb, i) => (
                   <div key={i} className="flex flex-col items-center gap-1">
-                    <span className="text-gray-200 text-sm font-mono">
+                    <span className="text-gray-900 text-sm font-mono">
                       {cb.code < 32 ? '·' : cb.char}
                     </span>
                     <div className="flex gap-0.5">

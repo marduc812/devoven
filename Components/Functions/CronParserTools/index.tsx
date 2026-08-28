@@ -47,7 +47,7 @@ export function CronParser() {
             <button
               key={ex.expr}
               onClick={() => setExpr(ex.expr)}
-              className="px-2 py-1 bg-gray-50 border border-gray-200 text-gray-400 text-xs hover:text-gray-200 hover:border-gray-400 transition-colors font-mono cursor-pointer"
+              className="px-2 py-1 bg-gray-50 border border-gray-200 text-gray-400 text-xs hover:text-gray-900 hover:border-gray-400 transition-colors font-mono cursor-pointer"
             >
               {ex.label}
             </button>

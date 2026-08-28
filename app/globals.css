@@ -24,10 +24,6 @@ body {
   background-color: #ffffff;
 }
 
-/* ── Light mode fixes ──────────────────────────────────────────────────────── */
-/* text-gray-200 (#e5e7eb) on bg-white is near-invisible; override to readable */
-.bg-white.text-gray-200 { color: #111827; }
-
 /* ── Dark mode overrides ───────────────────────────────────────────────────── */
 /* Uses .dark class on <html> (next-themes). Two-class selectors (0-2-0)       */
 /* have higher specificity than single Tailwind utilities (0-1-0).             */
@@ -47,6 +43,7 @@ body {
 .dark .text-gray-600     { color: #a1a1aa; }
 .dark .text-gray-500     { color: #a1a1aa; }
 .dark .text-gray-400     { color: #71717a; }
+.dark .hover\:text-gray-900:hover { color: #fafafa; }
 
 /* Borders */
 .dark .border-gray-100   { border-color: rgba(255,255,255,0.05); }

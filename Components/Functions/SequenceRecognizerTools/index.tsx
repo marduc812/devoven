@@ -20,7 +20,7 @@ function PatternCard({ pattern, primary }: { pattern: PatternMatch; primary: boo
       <p className="text-xs font-mono text-gray-400 mb-2">{pattern.formula}</p>
       <div>
         <span className="text-xs text-gray-500 uppercase tracking-wider">Next 5 terms:</span>
-        <span className="text-xs font-mono text-gray-200 ml-2">
+        <span className="text-xs font-mono text-gray-900 ml-2">
           {pattern.nextTerms.map(t => {
             const rounded = Math.round(t * 1e10) / 1e10;
             return rounded;

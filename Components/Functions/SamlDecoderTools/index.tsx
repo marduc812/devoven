@@ -18,7 +18,7 @@ export function SamlDecoder() {
 
   const inputClass = 'bg-white text-gray-900 border border-gray-200 focus:border-gray-400 focus:outline-none px-3 py-2 text-sm font-mono w-full resize-none';
   const tabActive = 'px-3 py-1.5 text-sm bg-gray-900 text-white border-gray-900';
-  const tabInactive = 'px-3 py-1.5 text-sm bg-gray-50 border border-gray-200 text-gray-400 hover:text-gray-200 transition-colors';
+  const tabInactive = 'px-3 py-1.5 text-sm bg-gray-50 border border-gray-200 text-gray-400 hover:text-gray-900 transition-colors';
 
   return (
     <Panel
@@ -65,7 +65,7 @@ export function SamlDecoder() {
                               <span className="text-gray-700 text-xs font-mono font-bold shrink-0">{f.name}</span>
                               <span className="text-gray-500 text-xs">{f.description}</span>
                             </div>
-                            <code className="text-gray-200 text-xs font-mono break-all mt-1 block">{f.value}</code>
+                            <code className="text-gray-900 text-xs font-mono break-all mt-1 block">{f.value}</code>
                           </div>
                         ))}
                       </div>

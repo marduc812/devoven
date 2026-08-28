@@ -314,7 +314,7 @@ export function ExtractFromText() {
 
   const extraElements = (
     <select
-      className="bg-gray-100 text-gray-200 border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-gray-400 transition-colors duration-200"
+      className="bg-gray-100 text-gray-900 border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-gray-400 transition-colors duration-200"
       value={extractType}
       onChange={(e) => setExtractType(e.target.value as ExtractType)}
     >

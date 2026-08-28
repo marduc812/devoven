@@ -46,7 +46,7 @@ export function ApiMockGenerator() {
       <div className="flex items-center gap-2">
         <span className="text-gray-400 text-sm">Output:</span>
         <select
-          className="bg-white text-gray-200 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30"
+          className="bg-white text-gray-900 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30"
           value={format}
           onChange={e => setFormat(e.target.value as MockOutputFormat)}
         >
@@ -63,7 +63,7 @@ export function ApiMockGenerator() {
           max={100}
           value={count}
           onChange={e => setCount(Math.max(1, Math.min(100, parseInt(e.target.value, 10) || 1)))}
-          className="bg-white text-gray-200 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30 w-20"
+          className="bg-white text-gray-900 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30 w-20"
         />
       </div>
     </div>

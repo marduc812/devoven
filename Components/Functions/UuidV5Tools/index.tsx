@@ -26,7 +26,7 @@ export function UuidV5Generator() {
     }
   }, [name, ns]);
 
-  const selectClass = 'bg-white text-gray-200 text-xs border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-gray-400';
+  const selectClass = 'bg-white text-gray-900 text-xs border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-gray-400';
 
   return (
     <AdvancedConverter

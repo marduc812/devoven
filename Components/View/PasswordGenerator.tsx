@@ -39,7 +39,7 @@ const PasswordGeneratorView = (props: PasswordGeneratorTypes) => {
         switch (determineCharType(char)) {
             case 'number':    classes = 'text-lime-400';  break;
             case 'lowercase': classes = 'text-gray-400';  break;
-            case 'uppercase': classes = 'text-gray-200';  break;
+            case 'uppercase': classes = 'text-gray-900';  break;
             case 'symbol':    classes = 'text-red-400';   break;
         }
         return <span key={index} className={classes}>{char}</span>;

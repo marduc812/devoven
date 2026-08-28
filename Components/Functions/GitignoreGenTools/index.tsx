@@ -5,7 +5,7 @@ import Panel from '@/Components/MainView/MainPanel/Panel';
 import { PROJECT_TYPES, generateGitignore } from './logic';
 
 const btnBase = 'px-2.5 py-1 text-xs border transition-colors duration-150 cursor-pointer';
-const btnOff = `${btnBase} border-gray-200 bg-gray-50 text-gray-400 hover:text-gray-200 hover:border-gray-400`;
+const btnOff = `${btnBase} border-gray-200 bg-gray-50 text-gray-400 hover:text-gray-900 hover:border-gray-400`;
 const btnOn = `${btnBase} border-emerald-500/60 bg-emerald-500/10 text-emerald-300`;
 
 export const GitignoreGen = () => {

@@ -166,7 +166,7 @@ export const EmailHeaderAnalyzer = () => {
                   {filteredHeaders.map((h, i) => (
                     <div key={i} className="border border-gray-200 p-3">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <span className="text-gray-200 text-xs font-mono font-semibold">{h.name}</span>
+                        <span className="text-gray-900 text-xs font-mono font-semibold">{h.name}</span>
                         <span className={`text-xs px-1.5 py-0.5 rounded border ${categoryColor[h.category]}`}>
                           {CATEGORY_LABELS[h.category]}
                         </span>

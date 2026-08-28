@@ -19,7 +19,7 @@ export function TlsConfigGenerator() {
   const config = generateTlsConfig(profile);
 
   const labelClass = 'text-xs font-bold uppercase tracking-wider text-gray-500';
-  const codeClass = 'bg-gray-100 p-4 border border-gray-200 text-gray-200 font-mono text-xs whitespace-pre-wrap leading-relaxed overflow-x-auto';
+  const codeClass = 'bg-gray-100 p-4 border border-gray-200 text-gray-900 font-mono text-xs whitespace-pre-wrap leading-relaxed overflow-x-auto';
   const btnClass = (active: boolean) =>
     'px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer border ' +
     (active

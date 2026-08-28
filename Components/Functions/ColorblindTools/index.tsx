@@ -81,7 +81,7 @@ export const ColorblindSimulator = () => {
                     title={originalHex}
                   />
                   <div>
-                    <div className="text-gray-200 font-mono text-sm">{originalHex.toUpperCase()}</div>
+                    <div className="text-gray-900 font-mono text-sm">{originalHex.toUpperCase()}</div>
                     <div className="text-gray-500 text-xs">Original</div>
                   </div>
                 </div>
@@ -98,7 +98,7 @@ export const ColorblindSimulator = () => {
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="text-gray-200 font-semibold text-sm">{r.type}</span>
+                          <span className="text-gray-900 font-semibold text-sm">{r.type}</span>
                           <span className="text-gray-500 text-xs font-mono">{r.simulatedHex.toUpperCase()}</span>
                         </div>
                         <div className="text-gray-500 text-xs">

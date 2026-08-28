@@ -14,7 +14,6 @@ import {
 } from '@/Components/Functions/TextEscapeTools/logic';
 import { normalizeText, NormalizationForm } from '@/Components/Functions/UnicodeNormalizerTools/logic';
 import { textToDataUrl } from '@/Components/Functions/DataUrlTools/logic';
-import { encodeBasicAuth } from '@/Components/Functions/BasicAuthTools/logic';
 import { Operation } from '../types';
 
 const escapeFlavors = {
@@ -178,19 +177,6 @@ export const encodingExtraOperations: Operation[] = [
     ],
     chainable: true,
     fn: (input, p) => textToDataUrl(input, p.mime || 'text/plain'),
-  },
-  {
-    id: 'basic-auth-encode',
-    name: 'HTTP Basic Auth Header',
-    category: 'network',
-    params: [],
-    chainable: false,
-    terminal: true,
-    fn: (input) => {
-      const idx = input.indexOf(':');
-      if (idx === -1) throw new Error('Expected input in the form username:password');
-      return encodeBasicAuth(input.slice(0, idx), input.slice(idx + 1));
-    },
   },
   {
     id: 'hex-dump',
