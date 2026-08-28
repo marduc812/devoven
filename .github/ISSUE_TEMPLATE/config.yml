@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/marduc812/devoven/security/advisories/new
+    about: Report privately instead of opening an issue. See SECURITY.md.
+  - name: How to add a tool
+    url: https://github.com/marduc812/devoven/blob/main/CONTRIBUTING.md
+    about: The four files and the menu entry a tool needs.

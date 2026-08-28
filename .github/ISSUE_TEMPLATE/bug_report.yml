@@ -1,0 +1,50 @@
+name: Bug report
+description: A tool gives the wrong answer, breaks, or hangs
+labels: [bug]
+body:
+  - type: input
+    id: tool
+    attributes:
+      label: Which tool
+      description: The URL or the path, for example /encoding/base64-decode
+      placeholder: /encoding/base64-decode
+    validations:
+      required: true
+
+  - type: textarea
+    id: input
+    attributes:
+      label: Input
+      description: >
+        The smallest input that reproduces it. Paste it as text rather than a
+        screenshot so it can be dropped straight into a test. Replace anything
+        private with something harmless that still breaks.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected, and what you got
+      description: >
+        If the tool disagrees with another implementation, say which one. That
+        usually settles it faster than anything else.
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Browser and OS
+      placeholder: Firefox 141, Windows 11
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: where
+    attributes:
+      label: Where you saw it
+      options:
+        - label: On devoven.com
+        - label: On a local checkout
