@@ -1,6 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import FeedbackModal from '@/Components/Feedback/FeedbackModal'
+import CookiePreferencesLink from '@/Components/Consent/CookiePreferencesLink'
 
 const FooterMainView = () => {
 
@@ -24,6 +25,7 @@ const FooterMainView = () => {
                         Source
                     </Link>
                     <FeedbackModal />
+                    <CookiePreferencesLink />
                     <p className='text-gray-400 text-sm'>
                         <span>&copy; {currentYear}</span>
                         {buildVersion && (

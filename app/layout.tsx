@@ -5,11 +5,11 @@ import { Inter } from 'next/font/google'
 import { Toaster } from 'react-hot-toast';
 import { Viewport } from 'next';
 import FooterMainView from '@/Components/Footer/MainView';
-import Script from 'next/script';
-import { GA_TRACKING_ID } from '@/Components/Functions/gtag';
 import { ThemeProvider } from 'next-themes';
-import { Analytics } from '@vercel/analytics/next';
 import ToolUsageTracker from '@/Components/Functions/ToolUsageTracker';
+import { ConsentProvider } from '@/Components/Consent/ConsentProvider';
+import AnalyticsGate from '@/Components/Consent/AnalyticsGate';
+import CookieBanner from '@/Components/Consent/CookieBanner';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -68,30 +68,17 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-          <div id='overlays'></div>
+          <ConsentProvider>
+            <div id='overlays'></div>
 
-          {GA_TRACKING_ID && (
-            <>
-              <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`} />
-              <Script id="google-analytics">
-                {`
-                  if (window.location.hostname!=='localhost'){
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){dataLayer.push(arguments);}
-                    gtag('js', new Date());
-
-                    gtag('config', '${GA_TRACKING_ID}');
-                  }
-                `}
-              </Script>
-            </>
-          )}
-          <ToolUsageTracker />
-          <NavigationHeader />
-          {children}
-          <FooterMainView />
-          <Toaster />
-          <Analytics />
+            <AnalyticsGate />
+            <ToolUsageTracker />
+            <NavigationHeader />
+            {children}
+            <FooterMainView />
+            <Toaster />
+            <CookieBanner />
+          </ConsentProvider>
         </ThemeProvider>
       </body>
     </html>
