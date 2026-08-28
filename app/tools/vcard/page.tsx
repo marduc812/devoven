@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'vCard Generator — DevOven',
-  description: 'Generate vCard 3.0 (.vcf) contact files from key=value input. Supports name, email, phone, org, title, url, address, and note fields. Also parses vCards back to structured display.',
+  description: 'Build a vCard 3.0 (.vcf) contact file and a scannable QR code from a simple form: name, organization, job title, email, phone, website, address, and note. Download the .vcf or the QR code, pre-fill fields from the URL, or paste an existing vCard to edit it.',
 };
 
 const page = () => <VcardGenerator />;
