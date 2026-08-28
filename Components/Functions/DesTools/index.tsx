@@ -1,8 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import CryptoJS from 'crypto-js'
 import Panel from '@/Components/MainView/MainPanel/Panel'
+
+const fieldClass =
+  'bg-white backdrop-blur-sm text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none transition-colors duration-200 font-mono text-sm'
+const labelClass = 'text-xs text-gray-400 uppercase tracking-wider'
 
 export function DesEncrypt() {
   const [plaintext, setPlaintext] = useState('')
@@ -10,59 +14,51 @@ export function DesEncrypt() {
   const [output, setOutput] = useState('')
   const [error, setError] = useState('')
 
-  const handleEncrypt = () => {
-    if (!plaintext.trim()) { setError('Please enter text to encrypt.'); return }
-    if (!password) { setError('Please enter a password.'); return }
-    setError('')
+  useEffect(() => {
+    if (!plaintext || !password) { setOutput(''); setError(''); return }
     try {
-      const result = CryptoJS.DES.encrypt(plaintext, password).toString()
-      setOutput(result)
+      setOutput(CryptoJS.DES.encrypt(plaintext, password).toString())
+      setError('')
     } catch (e) {
+      setOutput('')
       setError(e instanceof Error ? e.message : 'Encryption failed.')
     }
-  }
+  }, [plaintext, password])
 
   return (
     <Panel
       title="DES Encrypt"
-      description="Encrypt text using the DES algorithm with a password. All encryption happens client-side in your browser."
+      description="Encrypt text using the DES algorithm with a password. The result updates as you type. All encryption happens client-side in your browser."
       backColor="lime"
       extraElements={
         <div className="flex flex-col gap-3">
-          <label className="text-xs text-gray-400 uppercase tracking-wider">Plaintext</label>
+          <label className={labelClass}>Plaintext</label>
           <textarea
-            className="bg-white backdrop-blur-sm text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none resize-none transition-colors duration-200 font-mono text-sm"
+            className={`${fieldClass} resize-none`}
             placeholder="Enter text to encrypt…"
             rows={4}
             value={plaintext}
             onChange={(e) => setPlaintext(e.target.value)}
           />
-          <label className="text-xs text-gray-400 uppercase tracking-wider">Password</label>
+          <label className={labelClass}>Password</label>
           <input
-            type="password"
-            className="bg-white backdrop-blur-sm text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none transition-colors duration-200 font-mono text-sm"
+            type="text"
+            autoComplete="off"
+            spellCheck={false}
+            className={fieldClass}
             placeholder="Enter password…"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button
-            onClick={handleEncrypt}
-            className="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-semibold py-2 px-4 transition-colors duration-200"
-          >
-            Encrypt
-          </button>
-          {error && <p className="text-red-400 text-sm">{error}</p>}
-          {output && (
-            <>
-              <label className="text-xs text-gray-400 uppercase tracking-wider">Encrypted Output</label>
-              <textarea
-                className="bg-gray-50 text-gray-900 p-3 w-full border border-gray-300 cursor-default resize-y font-mono text-sm"
-                rows={4}
-                value={output}
-                readOnly
-              />
-            </>
-          )}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <label className={labelClass}>Encrypted Output</label>
+          <textarea
+            className="bg-gray-50 text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-300 cursor-default resize-y font-mono text-sm"
+            placeholder="Enter a plaintext and a password to see the ciphertext…"
+            rows={4}
+            value={output}
+            readOnly
+          />
         </div>
       }
     />
@@ -75,60 +71,57 @@ export function DesDecrypt() {
   const [output, setOutput] = useState('')
   const [error, setError] = useState('')
 
-  const handleDecrypt = () => {
-    if (!cipherInput.trim()) { setError('Please enter encrypted text.'); return }
-    if (!password) { setError('Please enter a password.'); return }
-    setError('')
+  useEffect(() => {
+    if (!cipherInput.trim() || !password) { setOutput(''); setError(''); return }
     try {
       const result = CryptoJS.DES.decrypt(cipherInput, password).toString(CryptoJS.enc.Utf8)
-      if (!result) { setError('Decryption failed. Check your ciphertext and password.'); return }
+      if (!result) {
+        setOutput('')
+        setError('Decryption failed. Check your ciphertext and password.')
+        return
+      }
       setOutput(result)
-    } catch (e) {
+      setError('')
+    } catch {
+      setOutput('')
       setError('Decryption failed. Check your ciphertext and password.')
     }
-  }
+  }, [cipherInput, password])
 
   return (
     <Panel
       title="DES Decrypt"
-      description="Decrypt DES encrypted text using your password. Paste the output from the DES Encrypt tool."
+      description="Decrypt DES encrypted text using your password. Paste the output from the DES Encrypt tool and the plaintext appears as you type."
       backColor="lime"
       extraElements={
         <div className="flex flex-col gap-3">
-          <label className="text-xs text-gray-400 uppercase tracking-wider">Encrypted Text</label>
+          <label className={labelClass}>Encrypted Text</label>
           <textarea
-            className="bg-white backdrop-blur-sm text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none resize-none transition-colors duration-200 font-mono text-sm"
+            className={`${fieldClass} resize-none`}
             placeholder="Paste encrypted text…"
             rows={4}
             value={cipherInput}
             onChange={(e) => setCipherInput(e.target.value)}
           />
-          <label className="text-xs text-gray-400 uppercase tracking-wider">Password</label>
+          <label className={labelClass}>Password</label>
           <input
-            type="password"
-            className="bg-white backdrop-blur-sm text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none transition-colors duration-200 font-mono text-sm"
+            type="text"
+            autoComplete="off"
+            spellCheck={false}
+            className={fieldClass}
             placeholder="Enter password…"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button
-            onClick={handleDecrypt}
-            className="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-semibold py-2 px-4 transition-colors duration-200"
-          >
-            Decrypt
-          </button>
-          {error && <p className="text-red-400 text-sm">{error}</p>}
-          {output && (
-            <>
-              <label className="text-xs text-gray-400 uppercase tracking-wider">Decrypted Output</label>
-              <textarea
-                className="bg-gray-50 text-gray-900 p-3 w-full border border-gray-300 cursor-default resize-y font-mono text-sm"
-                rows={4}
-                value={output}
-                readOnly
-              />
-            </>
-          )}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <label className={labelClass}>Decrypted Output</label>
+          <textarea
+            className="bg-gray-50 text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-300 cursor-default resize-y font-mono text-sm"
+            placeholder="Enter a ciphertext and a password to see the plaintext…"
+            rows={4}
+            value={output}
+            readOnly
+          />
         </div>
       }
     />
