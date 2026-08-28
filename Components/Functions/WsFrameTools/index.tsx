@@ -53,7 +53,7 @@ export const WsFrameDecoder = () => {
         </div>
       )}
       {result && (
-        <pre className="bg-white text-gray-200 border border-gray-200 p-3 text-xs font-mono whitespace-pre-wrap overflow-auto">
+        <pre className="bg-white text-gray-900 border border-gray-200 p-3 text-xs font-mono whitespace-pre-wrap overflow-auto">
           {result}
         </pre>
       )}

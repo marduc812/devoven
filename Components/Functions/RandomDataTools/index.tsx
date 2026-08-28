@@ -72,7 +72,7 @@ export const RandomDataGenerator = () => {
             {examples.map(ex => (
               <button
                 key={ex}
-                className="px-2.5 py-1 bg-gray-50 border border-gray-200 text-gray-400 text-xs hover:bg-gray-100 hover:text-gray-200 transition-colors duration-200 cursor-pointer font-mono"
+                className="px-2.5 py-1 bg-gray-50 border border-gray-200 text-gray-400 text-xs hover:bg-gray-100 hover:text-gray-900 transition-colors duration-200 cursor-pointer font-mono"
                 onClick={() => {
                   setFromValue(prev => (prev ? prev + '\n' + ex : ex));
                 }}

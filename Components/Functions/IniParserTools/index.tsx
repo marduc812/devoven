@@ -28,7 +28,7 @@ export function IniParser() {
     <div className="flex items-center gap-3">
       <span className="text-gray-400 text-sm">Mode:</span>
       <select
-        className="bg-white text-gray-200 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30"
+        className="bg-white text-gray-900 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30"
         value={direction}
         onChange={e => setDirection(e.target.value as 'ini-to-json' | 'json-to-ini')}
       >

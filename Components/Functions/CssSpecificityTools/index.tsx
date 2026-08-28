@@ -56,7 +56,7 @@ export const CssSpecificityCalc = () => {
                       <tr key={i} className={i > 0 ? 'border-t border-gray-200' : ''}>
                         <td className="px-4 py-2 text-gray-500 text-xs font-mono">{letters[i]}</td>
                         <td className="px-4 py-2 font-mono text-sm">
-                          <span className={isWinner ? 'text-emerald-400' : 'text-gray-200'}>{sel.selector}</span>
+                          <span className={isWinner ? 'text-emerald-400' : 'text-gray-900'}>{sel.selector}</span>
                           {isWinner && <span className="ml-2 text-xs text-emerald-500/80">wins</span>}
                         </td>
                         <td className="px-4 py-2 text-center">

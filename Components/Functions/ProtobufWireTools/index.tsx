@@ -37,7 +37,7 @@ export function ProtobufWireDecoder() {
 
   const inputClass = 'bg-white text-gray-900 border border-gray-200 focus:border-gray-400 focus:outline-none px-3 py-2 text-sm font-mono w-full resize-none';
   const tabActive = 'px-3 py-1.5 text-sm bg-gray-900 text-white border-gray-900';
-  const tabInactive = 'px-3 py-1.5 text-sm bg-gray-50 border border-gray-200 text-gray-400 hover:text-gray-200 transition-colors';
+  const tabInactive = 'px-3 py-1.5 text-sm bg-gray-50 border border-gray-200 text-gray-400 hover:text-gray-900 transition-colors';
 
   return (
     <Panel
@@ -75,7 +75,7 @@ export function ProtobufWireDecoder() {
                   <button
                     key={ex.label}
                     onClick={() => { setHexInput(ex.hex); setResult(''); setError(''); }}
-                    className="px-3 py-1.5 bg-gray-50 border border-gray-200 text-gray-400 text-xs hover:text-gray-200 transition-colors"
+                    className="px-3 py-1.5 bg-gray-50 border border-gray-200 text-gray-400 text-xs hover:text-gray-900 transition-colors"
                   >
                     {ex.label}
                   </button>

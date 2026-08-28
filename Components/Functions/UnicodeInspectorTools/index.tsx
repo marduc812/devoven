@@ -19,7 +19,7 @@ const categoryColors: Record<string, string> = {
 
 const CharRow = ({ char }: { char: CharInfo }) => {
   const displayChar = char.char === '\n' ? '↵' : char.char === '\t' ? '→' : char.char === ' ' ? '·' : char.char;
-  const colorClass = categoryColors[char.category] || 'text-gray-200';
+  const colorClass = categoryColors[char.category] || 'text-gray-900';
 
   return (
     <tr className="border-b border-gray-200 hover:bg-white/3 transition-colors">

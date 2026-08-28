@@ -6,7 +6,7 @@ import { inspectJwk, describeKeyUse, describeAlgorithm, type JwkInspectResult, t
 
 function KeyCard({ info, index }: { info: JwkKeyInfo; index: number }) {
   const labelClass = 'text-gray-500 text-xs w-36 shrink-0 font-medium';
-  const valueClass = 'text-gray-200 text-xs font-mono';
+  const valueClass = 'text-gray-900 text-xs font-mono';
 
   const rows: Array<{ label: string; value: string }> = [
     { label: 'Key Type (kty)', value: info.keyType },

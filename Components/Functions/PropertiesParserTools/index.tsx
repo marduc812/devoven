@@ -21,7 +21,7 @@ export const PropertiesParser = () => {
     <select
       value={mode}
       onChange={e => setMode(e.target.value as 'toJson' | 'toProps')}
-      className="bg-white text-gray-200 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30 cursor-pointer"
+      className="bg-white text-gray-900 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30 cursor-pointer"
     >
       <option value="toJson">.properties → JSON</option>
       <option value="toProps">JSON → .properties</option>

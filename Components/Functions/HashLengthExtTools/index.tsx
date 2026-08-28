@@ -44,7 +44,7 @@ export function HashLengthExtReference() {
                 <tbody>
                   {HASH_ALGORITHMS.map((algo, i) => (
                     <tr key={i} className="border-b border-gray-200">
-                      <td className="py-2 pr-4 font-mono text-gray-200">{algo.name}</td>
+                      <td className="py-2 pr-4 font-mono text-gray-900">{algo.name}</td>
                       <td className="py-2 pr-4 text-gray-500">{algo.family}</td>
                       <td className="py-2 pr-4 text-gray-500">{algo.blockSize}B</td>
                       <td className="py-2 pr-4">

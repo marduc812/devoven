@@ -36,9 +36,9 @@ export function JsonToSql() {
   }, [fromValue, tableName, dialect, batchSize]);
 
   const selectClass =
-    'bg-white text-gray-200 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30';
+    'bg-white text-gray-900 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30';
   const inputClass =
-    'bg-white text-gray-200 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30 w-32';
+    'bg-white text-gray-900 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30 w-32';
 
   const extraElements = (
     <div className="flex flex-wrap items-center gap-4">

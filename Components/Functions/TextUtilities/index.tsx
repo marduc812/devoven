@@ -471,7 +471,7 @@ export function TextRepeater() {
               max={1000}
               value={times}
               onChange={(e) => setTimes(Math.max(1, parseInt(e.target.value) || 1))}
-              className="bg-white text-gray-200 border border-gray-200 px-3 py-1.5 text-sm w-20 focus:outline-none focus:border-white/30"
+              className="bg-white text-gray-900 border border-gray-200 px-3 py-1.5 text-sm w-20 focus:outline-none focus:border-white/30"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -481,7 +481,7 @@ export function TextRepeater() {
               value={separator}
               onChange={(e) => setSeparator(e.target.value)}
               placeholder="\\n"
-              className="bg-white text-gray-200 border border-gray-200 px-3 py-1.5 text-sm w-24 font-mono focus:outline-none focus:border-white/30"
+              className="bg-white text-gray-900 border border-gray-200 px-3 py-1.5 text-sm w-24 font-mono focus:outline-none focus:border-white/30"
             />
           </div>
         </div>

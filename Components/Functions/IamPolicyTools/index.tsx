@@ -62,7 +62,7 @@ export function IamPolicyAnalyzer() {
                   <button
                     key={ex.name}
                     onClick={function() { setPolicyJson(JSON.stringify(ex.policy, null, 2)); }}
-                    className="px-2 py-1 bg-gray-50 border border-gray-200 text-gray-400 text-xs hover:text-gray-200 hover:border-gray-400 transition-colors cursor-pointer"
+                    className="px-2 py-1 bg-gray-50 border border-gray-200 text-gray-400 text-xs hover:text-gray-900 hover:border-gray-400 transition-colors cursor-pointer"
                   >
                     {ex.name}
                   </button>
@@ -225,7 +225,7 @@ export function IamPolicyAnalyzer() {
                   <button
                     key={ex}
                     onClick={function() { setGenDescription(ex); }}
-                    className="px-2 py-1 bg-gray-50 border border-gray-200 text-gray-400 text-xs hover:text-gray-200 hover:border-gray-400 transition-colors cursor-pointer"
+                    className="px-2 py-1 bg-gray-50 border border-gray-200 text-gray-400 text-xs hover:text-gray-900 hover:border-gray-400 transition-colors cursor-pointer"
                   >
                     {ex}
                   </button>
@@ -237,7 +237,7 @@ export function IamPolicyAnalyzer() {
           {generatedPolicy && (
             <div className="flex flex-col gap-2">
               <label className={labelClass}>Generated Policy</label>
-              <pre className="bg-gray-100 p-4 border border-gray-200 text-gray-200 font-mono text-xs whitespace-pre-wrap leading-relaxed">
+              <pre className="bg-gray-100 p-4 border border-gray-200 text-gray-900 font-mono text-xs whitespace-pre-wrap leading-relaxed">
                 {generatedPolicy}
               </pre>
               <div className="text-gray-500 text-xs">

@@ -33,7 +33,7 @@ export function CacheTtlCalculator() {
       <div className="flex items-center gap-2">
         <span className="text-gray-400 text-sm">Mode:</span>
         <select
-          className="bg-white text-gray-200 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30"
+          className="bg-white text-gray-900 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30"
           value={mode}
           onChange={e => setMode(e.target.value as CacheTtlMode)}
         >
@@ -45,7 +45,7 @@ export function CacheTtlCalculator() {
         <div className="flex items-center gap-2">
           <span className="text-gray-400 text-sm">Unit:</span>
           <select
-            className="bg-white text-gray-200 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30"
+            className="bg-white text-gray-900 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30"
             value={unit}
             onChange={e => setUnit(e.target.value as TtlUnit)}
           >

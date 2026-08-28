@@ -140,7 +140,7 @@ export const ColorShadesGenerator = () => {
                   <span className="text-gray-900 font-mono text-xs flex-1">{shade.hex}</span>
                   <span className="text-gray-400 font-mono text-xs hidden sm:block flex-1">{shade.hsl}</span>
                   <button
-                    className="text-xs text-gray-400 hover:text-gray-200 transition-colors duration-200 font-mono px-2 py-1 rounded border border-gray-200 hover:border-gray-400"
+                    className="text-xs text-gray-400 hover:text-gray-900 transition-colors duration-200 font-mono px-2 py-1 rounded border border-gray-200 hover:border-gray-400"
                     onClick={() => copyToClipboard(shade.hex)}
                   >
                     {copied === shade.hex ? 'Copied!' : 'Copy'}

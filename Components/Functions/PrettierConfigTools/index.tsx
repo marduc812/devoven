@@ -37,7 +37,7 @@ export function PrettierConfigGenerator() {
 
   const row = 'flex items-center justify-between py-1.5 border-b border-gray-200';
   const label = 'text-xs text-gray-400 flex-1';
-  const selectCls = 'bg-gray-100 text-gray-200 border border-gray-200 rounded px-2 py-1 text-xs focus:outline-none focus:border-gray-400';
+  const selectCls = 'bg-gray-100 text-gray-900 border border-gray-200 rounded px-2 py-1 text-xs focus:outline-none focus:border-gray-400';
   const toggleCls = (active: boolean) =>
     `px-2.5 py-1 rounded text-xs border transition-all ${
       active

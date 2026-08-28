@@ -35,7 +35,7 @@ export function RestToGraphql() {
 
   const extraElements = (
     <button
-      className="text-xs text-gray-400 border border-gray-200 px-3 py-1.5 hover:border-gray-400 hover:text-gray-200 transition-colors"
+      className="text-xs text-gray-400 border border-gray-200 px-3 py-1.5 hover:border-gray-400 hover:text-gray-900 transition-colors"
       onClick={() => setInput(EXAMPLE)}
     >
       Load example

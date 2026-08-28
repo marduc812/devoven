@@ -32,7 +32,7 @@ export function DohSimulator() {
   const inputClass = 'bg-white text-gray-900 p-3 w-full border border-gray-200 focus:border-gray-900 focus:outline-none font-mono text-sm';
   const selectClass = 'bg-white text-gray-900 p-3 border border-gray-200 focus:border-gray-900 focus:outline-none font-mono text-sm';
   const labelClass = 'text-xs font-bold uppercase tracking-wider text-gray-500';
-  const codeClass = 'bg-gray-100 p-4 border border-gray-200 text-gray-200 font-mono text-xs whitespace-pre-wrap break-all leading-relaxed';
+  const codeClass = 'bg-gray-100 p-4 border border-gray-200 text-gray-900 font-mono text-xs whitespace-pre-wrap break-all leading-relaxed';
 
   const tabBtnClass = (tab: string) =>
     'px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ' +
@@ -90,7 +90,7 @@ export function DohSimulator() {
                     </div>
                     <span className="text-gray-500 text-xs mb-2">{p.description}</span>
                     <label className="text-gray-500 text-xs uppercase tracking-wider">GET (JSON API)</label>
-                    <code className="text-gray-200 font-mono text-xs bg-white p-2 break-all border border-gray-200">{p.getUrl}</code>
+                    <code className="text-gray-900 font-mono text-xs bg-white p-2 break-all border border-gray-200">{p.getUrl}</code>
                     <label className="text-gray-500 text-xs uppercase tracking-wider mt-1">Wire Format (POST)</label>
                     <code className="text-gray-400 font-mono text-xs bg-white p-2 break-all border border-gray-200">{p.wireformatUrl}</code>
                   </div>

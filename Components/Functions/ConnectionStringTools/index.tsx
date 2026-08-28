@@ -40,9 +40,9 @@ export function ConnectionStringBuilder() {
   };
 
   const inputClass =
-    'bg-white text-gray-200 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30 w-full';
+    'bg-white text-gray-900 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30 w-full';
   const selectClass =
-    'bg-white text-gray-200 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30 w-full';
+    'bg-white text-gray-900 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30 w-full';
   const labelClass = 'text-gray-400 text-xs mb-1 block';
 
   return (
@@ -148,7 +148,7 @@ export function ConnectionStringBuilder() {
                   </button>
                 </div>
                 <p className="text-gray-500 text-xs mb-2 font-mono">{f.format}</p>
-                <pre className="text-xs text-gray-200 font-mono bg-white rounded px-3 py-2 overflow-x-auto whitespace-pre-wrap break-all">
+                <pre className="text-xs text-gray-900 font-mono bg-white rounded px-3 py-2 overflow-x-auto whitespace-pre-wrap break-all">
                   {f.value}
                 </pre>
               </div>

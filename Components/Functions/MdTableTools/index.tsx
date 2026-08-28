@@ -37,7 +37,7 @@ export function MdTableGenerator() {
       <div className="flex items-center gap-2">
         <span className="text-gray-400 text-sm">Direction:</span>
         <select
-          className="bg-white text-gray-200 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30"
+          className="bg-white text-gray-900 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30"
           value={direction}
           onChange={e => setDirection(e.target.value as MdTableDirection)}
         >
@@ -50,7 +50,7 @@ export function MdTableGenerator() {
         <div className="flex items-center gap-2">
           <span className="text-gray-400 text-sm">Alignment:</span>
           <select
-            className="bg-white text-gray-200 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30"
+            className="bg-white text-gray-900 text-sm border border-gray-200 px-3 py-1.5 focus:outline-none focus:border-white/30"
             value={alignment}
             onChange={e => setAlignment(e.target.value as MdTableAlignment)}
           >

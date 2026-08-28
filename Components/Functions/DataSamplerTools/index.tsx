@@ -29,8 +29,8 @@ export function DataSampler() {
     }
   }, [input, mode, sampleSize, trainRatio, numericSort]);
 
-  const selectClass = "bg-white text-gray-200 border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:border-white/25";
-  const inputClass = "bg-white text-gray-200 border border-gray-200 px-2 py-1.5 text-sm focus:outline-none focus:border-white/25 w-20";
+  const selectClass = "bg-white text-gray-900 border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:border-white/25";
+  const inputClass = "bg-white text-gray-900 border border-gray-200 px-2 py-1.5 text-sm focus:outline-none focus:border-white/25 w-20";
 
   const extraElements = (
     <div className="flex items-center gap-4 flex-wrap">

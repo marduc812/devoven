@@ -44,7 +44,7 @@ export const PacketSizeCalculator = () => {
   const inputClass =
     'bg-white backdrop-blur-sm text-gray-900 placeholder:text-gray-400 p-2.5 w-full border border-gray-200 focus:border-gray-400 focus:outline-none transition-colors duration-200 text-sm font-mono';
   const selectClass =
-    'bg-white text-gray-200 border border-gray-200 px-3 py-2.5 text-sm focus:outline-none w-full';
+    'bg-white text-gray-900 border border-gray-200 px-3 py-2.5 text-sm focus:outline-none w-full';
   const labelClass = 'text-gray-400 text-xs font-medium uppercase tracking-wider mb-1 block';
 
   return (
