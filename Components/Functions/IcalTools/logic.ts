@@ -1,71 +1,115 @@
-// Pure TypeScript — no browser APIs. Date is allowed.
+// Pure TypeScript — no browser APIs, no ambient clock. Anything time-dependent
+// (UID, DTSTAMP, the UTC offset of the user's zone) is passed in by the caller.
 
-export interface IcalFields {
+export interface IcalEvent {
   title?: string;
+  /** 'YYYY-MM-DDTHH:mm' for a timed event, 'YYYY-MM-DD' when allDay. */
   start?: string;
   end?: string;
+  allDay?: boolean;
   location?: string;
   description?: string;
   url?: string;
   organizer?: string;
+  /** Comma or semicolon separated. */
   attendees?: string;
-  uid?: string;
+}
+
+export interface BuildIcalOptions {
+  /** Event UID. Pass a stable value so the output does not churn while typing. */
+  uid: string;
+  /** DTSTAMP, as 'YYYYMMDDTHHMMSSZ'. */
+  dtstamp: string;
+  /**
+   * Minutes to add to the entered wall time to reach UTC — the value
+   * `Date.prototype.getTimezoneOffset()` returns for that instant.
+   * 0 means the user entered UTC directly.
+   */
+  offsetMinutes: number;
+}
+
+/** Legacy key=value input still accepted through `?from=`. */
+export interface IcalFields {
   [key: string]: string | undefined;
 }
 
-/**
- * Parse key=value lines into an IcalFields object.
- * Supports both `key=value` and `key: value` formats.
- */
+/** Parse key=value (or key: value) lines into a flat field map. */
 export function parseKeyValueInput(input: string): IcalFields {
   const fields: IcalFields = {};
-  const lines = input.split(/\r?\n/);
-  for (const line of lines) {
+  for (const line of input.split(/\r?\n/)) {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith('#')) continue;
     const match = trimmed.match(/^([^=:]+?)\s*[=:]\s*(.*)$/);
-    if (match) {
-      const key = match[1].trim().toLowerCase();
-      const val = match[2].trim();
-      fields[key] = val;
-    }
+    if (match) fields[match[1].trim().toLowerCase()] = match[2].trim();
   }
   return fields;
 }
 
+/** Turn a flat key=value map into an event, applying the usual aliases. */
+export function fieldsToEvent(fields: IcalFields): IcalEvent {
+  const start = fields.start || fields.dtstart || '';
+  const end = fields.end || fields.dtend || '';
+  const event: IcalEvent = {
+    title: fields.title || fields.summary,
+    start: normalizeDateInput(start),
+    end: normalizeDateInput(end),
+    allDay: start ? /^\d{4}-\d{2}-\d{2}$/.test(start.trim()) : undefined,
+    location: fields.location,
+    description: fields.description || fields.notes,
+    url: fields.url || fields.website,
+    organizer: fields.organizer || fields.host,
+    attendees: fields.attendees || fields.attendee || fields.guests,
+  };
+  for (const key of Object.keys(event) as (keyof IcalEvent)[]) {
+    if (event[key] === undefined || event[key] === '') delete event[key];
+  }
+  return event;
+}
+
+/** Coerce loose date text into the shape the form inputs use. */
+function normalizeDateInput(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  const dateOnly = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (dateOnly) return trimmed;
+  const dt = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);
+  if (dt) return `${dt[1]}-${dt[2]}-${dt[3]}T${dt[4]}:${dt[5]}`;
+  return trimmed;
+}
+
+function pad(n: number): string {
+  return String(n).padStart(2, '0');
+}
+
+/** 'YYYY-MM-DD' → 'YYYYMMDD'. */
+export function toIcalDate(value: string): string {
+  const m = value.trim().match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? m[1] + m[2] + m[3] : value.trim();
+}
+
 /**
- * Parse a date string (ISO 8601 or "YYYY-MM-DD HH:MM" or "YYYY-MM-DD") to iCal DTSTART/DTEND format.
- * Returns YYYYMMDDTHHMMSSZ for datetime or YYYYMMDD for all-day.
+ * 'YYYY-MM-DDTHH:mm' plus a UTC offset → 'YYYYMMDDTHHMMSSZ'.
+ * The arithmetic is done on the parts, so no host timezone leaks in.
  */
-export function parseDateToIcal(dateStr: string): string {
-  const trimmed = dateStr.trim();
+export function toIcalUtc(value: string, offsetMinutes: number): string {
+  const m = value.trim().match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})(?::(\d{2}))?/);
+  if (!m) return value.trim();
+  const [, yr, mo, dy, hr, mi, se] = m;
+  const utc = Date.UTC(+yr, +mo - 1, +dy, +hr, +mi, +(se ?? 0)) + offsetMinutes * 60_000;
+  const d = new Date(utc);
+  return (
+    d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate()) +
+    'T' + pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + pad(d.getUTCSeconds()) + 'Z'
+  );
+}
 
-  // Try ISO 8601 with time
-  const isoMatch = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})(?::(\d{2}))?(?:Z|[+-]\d{2}:\d{2})?$/);
-  if (isoMatch) {
-    const [, yr, mo, dy, hr, mi, se] = isoMatch;
-    return `${yr}${mo}${dy}T${hr}${mi}${se || '00'}Z`;
-  }
-
-  // Try date-only
-  const dateMatch = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (dateMatch) {
-    return `${dateMatch[1]}${dateMatch[2]}${dateMatch[3]}`;
-  }
-
-  // Fallback: try to parse with Date
-  const d = new Date(trimmed);
-  if (!isNaN(d.getTime())) {
-    const yr = d.getUTCFullYear().toString();
-    const mo = String(d.getUTCMonth() + 1).padStart(2, '0');
-    const dy = String(d.getUTCDate()).padStart(2, '0');
-    const hr = String(d.getUTCHours()).padStart(2, '0');
-    const mi = String(d.getUTCMinutes()).padStart(2, '0');
-    const se = String(d.getUTCSeconds()).padStart(2, '0');
-    return `${yr}${mo}${dy}T${hr}${mi}${se}Z`;
-  }
-
-  return trimmed; // Return as-is if we can't parse
+/** Shift a 'YYYY-MM-DD' by whole days. */
+export function addDays(value: string, days: number): string {
+  const m = value.trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return value.trim();
+  const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate());
 }
 
 function escapeIcalText(val: string): string {
@@ -73,16 +117,13 @@ function escapeIcalText(val: string): string {
     .replace(/\\/g, '\\\\')
     .replace(/;/g, '\\;')
     .replace(/,/g, '\\,')
-    .replace(/\n/g, '\\n');
+    .replace(/\r?\n/g, '\\n');
 }
 
-/**
- * Fold iCal content lines at 75 octets per RFC 5545.
- */
+/** Fold content lines at 75 octets per RFC 5545. */
 function foldIcalLine(line: string): string {
   if (line.length <= 75) return line;
-  const chunks: string[] = [];
-  chunks.push(line.slice(0, 75));
+  const chunks: string[] = [line.slice(0, 75)];
   let i = 75;
   while (i < line.length) {
     chunks.push(' ' + line.slice(i, i + 74));
@@ -91,179 +132,271 @@ function foldIcalLine(line: string): string {
   return chunks.join('\r\n');
 }
 
-function generateUid(): string {
-  // Simple UID without crypto (pure math)
-  const ts = Date.now();
-  const rand = Math.floor(Math.random() * 1000000000);
-  return `${ts}-${rand}@devoven.com`;
+function clean(val: string | undefined): string {
+  return (val ?? '').trim();
 }
 
-/**
- * Generate an iCalendar (.ics) VEVENT from structured key=value input.
- */
-export function generateIcal(input: string): string {
-  if (!input.trim()) return '';
+/** True when nothing worth exporting has been entered. */
+export function isEmptyEvent(event: IcalEvent): boolean {
+  return !clean(event.title) && !clean(event.start) && !clean(event.end) &&
+    !clean(event.location) && !clean(event.description) && !clean(event.url) &&
+    !clean(event.organizer) && !clean(event.attendees);
+}
 
-  const fields = parseKeyValueInput(input);
-  const lines: string[] = [];
+function mailto(value: string): string {
+  return /^mailto:/i.test(value) ? value : 'mailto:' + value;
+}
 
-  lines.push('BEGIN:VCALENDAR');
-  lines.push('VERSION:2.0');
-  lines.push('PRODID:-//DevOven//iCal Generator//EN');
-  lines.push('CALSCALE:GREGORIAN');
-  lines.push('METHOD:PUBLISH');
-  lines.push('BEGIN:VEVENT');
+/** Build a full VCALENDAR wrapping one VEVENT. */
+export function buildIcal(event: IcalEvent, opts: BuildIcalOptions): string {
+  if (isEmptyEvent(event)) return '';
 
-  // UID
-  const uid = fields['uid'] || generateUid();
-  lines.push(foldIcalLine('UID:' + uid));
+  const lines: string[] = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//DevOven//iCal Generator//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    foldIcalLine('UID:' + opts.uid),
+    'DTSTAMP:' + opts.dtstamp,
+  ];
 
-  // DTSTAMP (now)
-  const now = new Date();
-  const stamp = parseDateToIcal(now.toISOString());
-  lines.push('DTSTAMP:' + stamp);
+  const start = clean(event.start);
+  const end = clean(event.end);
 
-  // DTSTART
-  const startStr = fields['start'] || fields['dtstart'] || '';
-  if (startStr) {
-    const startIcal = parseDateToIcal(startStr);
-    // All-day events use DATE value type
-    if (startIcal.length === 8) {
-      lines.push(foldIcalLine('DTSTART;VALUE=DATE:' + startIcal));
-    } else {
-      lines.push(foldIcalLine('DTSTART:' + startIcal));
-    }
+  if (event.allDay) {
+    if (start) lines.push('DTSTART;VALUE=DATE:' + toIcalDate(start));
+    // DTEND is exclusive for all-day events: a one-day event ends the next day.
+    if (start || end) lines.push('DTEND;VALUE=DATE:' + toIcalDate(addDays(end || start, 1)));
+  } else {
+    if (start) lines.push('DTSTART:' + toIcalUtc(start, opts.offsetMinutes));
+    if (end) lines.push('DTEND:' + toIcalUtc(end, opts.offsetMinutes));
   }
 
-  // DTEND
-  const endStr = fields['end'] || fields['dtend'] || '';
-  if (endStr) {
-    const endIcal = parseDateToIcal(endStr);
-    if (endIcal.length === 8) {
-      lines.push(foldIcalLine('DTEND;VALUE=DATE:' + endIcal));
-    } else {
-      lines.push(foldIcalLine('DTEND:' + endIcal));
-    }
+  if (clean(event.title)) lines.push(foldIcalLine('SUMMARY:' + escapeIcalText(clean(event.title))));
+  if (clean(event.location)) lines.push(foldIcalLine('LOCATION:' + escapeIcalText(clean(event.location))));
+  if (clean(event.description)) lines.push(foldIcalLine('DESCRIPTION:' + escapeIcalText(clean(event.description))));
+  if (clean(event.url)) lines.push(foldIcalLine('URL:' + clean(event.url)));
+  if (clean(event.organizer)) lines.push(foldIcalLine('ORGANIZER:' + mailto(clean(event.organizer))));
+
+  for (const att of clean(event.attendees).split(/[;,]/).map(a => a.trim()).filter(Boolean)) {
+    // Only ROLE, so an ordinary address still fits on one unfolded line.
+    lines.push(foldIcalLine('ATTENDEE;ROLE=REQ-PARTICIPANT:' + mailto(att)));
   }
 
-  // SUMMARY (title)
-  const title = fields['title'] || fields['summary'] || '';
-  if (title) {
-    lines.push(foldIcalLine('SUMMARY:' + escapeIcalText(title)));
-  }
-
-  // LOCATION
-  const location = fields['location'] || '';
-  if (location) {
-    lines.push(foldIcalLine('LOCATION:' + escapeIcalText(location)));
-  }
-
-  // DESCRIPTION
-  const description = fields['description'] || '';
-  if (description) {
-    lines.push(foldIcalLine('DESCRIPTION:' + escapeIcalText(description)));
-  }
-
-  // URL
-  const url = fields['url'] || '';
-  if (url) {
-    lines.push(foldIcalLine('URL:' + url));
-  }
-
-  // ORGANIZER
-  const organizer = fields['organizer'] || '';
-  if (organizer) {
-    const hasMailto = organizer.startsWith('mailto:');
-    lines.push(foldIcalLine('ORGANIZER:' + (hasMailto ? organizer : 'mailto:' + organizer)));
-  }
-
-  // ATTENDEES
-  const attendees = fields['attendees'] || fields['attendee'] || '';
-  if (attendees) {
-    const list = attendees.split(/[;,]/).map(a => a.trim()).filter(Boolean);
-    for (const att of list) {
-      const hasMailto = att.startsWith('mailto:');
-      lines.push(foldIcalLine('ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT:' + (hasMailto ? att : 'mailto:' + att)));
-    }
-  }
-
-  lines.push('END:VEVENT');
-  lines.push('END:VCALENDAR');
-
+  lines.push('END:VEVENT', 'END:VCALENDAR');
   return lines.join('\r\n');
 }
 
+/** The name a downloaded .ics should carry, without the extension. */
+export function icalFilename(event: IcalEvent): string {
+  const slug = clean(event.title).replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '').toLowerCase();
+  return slug || 'event';
+}
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+/** 'YYYYMMDDTHHMMSSZ' or 'YYYYMMDD' → 'Tue, 15 Jan 2024, 10:00 UTC'. */
+export function formatIcalDate(icalDate: string): string {
+  const value = icalDate.trim();
+
+  const allDay = /^(\d{4})(\d{2})(\d{2})$/.exec(value);
+  if (allDay) {
+    const d = new Date(Date.UTC(+allDay[1], +allDay[2] - 1, +allDay[3]));
+    return `${WEEKDAYS[d.getUTCDay()]}, ${+allDay[3]} ${MONTHS[+allDay[2] - 1]} ${allDay[1]}`;
+  }
+
+  const dt = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z?)$/.exec(value);
+  if (dt) {
+    const d = new Date(Date.UTC(+dt[1], +dt[2] - 1, +dt[3]));
+    const zone = dt[7] ? ' UTC' : '';
+    return `${WEEKDAYS[d.getUTCDay()]}, ${+dt[3]} ${MONTHS[+dt[2] - 1]} ${dt[1]}, ${dt[4]}:${dt[5]}${zone}`;
+  }
+
+  return value;
+}
+
+/** Minutes between two iCal timestamps, or null when they cannot be compared. */
+function minutesBetween(startIcal: string, endIcal: string): number | null {
+  const toMs = (v: string): number | null => {
+    const allDay = /^(\d{4})(\d{2})(\d{2})$/.exec(v);
+    if (allDay) return Date.UTC(+allDay[1], +allDay[2] - 1, +allDay[3]);
+    const dt = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z?$/.exec(v);
+    if (dt) return Date.UTC(+dt[1], +dt[2] - 1, +dt[3], +dt[4], +dt[5], +dt[6]);
+    return null;
+  };
+  const a = toMs(startIcal);
+  const b = toMs(endIcal);
+  if (a === null || b === null || b < a) return null;
+  return Math.round((b - a) / 60_000);
+}
+
+function formatDuration(minutes: number): string {
+  if (minutes === 0) return '0 minutes';
+  const days = Math.floor(minutes / 1440);
+  const hours = Math.floor((minutes % 1440) / 60);
+  const mins = minutes % 60;
+  const parts: string[] = [];
+  if (days) parts.push(days + (days === 1 ? ' day' : ' days'));
+  if (hours) parts.push(hours + (hours === 1 ? ' hour' : ' hours'));
+  if (mins) parts.push(mins + (mins === 1 ? ' minute' : ' minutes'));
+  return parts.join(' ');
+}
+
 /**
- * Parse an iCalendar string back to structured key=value display.
+ * Render a VEVENT as an aligned, human-readable summary — what the calendar
+ * will actually show, rather than the raw property lines.
  */
-export function parseIcal(input: string): string {
+export function describeIcal(input: string): string {
   const trimmed = input.trim();
   if (!trimmed) return '';
   if (!trimmed.includes('BEGIN:VCALENDAR') && !trimmed.includes('BEGIN:VEVENT')) {
-    return 'Error: Not a valid iCalendar file';
+    return 'Error: Not a valid iCalendar file (no BEGIN:VEVENT found)';
   }
 
-  // Unfold lines
-  const unfolded = trimmed.replace(/\r?\n[ \t]/g, '');
-  const lines = unfolded.split(/\r?\n/);
+  const props = readEventProps(trimmed);
+  if (props.length === 0) return 'Error: The VEVENT block is empty';
 
-  const result: string[] = [];
-  let inEvent = false;
+  const single: Record<string, string> = {};
+  const attendees: string[] = [];
+  let startIcal = '';
+  let endIcal = '';
+  let allDay = false;
 
-  for (const line of lines) {
-    if (line === 'BEGIN:VEVENT') { inEvent = true; continue; }
-    if (line === 'END:VEVENT') { inEvent = false; continue; }
+  for (const { name, params, value } of props) {
+    switch (name) {
+      case 'SUMMARY': single.Title = value; break;
+      case 'DTSTART':
+        startIcal = value;
+        allDay = params.includes('VALUE=DATE');
+        break;
+      case 'DTEND': endIcal = value; break;
+      case 'LOCATION': single.Location = value; break;
+      case 'DESCRIPTION': single.Description = value.replace(/\n/g, ' '); break;
+      case 'URL': single.URL = value; break;
+      case 'ORGANIZER': single.Organizer = value.replace(/^mailto:/i, ''); break;
+      case 'ATTENDEE': attendees.push(value.replace(/^mailto:/i, '')); break;
+      case 'UID': single.UID = value; break;
+      case 'DTSTAMP': single.Created = formatIcalDate(value); break;
+    }
+  }
+
+  if (startIcal) single.Starts = formatIcalDate(startIcal);
+  if (endIcal) {
+    // All-day DTEND is exclusive; show the last day the event actually covers.
+    single.Ends = formatIcalDate(allDay ? toIcalDate(addDays(icalDateToIso(endIcal), -1)) : endIcal);
+  }
+  if (startIcal && endIcal) {
+    const mins = minutesBetween(startIcal, endIcal);
+    if (mins !== null) single.Duration = formatDuration(mins);
+  }
+  if (allDay) single['All day'] = 'Yes';
+  if (attendees.length > 0) {
+    single[attendees.length === 1 ? 'Attendee' : 'Attendees'] = attendees.join(', ');
+  }
+
+  // Read top to bottom the way someone reads an invitation, not in file order.
+  const ORDER = [
+    'Title', 'Starts', 'Ends', 'Duration', 'All day', 'Location',
+    'Description', 'URL', 'Organizer', 'Attendee', 'Attendees', 'UID', 'Created',
+  ];
+  const all = ORDER.filter(label => single[label] !== undefined).map(label => [label, single[label]] as const);
+  if (all.length === 0) return 'Error: The VEVENT block is empty';
+
+  const width = Math.max(...all.map(([label]) => label.length));
+  return all.map(([label, value]) => label.padEnd(width) + '   ' + value).join('\n');
+}
+
+/** 'YYYYMMDD' → 'YYYY-MM-DD', so date arithmetic helpers can be reused. */
+function icalDateToIso(value: string): string {
+  const m = /^(\d{4})(\d{2})(\d{2})/.exec(value.trim());
+  return m ? `${m[1]}-${m[2]}-${m[3]}` : value.trim();
+}
+
+interface IcalProp { name: string; params: string; value: string }
+
+/** Unfold the input and return the properties inside the first VEVENT. */
+function readEventProps(input: string): IcalProp[] {
+  const unfolded = input.replace(/\r?\n[ \t]/g, '');
+  const props: IcalProp[] = [];
+  let inEvent = !input.includes('BEGIN:VEVENT');
+
+  for (const line of unfolded.split(/\r?\n/)) {
+    if (line.trim() === 'BEGIN:VEVENT') { inEvent = true; continue; }
+    if (line.trim() === 'END:VEVENT') break;
     if (!inEvent) continue;
 
     const colonIdx = line.indexOf(':');
     if (colonIdx === -1) continue;
 
-    const propFull = line.slice(0, colonIdx);
-    const val = line.slice(colonIdx + 1).trim();
+    const head = line.slice(0, colonIdx);
+    const [name, ...params] = head.split(';');
+    props.push({
+      name: name.toUpperCase(),
+      params: params.join(';').toUpperCase(),
+      value: line.slice(colonIdx + 1).trim()
+        .replace(/\\n/gi, '\n')
+        .replace(/\\,/g, ',')
+        .replace(/\\;/g, ';')
+        .replace(/\\\\/g, '\\'),
+    });
+  }
+  return props;
+}
 
-    const propName = propFull.split(';')[0].toUpperCase();
+/** Read an .ics back into form fields, converting UTC stamps to local wall time. */
+export function icalToEvent(input: string, offsetMinutes: number): IcalEvent {
+  const event: IcalEvent = {};
+  const trimmed = input.trim();
+  if (!trimmed.includes('BEGIN:VCALENDAR') && !trimmed.includes('BEGIN:VEVENT')) return event;
 
-    const unescaped = val
-      .replace(/\\n/g, '\n')
-      .replace(/\\,/g, ',')
-      .replace(/\\;/g, ';')
-      .replace(/\\\\/g, '\\');
+  const attendees: string[] = [];
+  let endValue = '';
 
-    switch (propName) {
-      case 'SUMMARY': result.push('title: ' + unescaped); break;
-      case 'DTSTART': result.push('start: ' + formatIcalDate(unescaped)); break;
-      case 'DTEND': result.push('end: ' + formatIcalDate(unescaped)); break;
-      case 'LOCATION': result.push('location: ' + unescaped); break;
-      case 'DESCRIPTION': result.push('description: ' + unescaped); break;
-      case 'URL': result.push('url: ' + unescaped); break;
-      case 'ORGANIZER': result.push('organizer: ' + unescaped.replace(/^mailto:/i, '')); break;
-      case 'ATTENDEE': result.push('attendee: ' + unescaped.replace(/^mailto:/i, '')); break;
-      case 'UID': result.push('uid: ' + unescaped); break;
-      case 'DTSTAMP': result.push('stamp: ' + formatIcalDate(unescaped)); break;
+  for (const { name, params, value } of readEventProps(trimmed)) {
+    switch (name) {
+      case 'SUMMARY': event.title = value; break;
+      case 'DTSTART':
+        event.allDay = params.includes('VALUE=DATE');
+        event.start = event.allDay ? icalDateToIso(value) : utcToLocalInput(value, offsetMinutes);
+        break;
+      case 'DTEND': endValue = value; break;
+      case 'LOCATION': event.location = value; break;
+      case 'DESCRIPTION': event.description = value; break;
+      case 'URL': event.url = value; break;
+      case 'ORGANIZER': event.organizer = value.replace(/^mailto:/i, ''); break;
+      case 'ATTENDEE': attendees.push(value.replace(/^mailto:/i, '')); break;
     }
   }
 
-  return result.join('\n');
+  if (endValue) {
+    // Undo the exclusive all-day DTEND so the form shows the last covered day.
+    event.end = event.allDay
+      ? addDays(icalDateToIso(endValue), -1)
+      : utcToLocalInput(endValue, offsetMinutes);
+  }
+  if (attendees.length > 0) event.attendees = attendees.join(', ');
+  if (!event.allDay) delete event.allDay;
+
+  return event;
 }
 
-function formatIcalDate(icalDate: string): string {
-  // YYYYMMDDTHHMMSSZ or YYYYMMDD
-  const allDay = /^(\d{4})(\d{2})(\d{2})$/.exec(icalDate);
-  if (allDay) {
-    return `${allDay[1]}-${allDay[2]}-${allDay[3]}`;
-  }
-  const dt = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z?$/.exec(icalDate);
-  if (dt) {
-    return `${dt[1]}-${dt[2]}-${dt[3]} ${dt[4]}:${dt[5]}:${dt[6]} UTC`;
-  }
-  return icalDate;
+/** 'YYYYMMDDTHHMMSSZ' → 'YYYY-MM-DDTHH:mm' in the caller's zone. */
+function utcToLocalInput(value: string, offsetMinutes: number): string {
+  const m = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z?)$/.exec(value.trim());
+  if (!m) return icalDateToIso(value);
+  const ms = Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]) - (m[7] ? offsetMinutes * 60_000 : 0);
+  const d = new Date(ms);
+  return (
+    d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()) +
+    'T' + pad(d.getUTCHours()) + ':' + pad(d.getUTCMinutes())
+  );
 }
 
-/**
- * Auto-detect whether input looks like iCal or key=value.
- */
+/** Auto-detect whether input looks like iCal or key=value. */
 export function detectIcalOrInput(input: string): 'ical' | 'input' {
   const trimmed = input.trim();
-  if (trimmed.startsWith('BEGIN:VCALENDAR') || trimmed.startsWith('BEGIN:VEVENT')) return 'ical';
-  return 'input';
+  return trimmed.startsWith('BEGIN:VCALENDAR') || trimmed.startsWith('BEGIN:VEVENT') ? 'ical' : 'input';
 }
