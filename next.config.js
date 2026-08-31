@@ -23,16 +23,6 @@ const nextConfig = {
     env: {
         NEXT_PUBLIC_BUILD_VERSION: getBuildVersion(),
     },
-    async redirects() {
-        return [
-            // The duplicate Markdown to HTML route; the marked-based tool lives here.
-            {
-                source: '/converting/markdown-html',
-                destination: '/converting/markdown-to-html',
-                permanent: true,
-            },
-        ]
-    },
 }
 
 module.exports = nextConfig
