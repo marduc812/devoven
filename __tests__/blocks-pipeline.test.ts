@@ -157,3 +157,34 @@ describe('output budget', () => {
     expect(results[0].output.startsWith('01101000')).toBe(true);
   });
 });
+
+describe('compression operations', () => {
+  it('round-trips through every format', () => {
+    const text = 'compress me '.repeat(10);
+    const pairs: [string, string][] = [
+      ['gzip-compress', 'gzip-decompress'],
+      ['zlib-deflate', 'zlib-inflate'],
+      ['raw-deflate', 'raw-inflate'],
+    ];
+    for (const [compress, decompress] of pairs) {
+      expect(getFinalOutput(pipeline(text, block(compress), block(decompress)))).toBe(text);
+    }
+  });
+
+  it('carries the compressed bytes as hex when asked', () => {
+    const results = runPipeline(pipeline('hello', block('gzip-compress', { encoding: 'hex' })));
+    expect(results[0].error).toBeNull();
+    expect(results[0].output.startsWith('1f8b')).toBe(true);
+  });
+
+  it('reports input that is not in the chosen format', () => {
+    // Valid Base64, but the bytes underneath are not a gzip stream.
+    const results = runPipeline(pipeline('bm90IGNvbXByZXNzZWQ=', block('gzip-decompress')));
+    expect(results[0].error).toMatch(/not valid gzip/);
+  });
+
+  it('reports input that is not valid Base64 at all', () => {
+    const results = runPipeline(pipeline('%%%', block('gzip-decompress')));
+    expect(results[0].error).toMatch(/not valid Base64/);
+  });
+});
