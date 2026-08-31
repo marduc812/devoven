@@ -32,7 +32,7 @@ export interface SystemdGenOptions {
   requiredBy: string;
 }
 
-const DEFAULTS: SystemdGenOptions = {
+export const SYSTEMD_DEFAULTS: SystemdGenOptions = {
   description: 'My Application Service',
   documentation: '',
   after: 'network.target',
@@ -58,11 +58,11 @@ const DEFAULTS: SystemdGenOptions = {
   requiredBy: '',
 };
 
-const VALID_TYPES: ServiceType[] = ['simple', 'oneshot', 'forking', 'notify', 'dbus', 'idle'];
-const VALID_RESTARTS: RestartPolicy[] = ['no', 'on-success', 'on-failure', 'on-abnormal', 'on-watchdog', 'on-abort', 'always'];
+export const SERVICE_TYPES: ServiceType[] = ['simple', 'oneshot', 'forking', 'notify', 'dbus', 'idle'];
+export const RESTART_POLICIES: RestartPolicy[] = ['no', 'on-success', 'on-failure', 'on-abnormal', 'on-watchdog', 'on-abort', 'always'];
 
 export function parseSystemdGenInput(input: string, serviceType: ServiceType): SystemdGenOptions {
-  const opts: SystemdGenOptions = Object.assign({}, DEFAULTS, { serviceType });
+  const opts: SystemdGenOptions = Object.assign({}, SYSTEMD_DEFAULTS, { serviceType });
   for (const line of input.split('\n')) {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith('#')) continue;
@@ -87,7 +87,7 @@ export function parseSystemdGenInput(input: string, serviceType: ServiceType): S
       case 'environment_file': case 'environmentfile': opts.environmentFile = val; break;
       case 'restart': {
         const r = val as RestartPolicy;
-        if (VALID_RESTARTS.indexOf(r) !== -1) opts.restart = r;
+        if (RESTART_POLICIES.indexOf(r) !== -1) opts.restart = r;
         break;
       }
       case 'restart_sec': case 'restartsec': opts.restartSec = parseInt(val, 10) || 5; break;
@@ -104,8 +104,12 @@ export function parseSystemdGenInput(input: string, serviceType: ServiceType): S
 }
 
 export function generateSystemdUnit(input: string, serviceType: ServiceType): string {
-  const opts = parseSystemdGenInput(input, serviceType);
-  const validType = VALID_TYPES.indexOf(opts.serviceType) !== -1 ? opts.serviceType : 'simple';
+  return buildSystemdUnit(parseSystemdGenInput(input, serviceType));
+}
+
+/** The form talks to this directly; the key=value entry point above parses into it. */
+export function buildSystemdUnit(opts: SystemdGenOptions): string {
+  const validType = SERVICE_TYPES.indexOf(opts.serviceType) !== -1 ? opts.serviceType : 'simple';
   const lines: string[] = [];
 
   // [Unit]
@@ -191,3 +195,13 @@ export const SERVICE_TYPE_DESCRIPTIONS: Record<ServiceType, string> = {
   dbus: 'Process acquires a D-Bus name on startup',
   idle: 'Delayed start until all other jobs complete',
 };
+
+/** Filename for the downloaded unit, derived from the description. */
+export function systemdFilename(opts: SystemdGenOptions): string {
+  const slug = opts.description
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60);
+  return (slug || 'my-service') + '.service';
+}
