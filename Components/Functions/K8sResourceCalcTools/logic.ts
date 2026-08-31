@@ -237,3 +237,72 @@ export const K8S_RESOURCE_EXAMPLE = `cpu_request=250m
 cpu_limit=1
 mem_request=512Mi
 mem_limit=1Gi`;
+
+/** Common node sizes, shared by the fit estimate and the UI table. */
+export const NODE_SIZES: Array<{ name: string; cpu: number; mem: number }> = [
+  { name: 't3.micro', cpu: 2000, mem: 1024 },
+  { name: 't3.small', cpu: 2000, mem: 2048 },
+  { name: 't3.medium', cpu: 2000, mem: 4096 },
+  { name: 't3.large', cpu: 2000, mem: 8192 },
+  { name: 'm5.large', cpu: 2000, mem: 8192 },
+  { name: 'm5.xlarge', cpu: 4000, mem: 16384 },
+  { name: 'm5.2xlarge', cpu: 8000, mem: 32768 },
+  { name: 'm5.4xlarge', cpu: 16000, mem: 65536 },
+];
+
+export interface NodeFit {
+  name: string;
+  cpu: number;
+  mem: number;
+  replicas: number;
+  /** Which resource runs out first — the one worth tuning. */
+  boundBy: 'cpu' | 'memory';
+}
+
+/**
+ * Replicas per node for each size, using limits (falling back to a nominal
+ * 100m / 128Mi when a limit is unset, matching estimateNodeFit).
+ */
+export function nodeFits(cpuLimitMillicores: number, memLimitMiB: number): NodeFit[] {
+  const useCpu = cpuLimitMillicores > 0 ? cpuLimitMillicores : 100;
+  const useMem = memLimitMiB > 0 ? memLimitMiB : 128;
+  return NODE_SIZES.map(node => {
+    const byCpu = Math.floor(node.cpu / useCpu);
+    const byMem = Math.floor(node.mem / useMem);
+    return {
+      name: node.name,
+      cpu: node.cpu,
+      mem: node.mem,
+      replicas: Math.min(byCpu, byMem),
+      boundBy: byCpu <= byMem ? 'cpu' : 'memory',
+    };
+  });
+}
+
+/** The `resources:` block to paste into a container spec. */
+export function resourcesYaml(input: K8sResourceInput): string {
+  const requests: string[] = [];
+  const limits: string[] = [];
+  if (input.cpuRequest.trim()) requests.push('    cpu: "' + input.cpuRequest.trim() + '"');
+  if (input.memRequest.trim()) requests.push('    memory: "' + input.memRequest.trim() + '"');
+  if (input.cpuLimit.trim()) limits.push('    cpu: "' + input.cpuLimit.trim() + '"');
+  if (input.memLimit.trim()) limits.push('    memory: "' + input.memLimit.trim() + '"');
+
+  if (requests.length === 0 && limits.length === 0) {
+    return '# No requests or limits set — the pod lands in the BestEffort QoS class.';
+  }
+
+  const lines = ['resources:'];
+  if (requests.length > 0) lines.push('  requests:', ...requests);
+  if (limits.length > 0) lines.push('  limits:', ...limits);
+  return lines.join('\n');
+}
+
+export const QOS_EXPLANATIONS: Record<K8sResourceResult['qosClass'], string> = {
+  Guaranteed:
+    'Requests equal limits on both CPU and memory. Evicted last under node pressure, and eligible for exclusive CPUs under the static CPU manager policy.',
+  Burstable:
+    'Requests are set but below limits, or the spec is partial. Can use spare capacity, and is evicted before Guaranteed pods.',
+  BestEffort:
+    'Nothing is requested or limited. The pod runs on leftovers and is the first thing evicted when the node is under pressure.',
+};

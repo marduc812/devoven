@@ -1,4 +1,4 @@
-import { markdownToHtml } from '@/Components/Functions/MarkdownToHtmlTools/logic';
+import { markdownToHtml } from '@/Components/Functions/DataFormatConverters/logic';
 
 describe('markdownToHtml - headers', () => {
   it('converts # h1', () => expect(markdownToHtml('# Hello')).toContain('<h1>Hello</h1>'));
@@ -17,7 +17,7 @@ describe('markdownToHtml - inline', () => {
   });
   it('converts ![img](src)', () => {
     const html = markdownToHtml('![alt text](img.png)');
-    expect(html).toContain('<img src="img.png" alt="alt text" />');
+    expect(html).toContain('<img src="img.png" alt="alt text">');
   });
 });
 
@@ -45,10 +45,10 @@ describe('markdownToHtml - blocks', () => {
     expect(html).toContain('quoted text');
   });
   it('converts horizontal rule ---', () => {
-    expect(markdownToHtml('---')).toContain('<hr />');
+    expect(markdownToHtml('---')).toContain('<hr>');
   });
   it('converts horizontal rule ***', () => {
-    expect(markdownToHtml('***')).toContain('<hr />');
+    expect(markdownToHtml('***')).toContain('<hr>');
   });
   it('wraps paragraphs in <p>', () => {
     const html = markdownToHtml('Hello world');

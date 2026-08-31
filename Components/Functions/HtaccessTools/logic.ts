@@ -16,22 +16,24 @@ export interface HtaccessOptions {
   redirect_type: string;
 }
 
+export const HTACCESS_DEFAULTS: HtaccessOptions = {
+  https_redirect: 'no',
+  www_redirect: 'no',
+  no_www_redirect: 'no',
+  directory_listing: 'no',
+  cors: 'no',
+  cache: 'no',
+  block_ips: '',
+  error_404: '',
+  error_500: '',
+  rewrite_base: '/',
+  custom_redirect_from: '',
+  custom_redirect_to: '',
+  redirect_type: '301',
+};
+
 export function parseHtaccessInput(input: string): HtaccessOptions {
-  const opts: HtaccessOptions = {
-    https_redirect: 'no',
-    www_redirect: 'no',
-    no_www_redirect: 'no',
-    directory_listing: 'no',
-    cors: 'no',
-    cache: 'no',
-    block_ips: '',
-    error_404: '',
-    error_500: '',
-    rewrite_base: '/',
-    custom_redirect_from: '',
-    custom_redirect_to: '',
-    redirect_type: '301',
-  };
+  const opts: HtaccessOptions = Object.assign({}, HTACCESS_DEFAULTS);
 
   const lines = input.split('\n');
   for (const line of lines) {
@@ -49,7 +51,11 @@ export function parseHtaccessInput(input: string): HtaccessOptions {
 }
 
 export function generateHtaccess(input: string): string {
-  const opts = parseHtaccessInput(input);
+  return buildHtaccess(parseHtaccessInput(input));
+}
+
+/** The form talks to this directly; the key=value entry point above parses into it. */
+export function buildHtaccess(opts: HtaccessOptions): string {
   const sections: string[] = [];
 
   sections.push('# Generated .htaccess');

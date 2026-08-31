@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
+import { paneClass, segOff, segOn } from '@/Components/MainView/MainPanel/formControls';
 import {
   LICENSES,
   suggestLicenses,
@@ -10,9 +11,13 @@ import {
   type NeedsAnswer,
 } from './logic';
 
-const btnBase = 'px-3 py-1.5 text-xs border transition-colors duration-150';
-const btnOff = `${btnBase} border-gray-200 bg-gray-50 text-gray-400 hover:text-gray-900 hover:border-gray-400`;
-const btnOn = `${btnBase} border-emerald-500/60 bg-emerald-500/10 text-emerald-300`;
+// The selected state used to be emerald-300 text on an emerald-500/10 fill — a
+// dark-theme palette that all but vanished on white. segOn/segOff carry the
+// light-first colours that globals.css also overrides for dark mode.
+const btnOff = segOff;
+const btnOn = segOn;
+const questionClass = 'text-gray-700 text-xs font-semibold';
+const groupLabelClass = 'text-gray-500 text-xs font-semibold uppercase tracking-wider';
 
 export const LicenseChooser = () => {
   const [mode, setMode] = useState<'browse' | 'suggest'>('suggest');
@@ -30,7 +35,12 @@ export const LicenseChooser = () => {
 
   const suggested = suggestLicenses(needs);
   const browseLicense = getLicenseById(selectedId);
-  const displayLicense = mode === 'browse' ? browseLicense : suggested[0];
+  // In suggest mode the chips pick which match to show; falling back to the top
+  // one when the current selection is not among them.
+  const displayLicense =
+    mode === 'browse'
+      ? browseLicense
+      : suggested.find(l => l.id === selectedId) ?? suggested[0];
   const output = displayLicense ? formatLicenseSummary(displayLicense) : 'No matching license found for your criteria.';
 
   return (
@@ -48,11 +58,11 @@ export const LicenseChooser = () => {
 
           {mode === 'suggest' && (
             <div className="flex flex-col gap-4">
-              <p className="text-gray-400 text-xs">Answer a few questions to find the right license:</p>
+              <p className="text-gray-600 text-xs">Answer a few questions to find the right license:</p>
 
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
-                  <span className="text-gray-300 text-xs font-semibold">Commercial use allowed?</span>
+                  <span className={questionClass}>Commercial use allowed?</span>
                   <div className="flex gap-2">
                     <button className={needs.commercial ? btnOn : btnOff} onClick={() => toggle('commercial', true)}>Yes</button>
                     <button className={!needs.commercial ? btnOn : btnOff} onClick={() => toggle('commercial', false)}>No</button>
@@ -60,7 +70,7 @@ export const LicenseChooser = () => {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <span className="text-gray-300 text-xs font-semibold">Patent grant required?</span>
+                  <span className={questionClass}>Patent grant required?</span>
                   <div className="flex gap-2">
                     <button className={needs.patent ? btnOn : btnOff} onClick={() => toggle('patent', true)}>Yes</button>
                     <button className={!needs.patent ? btnOn : btnOff} onClick={() => toggle('patent', false)}>No / Don&apos;t care</button>
@@ -68,7 +78,7 @@ export const LicenseChooser = () => {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <span className="text-gray-300 text-xs font-semibold">Modifications policy?</span>
+                  <span className={questionClass}>Modifications policy?</span>
                   <div className="flex gap-2 flex-wrap">
                     {([['any', 'Any'], ['allow-closed', 'Allow closed-source'], ['keep-open', 'Must share modifications']] as const).map(([val, label]) => (
                       <button key={val} className={needs.modifications === val ? btnOn : btnOff} onClick={() => toggle('modifications', val)}>{label}</button>
@@ -77,7 +87,7 @@ export const LicenseChooser = () => {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <span className="text-gray-300 text-xs font-semibold">Network/SaaS use triggers sharing?</span>
+                  <span className={questionClass}>Network/SaaS use triggers sharing?</span>
                   <div className="flex gap-2">
                     <button className={needs.network ? btnOn : btnOff} onClick={() => toggle('network', true)}>Yes (AGPL style)</button>
                     <button className={!needs.network ? btnOn : btnOff} onClick={() => toggle('network', false)}>No</button>
@@ -87,7 +97,7 @@ export const LicenseChooser = () => {
 
               {/* Suggestions */}
               <div className="flex flex-col gap-2">
-                <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">Matching Licenses ({suggested.length})</span>
+                <span className={groupLabelClass}>Matching Licenses ({suggested.length})</span>
                 <div className="flex flex-wrap gap-2">
                   {suggested.map(l => (
                     <button
@@ -98,7 +108,7 @@ export const LicenseChooser = () => {
                       {l.spdx}
                     </button>
                   ))}
-                  {suggested.length === 0 && <span className="text-red-400 text-xs">No licenses match your criteria.</span>}
+                  {suggested.length === 0 && <span className="text-red-700 text-xs">No licenses match your criteria.</span>}
                 </div>
               </div>
             </div>
@@ -106,7 +116,7 @@ export const LicenseChooser = () => {
 
           {mode === 'browse' && (
             <div className="flex flex-col gap-2">
-              <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">Choose a License</span>
+              <span className={groupLabelClass}>Choose a License</span>
               <div className="flex flex-wrap gap-2">
                 {LICENSES.map(l => (
                   <button
@@ -124,13 +134,11 @@ export const LicenseChooser = () => {
           {/* License detail */}
           <div className="w-full h-px bg-gray-200" />
           <div className="flex flex-col gap-2">
-            <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">
-              {mode === 'suggest' && suggested.length > 0
-                ? `Top Suggestion: ${displayLicense?.spdx ?? ''}`
-                : displayLicense?.spdx ?? 'License Details'}
+            <span className={groupLabelClass}>
+              {displayLicense?.spdx ?? 'License Details'}
             </span>
             <textarea
-              className="bg-gray-50 text-gray-900 p-3 w-full border border-gray-300 font-mono text-sm resize-y"
+              className={`${paneClass} text-sm min-h-[420px]`}
               rows={20}
               value={output}
               readOnly
