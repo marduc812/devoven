@@ -6,7 +6,6 @@ import { validateEmail, formatEmailInfo } from '@/Components/Functions/EmailVali
 import { validateCard } from '@/Components/Functions/CreditCardTools/logic';
 import { validateUuid, formatUuidInfo } from '@/Components/Functions/DevTools4/logic';
 import { extractUuidTimestamp, formatUuidTimestamp } from '@/Components/Functions/UuidTimestampTools/logic';
-import { toEIP55Checksum, formatEthChecksumResult } from '@/Components/Functions/EthChecksumTools/logic';
 import { validateBitcoinAddress, formatBitcoinResult } from '@/Components/Functions/BitcoinAddrTools/logic';
 import { decodeCID, formatCIDInfo } from '@/Components/Functions/IpfsCidTools/logic';
 import { parseWhois, formatWhoisSummary } from '@/Components/Functions/WhoisParserTools/logic';
@@ -157,15 +156,6 @@ export const analysisOperations: Operation[] = [
     chainable: false,
     terminal: true,
     fn: (input) => formatUuidTimestamp(extractUuidTimestamp(input.trim())),
-  },
-  {
-    id: 'eth-checksum',
-    name: 'Ethereum Address Checksum',
-    category: 'analysis',
-    params: [],
-    chainable: false,
-    terminal: true,
-    fn: (input) => formatEthChecksumResult(toEIP55Checksum(input.trim())),
   },
   {
     id: 'bitcoin-address',
