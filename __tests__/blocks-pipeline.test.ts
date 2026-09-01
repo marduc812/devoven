@@ -188,3 +188,69 @@ describe('compression operations', () => {
     expect(results[0].error).toMatch(/not valid Base64/);
   });
 });
+
+describe('binary inspection operations', () => {
+  // A PNG header, eight bytes of filler, and the IEND chunk that closes a file.
+  const PNG_BASE64 = 'iVBORw0KGgpBQUFBQUFBQUlFTkSuQmCC';
+  // The same idea for JPEG: an APP0 header, filler, and the FFD9 end marker.
+  const JPEG_PLUS_PNG = '/9j/4CAgICAgICAgICAgICAgICD/2YlQTkcNChoKQUFBQUFBQUFJRU5ErkJggg==';
+
+  it('names a file from Base64 bytes', () => {
+    const results = runPipeline(pipeline(PNG_BASE64, block('detect-file-type')));
+    expect(results[0].error).toBeNull();
+    expect(results[0].output).toContain('PNG image');
+    expect(results[0].output).toContain('image/png');
+  });
+
+  it('reads the same bytes as hex when told to', () => {
+    const results = runPipeline(
+      pipeline('89504e470d0a1a0a', block('detect-file-type', { source: 'hex' })),
+    );
+    expect(results[0].output).toContain('PNG image');
+  });
+
+  it('inspects the output of an upstream compression block', () => {
+    const results = runPipeline(
+      pipeline(
+        PNG_BASE64,
+        block('gzip-compress', { encoding: 'base64', level: '6' }),
+        block('scan-embedded-files'),
+      ),
+    );
+    // Gzip's three-byte header is too short to carve, so nothing is found.
+    expect(results[1].error).toBeNull();
+    expect(results[1].output).toContain('No embedded file signatures found');
+  });
+
+  it('carves a PNG appended to a JPEG', () => {
+    const results = runPipeline(pipeline(JPEG_PLUS_PNG, block('scan-embedded-files')));
+    expect(results[0].error).toBeNull();
+    expect(results[0].output).toContain('JPEG image');
+    expect(results[0].output).toContain('PNG image');
+  });
+
+  it('pulls printable runs out of raw text and keeps chaining', () => {
+    const results = runPipeline(
+      pipeline(
+        // Space is printable, so NUL is what actually separates the runs.
+        'keep-this\u0000ok\u0000/usr/local/bin',
+        block('extract-strings', { source: 'text', minLength: '4', encoding: 'ascii' }),
+        block('case-convert', { case: 'upper' }),
+      ),
+    );
+    expect(results[0].output).toBe('keep-this\n/usr/local/bin');
+    expect(results[1].output).toBe('KEEP-THIS\n/USR/LOCAL/BIN');
+  });
+
+  it('says so when no run is long enough', () => {
+    const results = runPipeline(
+      pipeline('ab', block('extract-strings', { source: 'text', minLength: '12', encoding: 'ascii' })),
+    );
+    expect(results[0].error).toMatch(/No printable runs/);
+  });
+
+  it('refuses an empty input', () => {
+    const results = runPipeline(pipeline('   ', block('detect-file-type')));
+    expect(results[0].error).toMatch(/Nothing to inspect/);
+  });
+});

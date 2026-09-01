@@ -13,6 +13,7 @@ import { textExtraOperations } from './operations/text-extra';
 import { networkOperations } from './operations/network';
 import { analysisOperations } from './operations/analysis';
 import { compressionOperations } from './operations/compression';
+import { binaryOperations } from './operations/binary';
 
 export const OPERATIONS: Operation[] = [
   ...encodingOperations,
@@ -29,6 +30,7 @@ export const OPERATIONS: Operation[] = [
   ...networkOperations,
   ...analysisOperations,
   ...compressionOperations,
+  ...binaryOperations,
 ];
 
 export const OPERATION_MAP: Record<string, Operation> = Object.fromEntries(
