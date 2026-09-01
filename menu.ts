@@ -96,6 +96,7 @@ export const menu: MenuGroupType[] = [
             {"name": "MurmurHash", "link": "/hashing/murmur", "type": "hashing", "tag": ""},
             {"name": "FNV Hash", "link": "/hashing/fnv", "type": "hashing", "tag": ""},
             {"name": "NTLM Hash", "link": "/hashing/ntlm", "type": "hashing", "tag": ""},
+            {"name": "Hash Identifier", "link": "/hashing/hash-identifier", "type": "hashing", "tag": "popular"},
         ],
        "color": "teal",
         "titleColor": "tealTitle",

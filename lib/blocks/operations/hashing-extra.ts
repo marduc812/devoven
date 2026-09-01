@@ -2,6 +2,7 @@ import { crc32 } from '@/Components/Functions/Crc32Tools/logic';
 import { computeAll as computeFletcherAll } from '@/Components/Functions/FletcherTools/logic';
 import { murmurHash3_32 } from '@/Components/Functions/MurmurHashTools/logic';
 import { computeFnvAll } from '@/Components/Functions/FnvHashTools/logic';
+import { formatIdentifyReport } from '@/Components/Functions/HashIdentifierTools/logic';
 import { Operation } from '../types';
 
 const caseParam = {
@@ -108,5 +109,14 @@ export const hashingExtraOperations: Operation[] = [
       if (p.case === 'decimal') return entry.decimal;
       return p.case === 'upper' ? entry.hex : entry.hex.toLowerCase();
     },
+  },
+  {
+    id: 'hash-identify',
+    name: 'Identify Hash Type',
+    category: 'hashing',
+    params: [],
+    chainable: false,
+    terminal: true,
+    fn: (input) => formatIdentifyReport(input),
   },
 ];
