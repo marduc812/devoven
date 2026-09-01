@@ -622,7 +622,8 @@ export const menu: MenuGroupType[] = [
             {"name": "TLS Config Generator", "link": "/network/tls-config", "type": "network", "tag": ""},
             {"name": "IP Subnet Calculator", "link": "/network/subnet-calc", "type": "network", "tag": ""},
             {"name": "NTP Time Calculator", "link": "/network/ntp-time", "type": "network", "tag": ""},
-            {"name": "URL Builder", "link": "/network/url-builder", "type": "network", "tag": ""}
+            {"name": "URL Builder", "link": "/network/url-builder", "type": "network", "tag": ""},
+            {"name": "URL Defanger", "link": "/network/defang", "type": "network", "tag": ""}
         ],
         "color": "sky",
         "titleColor": "skyTitle",

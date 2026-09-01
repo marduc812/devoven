@@ -8,6 +8,7 @@ import {
 import { formatIpClassification } from '@/Components/Functions/NetworkTools2/logic';
 import { parseCookieHeader, formatParsedCookies } from '@/Components/Functions/NetworkTools3/logic';
 import { extractFromText, formatExtractResults, ExtractType } from '@/Components/Functions/SecurityTools/logic';
+import { defangText, fangText, DotStyle, DefangScope } from '@/Components/Functions/DefangTools/logic';
 import { Operation } from '../types';
 
 export const networkOperations: Operation[] = [
@@ -123,5 +124,47 @@ export const networkOperations: Operation[] = [
     chainable: false,
     terminal: true,
     fn: (input) => formatParsedUserAgent(parseUserAgent(input.trim())),
+  },
+  {
+    id: 'defang',
+    name: 'Defang Indicators',
+    category: 'network',
+    params: [
+      {
+        id: 'style',
+        label: 'Dots',
+        kind: 'select',
+        options: [
+          { value: 'brackets', label: '[.]' },
+          { value: 'parens', label: '(.)' },
+          { value: 'word', label: '[dot]' },
+        ],
+        default: 'brackets',
+      },
+      {
+        id: 'scope',
+        label: 'Scope',
+        kind: 'select',
+        options: [
+          { value: 'indicators', label: 'Indicators only' },
+          { value: 'everything', label: 'Everything' },
+        ],
+        default: 'indicators',
+      },
+    ],
+    chainable: true,
+    fn: (input, params) =>
+      defangText(input, {
+        dotStyle: (params.style as DotStyle) || 'brackets',
+        scope: (params.scope as DefangScope) || 'indicators',
+      }),
+  },
+  {
+    id: 'fang',
+    name: 'Fang Indicators',
+    category: 'network',
+    params: [],
+    chainable: true,
+    fn: (input) => fangText(input),
   },
 ];
