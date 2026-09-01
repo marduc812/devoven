@@ -2,6 +2,7 @@ import { keccak_256 } from 'js-sha3';
 import { hexToBytes, stringToHex, hexToString, numberToHex, hexToNumber } from 'web3-utils';
 import { hexToRgb, rgbToHex, textToBinary, binaryToString, hexToBinary as hexToBinaryFn } from '@/Components/Functions/Utils';
 import { generateColorScheme } from '@/Components/Functions/ColorSchemeTools/logic';
+import { toEIP55Checksum } from '@/Components/Functions/EthChecksumTools/logic';
 import { Operation } from '../types';
 
 const ethPublicToAddress: Operation = {
@@ -17,6 +18,19 @@ const ethPublicToAddress: Operation = {
       formattedInput = '0' + formattedInput;
     }
     return '0x' + keccak_256(hexToBytes('0x' + formattedInput)).toUpperCase().slice(-40);
+  },
+};
+
+const ethChecksum: Operation = {
+  id: 'eth-checksum',
+  name: 'ETH Address → EIP-55 Checksum',
+  category: 'conversion',
+  params: [],
+  chainable: true,
+  fn: (input) => {
+    const result = toEIP55Checksum(input);
+    if (!result.checksummed) throw new Error(result.error ?? 'Invalid Ethereum address');
+    return result.checksummed;
   },
 };
 
@@ -316,6 +330,7 @@ const colorScheme: Operation = {
 
 export const conversionOperations: Operation[] = [
   ethPublicToAddress,
+  ethChecksum,
   hexToRgbOp,
   rgbToHexOp,
   textReplace,
