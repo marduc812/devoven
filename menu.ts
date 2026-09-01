@@ -463,7 +463,10 @@ export const menu: MenuGroupType[] = [
                     {"name": "Weather Calculator", "link": "/tools/weather-calc", "type": "dev", "tag": ""},
                     {"name": "Cache TTL Calculator", "link": "/tools/cache-ttl", "type": "dev", "tag": ""},
                     {"name": "Modular Arithmetic Calculator", "link": "/tools/modular-arithmetic", "type": "text", "tag": ""},
-                    {"name": "Time Duration Calculator", "link": "/tools/duration-calculator", "type": "date", "tag": ""}
+                    {"name": "Time Duration Calculator", "link": "/tools/duration-calculator", "type": "date", "tag": ""},
+                    {"name": "Detect File Type", "link": "/tools/file-type", "type": "binary", "tag": ""},
+                    {"name": "Strings", "link": "/tools/strings", "type": "binary", "tag": ""},
+                    {"name": "Scan for Embedded Files", "link": "/tools/embedded-files", "type": "binary", "tag": ""}
                 ],
                "color": "lime",
                 "titleColor": "limeTitle",
