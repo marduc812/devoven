@@ -5,6 +5,7 @@ import { encodingExtraOperations } from './operations/encoding-extra';
 import { cipherOperations } from './operations/ciphers';
 import { hashingOperations } from './operations/hashing';
 import { hashingExtraOperations } from './operations/hashing-extra';
+import { hashingModernOperations } from './operations/hashing-modern';
 import { conversionOperations } from './operations/conversion';
 import { dataFormatOperations } from './operations/data-format';
 import { dataExtraOperations } from './operations/data-extra';
@@ -22,6 +23,7 @@ export const OPERATIONS: Operation[] = [
   ...cipherOperations,
   ...hashingOperations,
   ...hashingExtraOperations,
+  ...hashingModernOperations,
   ...conversionOperations,
   ...dataFormatOperations,
   ...dataExtraOperations,

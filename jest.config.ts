@@ -6,7 +6,7 @@ const createJestConfig = nextJest({ dir: './' });
 // Packages that ship ESM only. next/jest tells Jest to skip transforming
 // node_modules, so these have to be carved back out or importing them throws
 // "Unexpected token 'export'".
-const ESM_ONLY_PACKAGES = ['marked', 'turndown'];
+const ESM_ONLY_PACKAGES = ['marked', 'turndown', '@noble'];
 
 // next/jest builds its ignore patterns as `(?!(geist|...)/` style negative
 // lookaheads and the package list inside them changes between Next releases,

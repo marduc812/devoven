@@ -1,7 +1,7 @@
 {
   "name": "dev-oven",
   "version": "0.1.0",
-  "description": "A collection of 563 developer tools that run in your browser.",
+  "description": "A collection of 574 developer tools that run in your browser.",
   "homepage": "https://www.devoven.com",
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@eslint-community/regexpp": "^4.12.2",
+    "@noble/hashes": "^2.4.0",
     "@vercel/analytics": "^2.0.1",
     "bcryptjs": "^3.0.3",
     "cron-parser": "^3.5.0",
