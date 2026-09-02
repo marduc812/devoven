@@ -1,6 +1,4 @@
 import React, { Dispatch, SetStateAction } from 'react'
-import { IoUnlinkSharp } from 'react-icons/io5';
-import toast from 'react-hot-toast'
 
 type ColorContrastCalculatorTypes = {
     fromFg: string;
@@ -14,21 +12,10 @@ const inputClass = "rounded-xl border border-white/10 bg-gray-900/80 px-3 py-2 t
 
 const ColorContrastCalculatorView = (props: ColorContrastCalculatorTypes) => {
 
-    const notifySuccess = (message: string) => toast.success(message)
-
-    const copyURLWithParams = () => {
-        navigator.clipboard.writeText(document.location.origin.concat(document.location.pathname,'?from=', encodeURIComponent(`${props.fromFg},${props.fromBg}`)));
-        notifySuccess('Copied URL to clipboard');
-    }
-
     return (
         <>
             <div className='centered-content'>
                 <div className='flex flex-col gap-4'>
-
-                    <div className='flex flex-row justify-end'>
-                        <div onClick={copyURLWithParams} className="p-1.5 text-xl rounded-lg hover:cursor-pointer text-gray-400 hover:bg-gray-100 hover:text-lime-400 transition-all duration-150 active:scale-95 w-fit" aria-label="Copy as link" role="tooltip"><IoUnlinkSharp title='Copy URL with parameters'/></div>
-                    </div>
 
                     <div className='flex flex-row justify-center gap-8'>
                         <div className='flex flex-col gap-2'>

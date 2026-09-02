@@ -9,6 +9,7 @@ import {
   type AlignmentInfo,
   type PageInfo,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 type Mode = 'calculate' | 'distance';
 
@@ -166,6 +167,9 @@ export function MemoryAddrCalculator() {
     const to = p.get('offset');
     if (to) setOffset(to);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: base, offset })
 
   const calc = useMemo(
     () => (base.trim() ? calculateAddress(base, offset) : null),

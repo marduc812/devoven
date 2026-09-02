@@ -18,6 +18,7 @@ import {
   type Cell,
   type MoveOutcome,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const EMPTY_BOARD: Board = Array(9).fill('.') as Board;
 
@@ -60,6 +61,9 @@ export function TicTacToeAnalyzer() {
     const from = new URLSearchParams(window.location.search).get('from');
     if (from) setText(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: text })
 
   // A cleared textarea means an empty board, not "no input" — analyzing the
   // explicit form keeps the recommended move consistent with the ranking below.

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { convertNumeral, getReferenceTable } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export function NumeralSystems() {
   const [input, setInput] = useState('');
@@ -12,6 +13,9 @@ export function NumeralSystems() {
     const from = params.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const result = input.trim() ? convertNumeral(input) : null;
   const refTable = getReferenceTable(0, 256);

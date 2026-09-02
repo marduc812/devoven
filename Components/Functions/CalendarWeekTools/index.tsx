@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { getCalendarWeek, countBusinessDays } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 function copy(text: string) {
   navigator.clipboard.writeText(text).catch(() => {});
@@ -27,6 +28,9 @@ export function CalendarWeekCalculator() {
       setDate(`${y}-${m}-${d}`);
     }
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: date })
 
   const result = useMemo(() => {
     if (!date.trim()) return null;

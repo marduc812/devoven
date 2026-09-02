@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import BasicConverter from '@/Components/MainView/MainPanel/BasicConverter';
 import { jsonToPython, jsonToPythonDataclass, jsonToPhp, jsonToJava } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 // ─── JSON to Python ───────────────────────────────────────────────────────────
 
@@ -19,6 +20,9 @@ export function JsonToPython() {
     const m = params.get('mode');
     if (m === 'dataclass') setMode('dataclass');
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ mode })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }
@@ -102,6 +106,9 @@ export function JsonToJava() {
     const cn = params.get('class');
     if (cn) setClassName(cn);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ class: className })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }

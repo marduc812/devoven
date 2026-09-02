@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { calculateLoan, parseLoanInput, fullAmortization, yearlyAmortization } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const labelClass = 'text-xs font-bold uppercase tracking-wider text-gray-500';
 
@@ -37,6 +38,9 @@ export function LoanCalculator() {
     if (p.get('rate')) setRate(p.get('rate') as string);
     if (p.get('term')) setTerm(p.get('term') as string);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ principal, rate, term })
 
   const result = useMemo(() => {
     const amount = parseFloat(principal);

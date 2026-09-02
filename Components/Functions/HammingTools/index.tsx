@@ -14,6 +14,7 @@ import {
   ValueCard,
 } from '@/Components/MainView/MainPanel/ResultUI';
 import { compareHamming } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
   { label: 'karolin / kathrin', value: ['karolin', 'kathrin'] },
@@ -38,6 +39,9 @@ export function HammingDistance() {
     if (first !== undefined) setA(first.trim());
     if (second !== undefined) setB(second.trim());
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: [a, b].join('\n') })
 
   const result = useMemo(() => (a || b ? compareHamming(a, b) : null), [a, b]);
 

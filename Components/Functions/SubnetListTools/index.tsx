@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { generateSubnetList, type SubnetListResult } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const SubnetListGenerator = () => {
   const [cidr, setCidr] = useState('');
@@ -17,6 +18,9 @@ export const SubnetListGenerator = () => {
     const from = params.get('from') || '';
     if (from) setCidr(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: cidr })
 
   const calculate = () => {
     setError('');

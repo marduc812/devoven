@@ -12,6 +12,7 @@ import {
   vcardFilename,
   vcardToFields,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 // Byte-mode QR at error correction M tops out around 2.3 KB; stay well inside it.
 const QR_BYTE_LIMIT = 2000;
@@ -41,6 +42,9 @@ export function VcardGenerator() {
     }
     if (Object.keys(seeded).length > 0) setFields(seeded);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink(Object.fromEntries(VCARD_FIELDS.map((field) => [field.id, fields[field.id]])))
 
   const vcard = useMemo(() => buildVcard(fields), [fields]);
   const empty = isEmptyVcard(fields);

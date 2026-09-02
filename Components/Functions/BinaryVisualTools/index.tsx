@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { textToCharBinaries, autoConvert } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const BinaryVisual = () => {
   const [input, setInput] = useState('');
@@ -12,6 +13,9 @@ export const BinaryVisual = () => {
     const from = params.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const { direction, output } = autoConvert(input);
   const charBinaries = direction === 'encode' && input.trim() ? textToCharBinaries(input.slice(0, 64)) : [];

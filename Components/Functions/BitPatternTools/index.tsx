@@ -12,6 +12,7 @@ import {
   inputClass,
 } from '@/Components/MainView/MainPanel/ResultUI';
 import { analyzeBytes, type BitPatternRow, type InputMode } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const TEXT_PRESETS = [
   { label: 'Hello', value: 'Hello' },
@@ -74,6 +75,9 @@ export const BitPatternViewer = () => {
     const modeParam = params.get('mode');
     if (modeParam === 'hex' || modeParam === 'text') setMode(modeParam);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input, mode })
 
   const { result, error } = useMemo(() => {
     if (!input.trim()) return { result: null, error: '' };

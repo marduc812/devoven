@@ -9,6 +9,7 @@ import RelativeLuminanceView from "../View/RelativeLuminance";
 import ScreenSizeView from "../View/ScreenSize";
 import PasswordGeneratorView from "../View/PasswordGenerator";
 import WiFiQRCodeView from "../View/WiFiQRCode";
+import { useShareLink } from "@/Components/Functions/ShareLink";
 
 
 export const ColorContractCalculator = () => {
@@ -34,6 +35,9 @@ export const ColorContractCalculator = () => {
             }
         }
     }, [])
+
+    // Mirrors the params read above, so the header's copy-link button carries them.
+    useShareLink({ from: `${fromFg},${fromBg}` })
 
 
     useEffect(() => {
@@ -87,6 +91,9 @@ export const RelativeLuminanceCalculator = () => {
             }
         }
     }, [])
+
+    // Mirrors the params read above, so the header's copy-link button carries them.
+    useShareLink({ from: `${fromColor},${fromAccuracy}` })
 
 
     useEffect(() => {

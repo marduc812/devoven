@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { generateNginxConfig, getExampleInput, NginxTemplate } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const TEMPLATES: { value: NginxTemplate; label: string }[] = [
   { value: 'reverse-proxy', label: 'Reverse Proxy' },
@@ -25,6 +26,9 @@ export function NginxConfigGen() {
     const tmpl = params.get('template') as NginxTemplate | null;
     if (tmpl && TEMPLATES.find(t => t.value === tmpl)) setTemplate(tmpl);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ template })
 
   useEffect(() => {
     try {

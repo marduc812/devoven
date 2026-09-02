@@ -10,6 +10,7 @@ import {
   hexToRgb,
   normalizeHex,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const labelClass = 'text-xs font-bold uppercase tracking-wider text-gray-500';
 
@@ -42,6 +43,9 @@ export function TailwindColorTools() {
     const from = params.get('from');
     if (from) setHexInput(from.trim());
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: hexInput })
 
   const result = useMemo(() => {
     if (!hexInput.trim()) return { data: null, error: 'Enter a hex colour, for example #3b82f6' };

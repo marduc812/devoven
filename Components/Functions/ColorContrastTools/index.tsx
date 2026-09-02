@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { checkContrast, WcagResult } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 function PassBadge({ pass, label }: { pass: boolean; label: string }) {
   return (
@@ -33,6 +34,9 @@ export const ColorContrastChecker = () => {
       if (lines[1]) setColor2(lines[1]);
     }
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: [color1, color2].filter(Boolean).join('\n') })
 
   useEffect(() => {
     if (!color1.trim() || !color2.trim()) { setResult(null); setError(''); return; }

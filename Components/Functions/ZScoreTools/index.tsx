@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { computeZScore, normalPDF, twoTailedOdds } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const labelClass = 'text-xs font-bold uppercase tracking-wider text-gray-500';
 
@@ -65,6 +66,9 @@ export function ZScoreCalculator() {
     if (p.get('mean')) setMean(p.get('mean') as string);
     if (p.get('sd')) setSigma(p.get('sd') as string);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: value, mean, sd: sigma })
 
   const result = useMemo(() => {
     const x = parseFloat(value);

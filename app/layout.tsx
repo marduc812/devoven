@@ -10,6 +10,7 @@ import ToolUsageTracker from '@/Components/Functions/ToolUsageTracker';
 import { ConsentProvider } from '@/Components/Consent/ConsentProvider';
 import AnalyticsGate from '@/Components/Consent/AnalyticsGate';
 import CookieBanner from '@/Components/Consent/CookieBanner';
+import { ShareLinkProvider } from '@/Components/Functions/ShareLink';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -69,15 +70,17 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <ConsentProvider>
-            <div id='overlays'></div>
+            <ShareLinkProvider>
+              <div id='overlays'></div>
 
-            <AnalyticsGate />
-            <ToolUsageTracker />
-            <NavigationHeader />
-            {children}
-            <FooterMainView />
-            <Toaster />
-            <CookieBanner />
+              <AnalyticsGate />
+              <ToolUsageTracker />
+              <NavigationHeader />
+              {children}
+              <FooterMainView />
+              <Toaster />
+              <CookieBanner />
+            </ShareLinkProvider>
           </ConsentProvider>
         </ThemeProvider>
       </body>

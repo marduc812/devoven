@@ -11,6 +11,7 @@ import {
   similarity,
   type EditOpType,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const labelClass = 'text-xs font-bold uppercase tracking-wider text-gray-500';
 
@@ -69,6 +70,9 @@ export function TextLevenshteinConverter() {
     if (params.get('a') !== null) setA(params.get('a') as string);
     if (params.get('b') !== null) setB(params.get('b') as string);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ a, b })
 
   const tooLong = a.length > COMPARE_LIMIT || b.length > COMPARE_LIMIT;
 

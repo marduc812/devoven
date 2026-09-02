@@ -8,6 +8,7 @@ import {
   DEFAULT_PRODVERSION,
   AcceptFormat,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const INSTALL_STEPS = [
   'Download the .crx file below using a browser that has internet access.',
@@ -27,6 +28,9 @@ export function CrxDownloader() {
     const from = params.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const result = input.trim() ? extractExtensionId(input) : null;
   const id = result && 'id' in result ? result.id : null;

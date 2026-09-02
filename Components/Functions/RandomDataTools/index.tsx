@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { processInput } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const RandomDataGenerator = () => {
   const [fromValue, setFromValue] = useState('');
@@ -16,6 +17,9 @@ export const RandomDataGenerator = () => {
     const from = params.get('from') || '';
     if (from) setFromValue(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: fromValue })
 
   const generate = () => {
     setError('');

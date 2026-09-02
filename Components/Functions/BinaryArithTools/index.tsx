@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { computeBinaryArith, BinaryOp } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const inputClass =
   'bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-300 focus:border-gray-900 focus:outline-none font-mono text-sm';
@@ -27,6 +28,9 @@ export function BinaryArithCalculator() {
     const from = params.get('from') ?? '';
     if (from) setInputA(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: inputA })
 
   const result =
     inputA.trim() && inputB.trim()

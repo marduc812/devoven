@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { analyzeChain, type ChainAnalysis } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const SAMPLE = `-----BEGIN CERTIFICATE-----
 MIIBkTCB+wIJAJemfuCopMEeMA0GCSqGSIb3DQEBCwUAMCIxIDAeBgNVBAMTF0V4
@@ -31,6 +32,9 @@ export const CertChainAnalyzer = () => {
     const from = params.get('from') ?? '';
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   useEffect(() => {
     if (!input.trim()) { setResult(null); return; }

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { analyzePassword, PasswordAnalysis } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const scoreBadge: Record<PasswordAnalysis['score'], string> = {
   'Weak':       'border border-red-300 bg-red-50 text-red-700',
@@ -43,6 +44,9 @@ export const PasswordStrengthAnalyzer = () => {
     const from = searchParams.get('from') || '';
     if (from) setPassword(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: password })
 
   useEffect(() => {
     setAnalysis(analyzePassword(password));

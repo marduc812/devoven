@@ -10,6 +10,7 @@ import {
   StatTile,
 } from '@/Components/MainView/MainPanel/ResultUI';
 import { TOKEN_MODES, tokenizeResult, type TokenMode } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const SAMPLE = `The quick brown fox jumps over the lazy dog. The dog barks!
 
@@ -43,6 +44,9 @@ export const TextTokenizer = () => {
     const m = params.get('mode');
     if (m && (TOKEN_MODES as string[]).includes(m)) setMode(m as TokenMode);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input, mode })
 
   const result = useMemo(
     () => (input.trim() ? tokenizeResult(input, mode) : null),

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 function hexToHsl(hex: string): [number, number, number] {
   const h = hex.replace('#', '');
@@ -86,6 +87,9 @@ export function ColorSchemeGenerator() {
     const from = params.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const schemes = useMemo(() => {
     const h = input.replace('#', '');

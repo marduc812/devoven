@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { kelvinToRgb, rgbToHex, getDescriptor, getSceneDescription, getNearestPreset, getCssFilter, WB_PRESETS } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 function isLight(r: number, g: number, b: number): boolean {
   return (r * 299 + g * 587 + b * 114) / 1000 > 128;
@@ -16,6 +17,9 @@ export function WhiteBalanceConverter() {
     const from = p.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const result = useMemo(() => {
     const trimmed = input.trim().replace(/k$/i, '');

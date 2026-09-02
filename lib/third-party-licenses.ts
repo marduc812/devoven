@@ -20,6 +20,7 @@ export const REPOSITORY_URL = 'https://github.com/marduc812/devoven';
 
 export const THIRD_PARTY_LIBRARIES: ThirdPartyLibrary[] = [
     { name: '@eslint-community/regexpp', license: 'MIT', url: 'https://github.com/eslint-community/regexpp', used: 'Regex parsing behind the ReDoS analyser' },
+    { name: '@noble/hashes', license: 'MIT', url: 'https://github.com/paulmillr/noble-hashes', used: 'BLAKE2, BLAKE3, and the PBKDF2, HKDF, scrypt and Argon2 key derivation functions' },
     { name: '@vercel/analytics', license: 'MIT', url: 'https://github.com/vercel/analytics', used: 'Page view counts' },
     { name: 'bcryptjs', license: 'BSD-3-Clause', url: 'https://github.com/dcodeIO/bcrypt.js', used: 'Bcrypt hashing and verification' },
     { name: 'cron-parser', license: 'MIT', url: 'https://github.com/harrisiirak/cron-parser', used: 'Next run times for cron expressions' },

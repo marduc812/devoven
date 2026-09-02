@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { normalizeText, getFormDescription, type NormalizationForm } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const UnicodeNormalizer = () => {
   const [input, setInput] = useState('');
@@ -16,6 +17,9 @@ export const UnicodeNormalizer = () => {
     const f = params.get('form');
     if (f && ['NFC', 'NFD', 'NFKC', 'NFKD'].includes(f)) setForm(f as NormalizationForm);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ form })
 
   useEffect(() => {
     if (!input) { setOutput(''); return; }

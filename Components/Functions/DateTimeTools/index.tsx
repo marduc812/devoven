@@ -31,6 +31,7 @@ import {
   type DateOutputFormat,
   type WeekReport,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 // ---------------------------------------------------------------------------
 // 1. Date Format Converter
@@ -50,6 +51,9 @@ export function DateFormatConverter() {
     const fmt = params.get('format') as DateOutputFormat | null;
     if (fmt) setFormat(fmt);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ format })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }
@@ -116,6 +120,9 @@ export function CronToHuman() {
     const from = params.get('from');
     if (from) setExpr(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: expr })
 
   useEffect(() => {
     if (!expr.trim()) {
@@ -241,6 +248,9 @@ export function WeekNumberCalculator() {
     const from = new URLSearchParams(window.location.search).get('from');
     setInput(from || todayISO());
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const parsed = useMemo(() => {
     if (!input.trim()) return { report: null as WeekReport | null, error: null as string | null };

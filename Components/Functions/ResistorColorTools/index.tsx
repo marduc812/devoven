@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { decodeColorBands, resistanceToBands4, findESeries } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const COLOR_HEX: Record<string, string> = {
   black: '#1a1a1a', brown: '#8B4513', red: '#CC0000', orange: '#FF8C00',
@@ -25,6 +26,9 @@ export const ResistorColorDecoder = () => {
     const from = params.get('from') || '';
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); setError(''); setBands([]); return; }

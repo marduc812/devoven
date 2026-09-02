@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { simulateAll, parseHex, rgbToHex, ColorblindResult } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const ColorblindSimulator = () => {
   const [hexInput, setHexInput] = useState('#3b82f6');
@@ -16,6 +17,9 @@ export const ColorblindSimulator = () => {
     const from = params.get('from') || '';
     if (from) setHexInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: hexInput })
 
   useEffect(() => {
     if (!hexInput.trim()) {

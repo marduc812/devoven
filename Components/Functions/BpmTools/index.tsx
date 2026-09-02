@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { bpmToMs, msToBpm, noteDurations } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const inputClass = 'bg-white text-gray-900 border border-gray-300 focus:border-gray-900 focus:outline-none px-3 py-2 text-sm font-mono w-full';
 const labelClass = 'block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1';
@@ -48,6 +49,9 @@ export function BpmConverter() {
     const from = p.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const result = useMemo(() => parseInput(input), [input]);
   const activeBpm = tapBpm ?? result?.bpm ?? null;

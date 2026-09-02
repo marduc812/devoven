@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { interpretBrainfuck } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const labelClass = 'text-xs text-gray-500 uppercase tracking-wider';
 const textareaClass = 'bg-white text-gray-900 border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:border-white/30 w-full font-mono resize-none';
@@ -21,6 +22,9 @@ export function BrainfuckTools() {
     const stdin = params.get('stdin') ?? '';
     if (stdin) setStdinValue(stdin);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ stdin: stdinValue })
 
   useEffect(() => {
     if (!fromValue.trim()) { setToValue(''); return; }

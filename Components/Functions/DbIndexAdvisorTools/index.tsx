@@ -17,6 +17,7 @@ import {
   type CardinalityLevel,
   type IndexSuggestion,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const EXAMPLE = `SELECT u.id, u.name, o.total
 FROM users u
@@ -127,6 +128,9 @@ export function DbIndexAdvisor() {
     const from = params.get('from');
     if (from) setSql(decodeURIComponent(from));
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: sql })
 
   const analysis = useMemo(() => (sql.trim() ? analyzeQuery(sql) : null), [sql]);
   const script = useMemo(() => (analysis ? buildIndexScript(analysis) : ''), [analysis]);

@@ -3,6 +3,7 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import BasicConverter from '@/Components/MainView/MainPanel/BasicConverter'
+import { useShareLink } from '@/Components/Functions/ShareLink'
 import { Buffer } from 'buffer'
 import AdvancedConverter from '../MainView/MainPanel/AdvancedConverter'
 import { textToBinary, binaryToString, hexToBinary, trackToolError, urlEncodeAll, urlEncodeUnicode, urlDecodeWithUnicode, urlEncodeModes, URLEncodeMode } from './Utils'
@@ -61,7 +62,6 @@ export const URLEncode = ({ defaultMode = 'standard' }: { defaultMode?: URLEncod
   const [fromValue, setFromValue] = useState<string>('');
   const [toValue, setToValue] = useState<string>('');
   const [mode, setMode] = useState<URLEncodeMode>(defaultMode);
-  const [extraLink, setExtraLink] = useState<string>('');
 
 
   useEffect(() => {
@@ -82,8 +82,9 @@ export const URLEncode = ({ defaultMode = 'standard' }: { defaultMode?: URLEncod
   }, [])
 
 
+  useShareLink({ mode })
+
   useEffect(() => {
-    setExtraLink('&mode=' + mode)
 
     if (mode === 'all') {
       setToValue(urlEncodeAll(fromValue))
@@ -115,7 +116,6 @@ export const URLEncode = ({ defaultMode = 'standard' }: { defaultMode?: URLEncod
       fromTitle='Text Input'
       toTitle='URL Encoded Output'
       extraElements={<SelectElements />}
-      extraLink={extraLink}
       backColor='yellow'
     />
   )
@@ -212,7 +212,6 @@ export const Base64Encode = () => {
   const [fromValue, setFromValue] = useState<string>('');
   const [toValue, setToValue] = useState<string>('');
   const [encoding, setEncoding] = useState<BufferEncoding>('utf-8')
-  const [extraLink, setExtraLink] = useState<string>('');
 
   useEffect(() => {
     const searchParams = new URLSearchParams(
@@ -230,8 +229,9 @@ export const Base64Encode = () => {
     }
   }, [])
 
+  useShareLink({ encoding })
+
   useEffect(() => {
-    setExtraLink('&encoding=' + encoding)
     try {
       setToValue(Buffer.from(fromValue, encoding).toString('base64'));
     } catch {
@@ -261,7 +261,6 @@ export const Base64Encode = () => {
       fromTitle='Text Input'
       toTitle='Base64 Encoded Output'
       extraElements={<SelectElements />}
-      extraLink={extraLink}
       backColor='yellow'
     />
   )
@@ -274,7 +273,6 @@ export const Base64Decode = () => {
   const [fromValue, setFromValue] = useState<string>('');
   const [toValue, setToValue] = useState<string>('');
   const [encoding, setEncoding] = useState<BufferEncoding>('utf-8')
-  const [extraLink, setExtraLink] = useState<string>('');
 
   useEffect(() => {
 
@@ -296,8 +294,9 @@ export const Base64Decode = () => {
     }
   }, [])
 
+  useShareLink({ encoding })
+
   useEffect(() => {
-    setExtraLink('&encoding=' + encoding)
     try {
       const decoded = Buffer.from(fromValue, 'base64').toString(encoding);
       // Lone surrogates crash encodeURIComponent in the swap link render
@@ -336,7 +335,6 @@ export const Base64Decode = () => {
       fromTitle='Base64 Encoded Input'
       toTitle='Text Output'
       extraElements={<SelectElements />}
-      extraLink={extraLink}
       backColor='yellow'
     />
   )
@@ -439,7 +437,6 @@ export const StringToBytes32 = () => {
   const [fromValue, setFromValue] = useState<string>('');
   const [toValue, setToValue] = useState<string>('');
   const [zero, setZero] = useState<boolean>(false)
-  const [extraLink, setExtraLink] = useState<string>('');
 
   useEffect(() => {
 
@@ -461,8 +458,9 @@ export const StringToBytes32 = () => {
     }
   }, [])
 
+  useShareLink({ zeros: zero })
+
   useEffect(() => {
-    setExtraLink('&zeros=' + zero)
     setToValue(zeroHandler(stringToHex(fromValue)))
   }, [fromValue, zero])
 
@@ -503,7 +501,6 @@ export const StringToBytes32 = () => {
       fromTitle='Text Input'
       toTitle='Bytes32 Output'
       extraElements={<CheboxElement />}
-      extraLink={extraLink}
       backColor='cyan'
     />
   )
@@ -513,7 +510,6 @@ export const NumberToBytes32 = () => {
   const [fromValue, setFromValue] = useState<string>('');
   const [toValue, setToValue] = useState<string>('');
   const [zero, setZero] = useState<boolean>(false)
-  const [extraLink, setExtraLink] = useState<string>('');
 
   useEffect(() => {
 
@@ -534,8 +530,9 @@ export const NumberToBytes32 = () => {
     }
   }, [])
 
+  useShareLink({ zeros: zero })
+
   useEffect(() => {
-    setExtraLink('&zeros=' + zero)
     setToValue(numberToHex(fromValue))
   }, [fromValue, zero])
 
@@ -761,7 +758,6 @@ export const TextToHex = () => {
   const [toValue, setToValue] = useState<string>('');
   const [zero, setZero] = useState<boolean>(false)
   const [appendSpace, setAppendSpace] = useState<boolean>(false);
-  const [extraLink, setExtraLink] = useState<string>('');
 
   useEffect(() => {
     const searchParams = new URLSearchParams(
@@ -787,8 +783,9 @@ export const TextToHex = () => {
     }
   }, [])
 
+  useShareLink({ zeros: zero, space: appendSpace })
+
   useEffect(() => {
-    setExtraLink('&zeros=' + zero)
     setToValue(hexConverter(fromValue))
   }, [fromValue, zero, appendSpace])
 
@@ -835,7 +832,6 @@ export const TextToHex = () => {
       fromTitle='Text Input'
       toTitle='Hex Output'
       extraElements={<CheboxElement />}
-      extraLink={extraLink}
       backColor='cyan'
     />
   )
@@ -1026,6 +1022,8 @@ export const HexToText = () => {
       setStripSpace(spaceQuery === 'true');
     }
   }, []);
+
+  useShareLink({ zeros: stripZero, space: stripSpace })
 
   useEffect(() => {
     setToValue(textConverter(fromValue));

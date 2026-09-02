@@ -12,6 +12,7 @@ import {
   digitSet,
   placeValues,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const labelClass = 'text-xs font-bold uppercase tracking-wider text-gray-500';
 
@@ -71,6 +72,9 @@ export function BaseConverter() {
       if (b >= MIN_BASE && b <= MAX_BASE) setSourceBase(b);
     }
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input, base: sourceBase })
 
   const result = useMemo(() => {
     if (!input.trim()) return { data: null, error: 'Enter a number to convert' };

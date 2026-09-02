@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { calculateLoanAmortization, LoanAmortResult, TermUnit } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const inputClass = 'bg-white text-gray-900 border border-gray-300 focus:border-gray-900 focus:outline-none px-3 py-2 text-sm font-mono w-full';
 const labelClass = 'block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1';
@@ -28,6 +29,9 @@ export function LoanAmortizationCalculator() {
     const u = p.get('unit');
     if (u === 'months' || u === 'years') setTermUnit(u);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: [loanAmount, rate, term].join('\n'), unit: termUnit })
 
   useEffect(() => {
     if (!loanAmount.trim() || !rate.trim() || !term.trim()) { setResult(null); setError(''); return; }

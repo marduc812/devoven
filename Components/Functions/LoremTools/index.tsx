@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { generateLorem, STYLE_LABELS } from './logic';
 import type { LoremStyle, LoremUnit } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const STYLES: LoremStyle[] = ['lorem', 'cicero', 'english', 'hipster', 'corporate'];
 const UNITS: LoremUnit[] = ['words', 'sentences', 'paragraphs'];
@@ -17,6 +18,9 @@ export function LoremGenerator() {
     const from = p.get('from');
     if (from) setCount(Math.max(1, parseInt(from, 10) || 3));
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: count })
 
   const output = useMemo(() => {
     try {

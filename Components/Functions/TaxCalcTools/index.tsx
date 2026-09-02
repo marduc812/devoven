@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { parseTaxInput, formatTaxResult, TaxMode } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export function TaxCalculator() {
   const [input, setInput] = useState('');
@@ -17,6 +18,9 @@ export function TaxCalculator() {
     const m = p.get('mode');
     if (m === 'add' || m === 'extract') setMode(m);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ mode })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }

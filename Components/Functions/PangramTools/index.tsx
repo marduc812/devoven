@@ -12,6 +12,7 @@ import {
   type BadgeTone,
 } from '@/Components/MainView/MainPanel/ResultUI';
 import { analyzePangramResult } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
@@ -46,6 +47,9 @@ export function PangramChecker() {
     const from = new URLSearchParams(window.location.search).get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const hasInput = input.trim().length > 0;
 

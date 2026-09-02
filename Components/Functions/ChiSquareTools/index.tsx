@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { computeChiSquare, ChiSquareResult } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const inputClass = 'bg-white text-gray-900 border border-gray-300 focus:border-gray-900 focus:outline-none px-3 py-2 text-sm font-mono w-full';
 const labelClass = 'block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1';
@@ -29,6 +30,9 @@ export function ChiSquareTest() {
     const exp_ = p.get('expected');
     if (exp_) setExpected(exp_);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: observed, expected })
 
   useEffect(() => {
     if (!observed.trim()) { setResult(null); setError(''); return; }

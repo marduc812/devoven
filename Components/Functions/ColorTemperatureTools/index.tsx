@@ -13,6 +13,7 @@ import {
   rgbToHex,
   spectrumStops,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const labelClass = 'text-xs font-bold uppercase tracking-wider text-gray-500';
 
@@ -60,6 +61,9 @@ export const ColorTemperature = () => {
     const from = params.get('from');
     if (from) setKelvinText(from.trim());
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: kelvinText })
 
   const parsed = useMemo(() => {
     const k = parseFloat(kelvinText.trim());

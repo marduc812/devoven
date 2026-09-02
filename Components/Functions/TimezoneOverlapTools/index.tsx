@@ -11,6 +11,7 @@ import {
   inputClass,
 } from '@/Components/MainView/MainPanel/ResultUI';
 import { findOverlap, parseTimezoneInput } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
   { label: 'UTC, EST, JST', value: 'UTC, EST, JST' },
@@ -29,6 +30,9 @@ export function TimezoneOverlapFinder() {
     const from = params.get('from') ?? '';
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const { result, error } = useMemo(() => {
     if (!input.trim()) return { result: null, error: '' };

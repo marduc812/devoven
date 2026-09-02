@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { decodeProtobuf, formatProtobufResult, WIRE_TYPES } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const EXAMPLES = [
   { label: 'Field 1 string "hello"', hex: '0a 05 68 65 6c 6c 6f' },
@@ -22,6 +23,9 @@ export function ProtobufWireDecoder() {
     const from = params.get('from');
     if (from) setHexInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: hexInput })
 
   const decode = () => {
     if (!hexInput.trim()) { setResult(''); setError(''); return; }

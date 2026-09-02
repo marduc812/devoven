@@ -12,6 +12,7 @@ import {
   isEmptyEvent,
   parseKeyValueInput,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 type Zone = 'local' | 'utc';
 
@@ -87,6 +88,9 @@ export function IcalGenerator() {
     if (params.get('start') && /^\d{4}-\d{2}-\d{2}$/.test(params.get('start') as string)) seeded.allDay = true;
     if (Object.keys(seeded).length > 0) setEvent(seeded);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ ...Object.fromEntries(URL_PARAMS.map((key) => [key, event[key]])), allDay: event.allDay })
 
   const ics = useMemo(
     () => buildIcal(event, { ...identity.current, offsetMinutes: offsetFor(zone, event.start ?? '') }),

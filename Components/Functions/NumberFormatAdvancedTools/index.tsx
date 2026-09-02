@@ -11,6 +11,7 @@ import {
   numberFormats,
   parseNumber,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const labelClass = 'text-xs font-bold uppercase tracking-wider text-gray-500';
 
@@ -57,6 +58,9 @@ export const NumberFormatAdvanced = () => {
     const loc = p.get('locale');
     if ((LOCALES as readonly string[]).includes(loc ?? '')) setLocale(loc as Locale);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input, locale })
 
   const result = useMemo(() => {
     if (!input.trim()) return { data: null, error: 'Enter a number to format' };

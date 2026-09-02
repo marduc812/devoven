@@ -16,6 +16,7 @@ import {
   type CodePointCategory,
   type CodePointInfo,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 // Written as escapes on purpose: several of these are invisible in a source file,
 // and the composed / decomposed pair is indistinguishable otherwise.
@@ -76,6 +77,9 @@ export const StringInspector = () => {
     const from = searchParams.get('from') ?? '';
     if (from) setText(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: text })
 
   const report = useMemo(() => (text ? analyzeString(text) : null), [text]);
 

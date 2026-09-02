@@ -22,6 +22,7 @@ import {
   type BlendKind,
   type TailMode,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
   { label: 'smoke / fog', value: ['smoke', 'fog'] },
@@ -205,6 +206,9 @@ export function PortmanteauGenerator() {
     if (first) setA(first);
     if (second) setB(second);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: [a, b].filter(Boolean).join(' ') })
 
   const result = useMemo(() => analyzePortmanteau(a, b), [a, b]);
   const { word1, word2 } = result;

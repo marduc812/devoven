@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { textToMorse, morseToText } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const selectClass = 'border border-gray-300 bg-white text-gray-900 px-3 py-1.5 text-sm focus:outline-none focus:border-gray-900';
 
@@ -18,6 +19,9 @@ export function MorseCodeConverter() {
     const m = params.get('mode');
     if (m === 'decode') setMode('decode');
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ mode })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }

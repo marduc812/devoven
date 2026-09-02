@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { parseCronExpression } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const EXAMPLES = [
   { label: 'Every minute', expr: '* * * * *' },
@@ -23,6 +24,9 @@ export function CronParser() {
     const from = params.get('from');
     if (from) setExpr(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: expr })
 
   const result = expr.trim() ? parseCronExpression(expr) : null;
 

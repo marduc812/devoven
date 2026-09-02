@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { analyzeAriaIssues, formatAnalysisOutput, getPatternSuggestions } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export function AriaLabelGenerator() {
   const [input, setInput] = useState('');
@@ -17,6 +18,9 @@ export function AriaLabelGenerator() {
     const from = params.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { expandUriTemplate, parseVariableLines, extractTemplateVars } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const UriTemplateExpander = () => {
   const [template, setTemplate] = useState('');
@@ -17,6 +18,9 @@ export const UriTemplateExpander = () => {
     const from = params.get('from') || '';
     if (from) setTemplate(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: template })
 
   useEffect(() => {
     const vars = extractTemplateVars(template);

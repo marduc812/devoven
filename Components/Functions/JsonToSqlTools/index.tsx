@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { generateInserts, SqlDialect } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const EXAMPLE = JSON.stringify(
   [
@@ -30,6 +31,9 @@ export function JsonToSql() {
     const t = params.get('table');
     if (t) setTableName(t);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ table: tableName })
 
   useEffect(() => {
     setToValue(generateInserts(fromValue, { tableName, dialect, batchSize }));

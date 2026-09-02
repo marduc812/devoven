@@ -6,6 +6,7 @@ import { formatDuration, parseDurationParam, splitMs, toMs } from '../TimerShare
 import { useTicker } from '../TimerShared/useTicker';
 import { loadSoundPreference, playBeep, saveSoundPreference } from '../TimerShared/beep';
 import { buildLap, formatLap, type Lap } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 type Mode = 'countdown' | 'stopwatch';
 
@@ -59,6 +60,9 @@ export const Timer = () => {
     const parsed = parseDurationParam(from);
     if (parsed !== null) applyDuration(parsed);
   }, [applyDuration]);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: Math.round(durationMs / 1000) })
 
   const parts = splitMs(durationMs);
 

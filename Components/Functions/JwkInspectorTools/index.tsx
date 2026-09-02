@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { inspectJwk, describeKeyUse, describeAlgorithm, type JwkInspectResult, type JwkKeyInfo } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 function KeyCard({ info, index }: { info: JwkKeyInfo; index: number }) {
   const labelClass = 'text-gray-500 text-xs w-36 shrink-0 font-medium';
@@ -71,6 +72,9 @@ export const JwkInspector = () => {
     const from = params.get('from') || '';
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   useEffect(() => {
     if (!input.trim()) {

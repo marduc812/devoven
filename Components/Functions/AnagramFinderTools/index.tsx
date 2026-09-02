@@ -11,6 +11,7 @@ import {
   inputClass,
 } from '@/Components/MainView/MainPanel/ResultUI';
 import { analyzeAnagrams, type RackTile, type ScoredWord } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
   { label: 'least', value: 'least' },
@@ -61,6 +62,9 @@ export function AnagramWordFinder() {
     const from = p.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const report = useMemo(() => (input.trim() ? analyzeAnagrams(input) : null), [input]);
   return (

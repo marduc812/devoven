@@ -12,6 +12,7 @@ import {
   type BadgeTone,
 } from '@/Components/MainView/MainPanel/ResultUI';
 import { formatGrid, remainingDigits, validateSudoku } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const SOLVED = [
   '534678912',
@@ -73,6 +74,9 @@ export function SudokuValidator() {
     const from = p.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const result = useMemo(() => validateSudoku(input), [input]);
 

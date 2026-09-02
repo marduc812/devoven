@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { processSampler, DataSamplerMode } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export function DataSampler() {
   const [input, setInput] = useState('');
@@ -19,6 +20,9 @@ export function DataSampler() {
     const m = p.get('mode');
     if (m) setMode(m as DataSamplerMode);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ mode })
 
   useEffect(function() {
     if (!input.trim()) { setOutput(''); return; }

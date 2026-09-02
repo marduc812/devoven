@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Panel from '@/Components/MainView/MainPanel/Panel'
 import { calcSpecificity } from './logic'
+import { useShareLink } from '@/Components/Functions/ShareLink'
 
 export const CssSpecificityCalc = () => {
   const [input, setInput] = useState('')
@@ -14,6 +15,9 @@ export const CssSpecificityCalc = () => {
     const from = searchParams.get('from') || ''
     if (from) setInput(decodeURIComponent(from))
   }, [])
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const result = calcSpecificity(input)
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'

@@ -36,7 +36,6 @@ export type AdvancedCoversionType = {
     fromTitle: string;
     toTitle: string;
     pageTitle?: string;
-    extraLink?: string;
     backColor: MainViewColorVariants;
 }
 
@@ -46,7 +45,6 @@ export type PanelType = {
     description: string;
     extraElements: React.JSX.Element;
     pageTitle?: string;
-    extraLink?: string;
     backColor: MainViewColorVariants;
 }
 
@@ -111,7 +109,6 @@ export type MediaConverterType = {
 
 export type TextAnalyticsType = {
     userInput: string;
-    extraLink?: string;
     title: string;
     output: boolean;
     color: MainViewColorVariants;

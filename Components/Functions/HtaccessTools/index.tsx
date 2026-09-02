@@ -22,6 +22,7 @@ import {
   HtaccessOptions,
   HTACCESS_DEFAULTS,
 } from './logic'
+import { useShareLink } from '@/Components/Functions/ShareLink'
 
 type ToggleKey = 'https_redirect' | 'directory_listing' | 'cors' | 'cache'
 
@@ -105,6 +106,9 @@ export const HtaccessGenerator = () => {
     }
     if (seeded) setOpts(seeded)
   }, [])
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink(Object.fromEntries(URL_PARAM_KEYS.map((key) => [key, opts[key]])))
 
   const output = useMemo(() => buildHtaccess(opts), [opts])
   const wwwMode = wwwModeOf(opts)

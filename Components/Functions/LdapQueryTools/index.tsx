@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { buildLdapQuery, validateLdapFilter, LDAP_OPERATORS, LDAP_EXAMPLES } from './logic';
 import { UNPARSED_WARNING_PREFIX } from './parse';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export function LdapQueryBuilder() {
   const [input, setInput] = useState('');
@@ -14,6 +15,9 @@ export function LdapQueryBuilder() {
     const from = params.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const result = buildLdapQuery(input);
   const validationError = result.filter ? validateLdapFilter(result.filter) : null;

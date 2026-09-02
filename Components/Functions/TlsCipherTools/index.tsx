@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { searchCiphers, lookupCipher, parseCipherName, type CipherSuiteInfo } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const TlsCipherDecoder = () => {
   const [query, setQuery] = useState('');
@@ -17,6 +18,9 @@ export const TlsCipherDecoder = () => {
     const from = params.get('from') || '';
     if (from) setQuery(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: query })
 
   useEffect(() => {
     const trimmed = query.trim();

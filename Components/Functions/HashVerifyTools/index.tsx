@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { compareHashes, formatCompareResult } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const inputClass =
   'bg-white backdrop-blur-sm text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none resize-none transition-colors duration-200 font-mono text-sm';
@@ -18,6 +19,9 @@ export function HashVerifier() {
     const from = params.get('from');
     if (from) setExpectedHash(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: expectedHash })
 
   function handleCompare() {
     if (!computedHash.trim() || !expectedHash.trim()) {

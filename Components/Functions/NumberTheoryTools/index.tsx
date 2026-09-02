@@ -13,6 +13,7 @@ import {
   type BadgeTone,
 } from '@/Components/MainView/MainPanel/ResultUI';
 import { analyzeNumber, type NumberTheoryResult } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
   { label: '28 perfect', value: '28' },
@@ -76,6 +77,9 @@ export function NumberTheoryCalc() {
     const from = params.get('from') ?? '';
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const result = useMemo(() => analyzeNumber(input), [input]);
   const invalid = input.trim() !== '' && result === null;

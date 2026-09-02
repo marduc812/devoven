@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { extractCssVariables, formatCssVariables, cssVariablesToJson } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const CssVariableExtractor = () => {
   const [input, setInput] = useState('');
@@ -16,6 +17,9 @@ export const CssVariableExtractor = () => {
     const m = params.get('mode');
     if (m === 'json') setMode('json');
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ mode })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }

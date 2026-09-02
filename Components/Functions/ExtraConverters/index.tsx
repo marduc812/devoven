@@ -25,6 +25,7 @@ import {
   formatNumber,
   unformatNumber,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 // ─── YAML to TOML ─────────────────────────────────────────────────────────────
 
@@ -361,6 +362,9 @@ export const HexDump = () => {
     const enc = searchParams.get('encoding');
     if (HEX_DUMP_ENCODINGS.some((e) => e.value === enc)) setEncoding(enc as HexDumpEncoding);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: fromValue, width: bytesPerLine, encoding })
 
   const { bytes, rows, counts } = useMemo(() => {
     const b = encodeBytes(fromValue, encoding);

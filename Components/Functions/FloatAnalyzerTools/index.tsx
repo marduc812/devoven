@@ -13,6 +13,7 @@ import {
   inputClass,
 } from '@/Components/MainView/MainPanel/ResultUI';
 import { analyzeFloat, type FloatPrecision } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
   { label: '0.1', value: '0.1' },
@@ -156,6 +157,9 @@ export function FloatAnalyzer() {
     const from = params.get('from') ?? '';
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const result = useMemo(() => (input.trim() ? analyzeFloat(input) : null), [input]);
 

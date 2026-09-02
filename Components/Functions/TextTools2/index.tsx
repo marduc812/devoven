@@ -19,6 +19,7 @@ import {
   wrapText,
   unwrapText,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const selectClass = 'border border-gray-300 bg-white text-gray-900 px-3 py-1.5 text-sm focus:outline-none focus:border-gray-900';
 const inputClass = 'border border-gray-300 bg-white text-gray-900 px-3 py-1.5 text-sm focus:outline-none focus:border-gray-900';
@@ -41,6 +42,9 @@ export function LineNumberer() {
     const start = params.get('start');
     if (start) setStartFrom(start);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ start: startFrom })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }
@@ -186,6 +190,9 @@ export function ColumnExtractor() {
     const from = params.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }
@@ -404,6 +411,9 @@ export function WordWrap() {
     const w = params.get('width');
     if (w) setWidth(w);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ width })
 
   useEffect(() => {
     if (!input) { setOutput(''); return; }

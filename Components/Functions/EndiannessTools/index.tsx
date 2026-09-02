@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { byteAscii, convertEndianness, type BitWidth } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const labelClass = 'text-xs font-bold uppercase tracking-wider text-gray-500';
 
@@ -77,6 +78,9 @@ export function EndiannessConverter() {
     const bits = p.get('bits');
     if (bits === '16' || bits === '32' || bits === '64') setBitWidth(Number(bits) as BitWidth);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input, bits: bitWidth })
 
   const result = useMemo(() => {
     if (!input.trim()) {

@@ -10,6 +10,7 @@ import {
   type ParsedContentType,
   type ContentTypeEntry,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 type Mode = 'build' | 'parse' | 'browse';
 
@@ -30,6 +31,9 @@ export const ContentTypeBuilder = () => {
     const from = params.get('from') || '';
     if (from) setBuildInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: buildInput })
 
   useEffect(() => {
     if (!buildInput.trim()) { setBuildResult(null); return; }

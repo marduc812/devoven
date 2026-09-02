@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { processAtbash } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const labelClass = 'text-xs text-gray-500 uppercase tracking-wider';
 
@@ -18,6 +19,9 @@ export function AtbashCipher() {
     const heb = params.get('hebrew');
     if (heb === 'true') setIncludeHebrew(true);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ hebrew: includeHebrew })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { analyzeSequence, PatternMatch } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const inputClass =
   'bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none font-mono text-sm transition-colors duration-200';
@@ -43,6 +44,9 @@ export function SequenceRecognizer() {
     const from = params.get('from') ?? '';
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   useEffect(() => {
     if (!input.trim()) { setAnalysis(null); setError(''); return; }

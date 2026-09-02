@@ -13,6 +13,7 @@ import {
   type BadgeTone,
 } from '@/Components/MainView/MainPanel/ResultUI';
 import { toEIP55Checksum, type EthChecksumForm } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
   { label: 'lowercase', value: '0xfb6916095ca1df60bb79ce92ce3ea74c37c5d359' },
@@ -77,6 +78,9 @@ export const EthChecksumConverter = () => {
     const from = params.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const result = useMemo(() => (input.trim() ? toEIP55Checksum(input) : null), [input]);
   const copy = result?.form ? FORM_COPY[result.form] : null;
