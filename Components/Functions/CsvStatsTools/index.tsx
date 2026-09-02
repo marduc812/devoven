@@ -13,6 +13,7 @@ import {
   type BadgeTone,
 } from '@/Components/MainView/MainPanel/ResultUI';
 import { analyzeCsv, type ColumnStats } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const SALES_CSV = `date,region,units,revenue,rep
 2024-01-05,North,12,1440.00,Ada
@@ -145,6 +146,9 @@ export const CsvStats = () => {
     const from = params.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const { analysis, error } = useMemo(() => {
     if (!input.trim()) return { analysis: null, error: '' };

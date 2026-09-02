@@ -31,6 +31,7 @@ import {
   weekdayOf,
   type ChineseYearReport,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
   { label: '2024 Dragon', value: '2024' },
@@ -93,6 +94,9 @@ export function ChineseCalendar() {
     const from = new URLSearchParams(window.location.search).get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const parsed = useMemo(() => {
     try {

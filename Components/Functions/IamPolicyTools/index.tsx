@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { analyzeIamPolicy, generateMinimalPolicy, EXAMPLE_POLICIES } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const SEVERITY_COLORS: Record<string, string> = {
   critical: 'bg-red-500/15 border-red-500/40 text-red-300',
@@ -23,6 +24,9 @@ export function IamPolicyAnalyzer() {
     const from = params.get('from');
     if (from) setPolicyJson(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: policyJson })
 
   const analysis = policyJson.trim() ? analyzeIamPolicy(policyJson) : null;
   const generatedPolicy = genDescription.trim() ? generateMinimalPolicy(genDescription) : '';

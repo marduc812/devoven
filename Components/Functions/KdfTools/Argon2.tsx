@@ -22,6 +22,7 @@ import {
   SELECT_CLASS,
   afterPaint,
 } from './controls';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 type OutputFormat = KdfOutput | 'phc';
 
@@ -61,6 +62,9 @@ export const Argon2 = () => {
       if (value) setter(value);
     }
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ salt, variant, t: time, m: memory, p: lanes, bits: keyBits })
 
   const derive = useCallback(() => {
     if (!fromValue) {

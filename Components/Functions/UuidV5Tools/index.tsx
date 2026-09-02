@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { formatUuidV5, NAMESPACES } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export function UuidV5Generator() {
   const [name, setName] = useState('');
@@ -16,6 +17,9 @@ export function UuidV5Generator() {
     const nsParam = p.get('ns');
     if (nsParam && NAMESPACES[nsParam]) setNs(nsParam);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ ns })
 
   useEffect(function() {
     if (!name.trim()) { setOutput(''); return; }

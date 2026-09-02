@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { buildRawRequest, HttpMethod } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const HTTP_METHODS: HttpMethod[] = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'];
 
@@ -19,6 +20,9 @@ export const HttpRequestBuilder = () => {
     const from = params.get('from') || '';
     if (from) setUrl(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: url })
 
   useEffect(() => {
     if (!url.trim()) { setOutput({ rawRequest: '', curlCommand: '', fetchCode: '' }); return; }

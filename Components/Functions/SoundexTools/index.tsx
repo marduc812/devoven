@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { soundexEntries, SOUNDEX_GROUPS, type TraceStatus } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 function copy(text: string) {
   navigator.clipboard.writeText(text).catch(() => {});
@@ -29,6 +30,9 @@ export function SoundexConverter() {
     const from = params.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const entries = useMemo(() => soundexEntries(input), [input]);
 

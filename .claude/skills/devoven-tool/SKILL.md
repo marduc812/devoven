@@ -54,7 +54,20 @@ skill directory before building any non-text tool.
 6. **URL params** — text tools read `?from=<value>` on mount. Media tools cannot
    seed a file from a URL, so they skip `?from=` but still honor their option
    params (`?quality=`, `?format=`, …) so a configured tool stays shareable.
-7. **Blocks registry** — if the operation is `string → string`, also add it to
+7. **Share link** — mirror every param you read with `useShareLink`
+   (`Components/Functions/ShareLink.tsx`), so the one "Copy link" button in the
+   page header carries the whole tool state and not just the input:
+
+   ```tsx
+   useShareLink({ salt, variant, t: time, m: memory })
+   ```
+
+   `BasicConverter` and `AdvancedConverter` already publish their input textarea
+   as `from`; a `Panel` tool has no textarea of its own, so it publishes `from`
+   too. The rule is symmetry: the keys you publish are exactly the keys you read
+   back on mount, so a copied link restores the page it was copied from. If an
+   option is worth publishing, give it a reader as well.
+8. **Blocks registry** — if the operation is `string → string`, also add it to
    `lib/blocks/operations/`, or it won't appear in the builder at `/blocks`. See
    the next section; this is a step on *edits* too, not just new tools.
 

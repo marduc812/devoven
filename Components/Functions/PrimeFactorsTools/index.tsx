@@ -18,6 +18,7 @@ import {
   isPrimeFactorization,
   superscript,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
   { label: '360', value: '360' },
@@ -59,6 +60,9 @@ export function PrimeFactors() {
     const from = p.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const { result, error } = useMemo(() => {
     try {

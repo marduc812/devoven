@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { parsePemCertificate, CertificateInfo } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const Field = ({ label, value }: { label: string; value: string }) => (
   <div className="border-b border-gray-200 py-2 last:border-0">
@@ -23,6 +24,9 @@ export const PemViewer = () => {
     const from = searchParams.get('from') ?? '';
     if (from) setInput(decodeURIComponent(from));
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   useEffect(() => {
     if (!input.trim()) {

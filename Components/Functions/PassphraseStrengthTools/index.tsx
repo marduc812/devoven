@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { evaluatePassphrase, type PassphraseResult } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const strengthBadge: Record<string, string> = {
   'Very Weak':  'border border-red-300 bg-red-50 text-red-700',
@@ -37,6 +38,9 @@ export const PassphraseStrength = () => {
     const from = params.get('from') || '';
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   useEffect(() => {
     if (!input) { setResult(null); return; }

@@ -12,6 +12,7 @@ import {
   escapeShell,
   escapeCsv,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const selectClass =
   'border border-gray-300 bg-white text-gray-900 px-3 py-1.5 text-sm focus:outline-none focus:border-gray-900';
@@ -49,6 +50,9 @@ export function TextEscape() {
     const dir = params.get('direction') as Direction;
     if (dir) setDirection(dir);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ context, direction })
 
   useEffect(() => {
     setOutput(convert(input, context, direction));

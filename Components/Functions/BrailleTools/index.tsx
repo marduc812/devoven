@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { textToBraille, dotsOf, type BrailleCell } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 function copy(text: string) {
   navigator.clipboard.writeText(text).catch(() => {});
@@ -81,6 +82,9 @@ export function BrailleConverter() {
     const from = p.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const cells = useMemo(() => (input ? textToBraille(input) : []), [input]);
 

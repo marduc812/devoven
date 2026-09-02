@@ -14,6 +14,7 @@ import {
   inputClass,
 } from '@/Components/MainView/MainPanel/ResultUI';
 import { analyzePrimeResult, type FactorPower } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
   { label: '97', value: '97' },
@@ -47,6 +48,9 @@ export function PrimeChecker() {
     const from = p.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const { result, error } = useMemo(() => {
     if (!input.trim()) return { result: null, error: '' };

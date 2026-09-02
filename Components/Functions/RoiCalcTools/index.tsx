@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { calculateRoi, parseRoiInput, roiProjection } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const labelClass = 'text-xs font-bold uppercase tracking-wider text-gray-500';
 
@@ -38,6 +39,9 @@ export function RoiCalculator() {
     if (p.get('final')) setFinal(p.get('final') as string);
     if (p.get('years')) setYears(p.get('years') as string);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ initial, final, years })
 
   const result = useMemo(() => {
     const i = parseFloat(initial);

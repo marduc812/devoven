@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { calculateVlsm } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const DEFAULT_NETWORK = '192.168.1.0/24';
 const DEFAULT_HOSTS = '50\n30\n10\n2';
@@ -18,6 +19,9 @@ export function VlsmCalculator() {
     const from = params.get('from');
     if (from) setNetwork(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: network })
 
   const result = network.trim() && hostsInput.trim()
     ? calculateVlsm(network, hostsInput)

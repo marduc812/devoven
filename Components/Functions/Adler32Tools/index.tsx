@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { computeAdler32, stringToBytes } from '../FletcherTools/logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 type Format = 'hex' | 'decimal' | 'both';
 
@@ -28,6 +29,9 @@ export const Adler32 = () => {
       setFormat(paramFormat);
     }
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ format })
 
   useEffect(() => {
     if (!fromValue) {

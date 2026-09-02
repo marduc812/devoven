@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { convertNtp, NTP_UNIX_OFFSET } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 function copy(text: string) {
   navigator.clipboard.writeText(text).catch(() => {});
@@ -22,6 +23,9 @@ export function NtpTimeCalculator() {
       setInput(String(nowUnix + NTP_UNIX_OFFSET));
     }
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const result = useMemo(() => {
     if (!input.trim()) return null;

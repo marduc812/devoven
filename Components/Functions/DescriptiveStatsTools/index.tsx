@@ -18,6 +18,7 @@ import {
   histogram,
   parseNumbers,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
   { label: 'Test scores', value: '72, 88, 91, 65, 78, 95, 83, 70, 88, 60, 77, 84' },
@@ -33,6 +34,9 @@ export function DescriptiveStatsCalculator() {
     const from = p.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const { result, error } = useMemo(() => {
     if (!input.trim()) return { result: null, error: '' };

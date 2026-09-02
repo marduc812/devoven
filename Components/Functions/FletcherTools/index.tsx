@@ -21,6 +21,7 @@ import {
   type FletcherStep,
   type InputMode,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const MODES: { id: InputMode; label: string; hint: string }[] = [
   { id: 'text', label: 'Text', hint: 'encoded as UTF-8' },
@@ -191,6 +192,9 @@ export const FletcherChecksum = () => {
     if (from) setInput(from);
     if (params.get('mode') === 'hex') setMode('hex');
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input, mode })
 
   const parsed = useMemo(() => parseInput(input, mode), [input, mode]);
   const result = useMemo(() => analyzeFletcher(parsed.bytes), [parsed.bytes]);

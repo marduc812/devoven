@@ -14,6 +14,7 @@ import {
   byteInputNote,
 } from './logic';
 import { ByteFormatSelect, Field, INPUT_CLASS, NumberField, SELECT_CLASS } from './controls';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const Hkdf = () => {
   const [fromValue, setFromValue] = useState('');
@@ -40,6 +41,9 @@ export const Hkdf = () => {
     const paramBits = params.get('bits');
     if (paramBits) setKeyBits(paramBits);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ salt, info, hash, bits: keyBits })
 
   // Unlike the password KDFs, HKDF is two HMAC passes — cheap enough to run on
   // every keystroke.

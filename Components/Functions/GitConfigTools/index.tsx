@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { gitConfigToJson, jsonToGitConfig } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 type Mode = 'toJson' | 'toConfig';
 
@@ -19,6 +20,9 @@ export const GitConfigParser = () => {
     const m = params.get('mode');
     if (m === 'toConfig') setMode('toConfig');
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ mode })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); setError(''); return; }

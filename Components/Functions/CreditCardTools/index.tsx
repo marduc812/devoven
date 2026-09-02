@@ -13,6 +13,7 @@ import {
   inputClass,
 } from '@/Components/MainView/MainPanel/ResultUI';
 import { analyzeCard, type CardReport } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 // The standard publisher sandbox numbers — none of these is a real card.
 const PRESETS = [
@@ -87,6 +88,9 @@ export function CreditCardTools() {
     const from = params.get('from') ?? '';
     if (from) setFromValue(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: fromValue })
 
   const { report, error } = useMemo(() => {
     if (!fromValue.trim()) return { report: null, error: '' };

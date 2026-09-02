@@ -10,6 +10,7 @@ import {
   PLATFORM_LABELS,
   PROJECT_TYPE_LABELS,
 } from './logic'
+import { useShareLink } from '@/Components/Functions/ShareLink'
 
 const PLATFORMS: CiPlatform[] = ['github-actions', 'gitlab-ci', 'circleci']
 const PROJECT_TYPES: ProjectType[] = ['node', 'python', 'go', 'rust', 'docker', 'generic']
@@ -31,6 +32,9 @@ export const CicdPipelineGenerator = () => {
     const pt = searchParams.get('project') as ProjectType | null
     if (pt && PROJECT_TYPES.indexOf(pt) !== -1) setProjectType(pt)
   }, [])
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ platform, project: projectType })
 
   useEffect(() => {
     if (!fromValue.trim()) {

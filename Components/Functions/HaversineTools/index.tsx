@@ -22,6 +22,7 @@ import {
   KM_TO_MILES,
   KM_TO_NAUTICAL_MILES,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 interface Point { lat: string; lon: string }
 
@@ -79,6 +80,9 @@ export function HaversineDistance() {
     if (nextA) setA(nextA);
     if (nextB) setB(nextB);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ lat1: a.lat, lon1: a.lon, lat2: b.lat, lon2: b.lon })
 
   const errors = {
     aLat: latError(parseFloat(a.lat)),

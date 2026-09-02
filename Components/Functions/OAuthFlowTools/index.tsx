@@ -9,6 +9,7 @@ import {
   type GrantType,
   type OAuthParams,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const OAuthFlowBuilder = () => {
   const [grantType, setGrantType] = useState<GrantType>('authorization_code');
@@ -27,6 +28,9 @@ export const OAuthFlowBuilder = () => {
     const from = params.get('from');
     if (from) setClientId(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: clientId })
 
   const params: OAuthParams = {
     grantType,

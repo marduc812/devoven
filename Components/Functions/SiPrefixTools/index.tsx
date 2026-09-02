@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { SI_PREFIXES, parseSiPrefixConversion } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const SiPrefixConverter = () => {
   const [input, setInput] = useState('');
@@ -15,6 +16,9 @@ export const SiPrefixConverter = () => {
     const from = params.get('from') || '';
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); setError(''); return; }

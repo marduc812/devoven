@@ -113,6 +113,13 @@ image→image, a drop pane and a textarea for image→text. Never a bare
 
 - **URL pre-population**: Tool components read `?from=<value>` from the query string on mount to pre-populate inputs. Tools with extra options also support additional params (e.g. `?encoding=utf-8`, `?zeros=true`).
 
+- **Share links**: the mirror of the above. Every tool page has one "Copy link"
+  button in its header (`Components/MainView/MainPanel/ShareLinkButton.tsx`),
+  which copies the current URL plus the tool's whole state. Tools publish that
+  state with `useShareLink` from `Components/Functions/ShareLink.tsx`, using the
+  same keys they read on mount; `BasicConverter` and `AdvancedConverter` publish
+  their input textarea as `from` on the tool's behalf.
+
 - **Description highlighting**: In description strings, wrap example text with `[1 example text 2]` - the `BasicConverter` and `AdvancedConverter` components parse this to render examples as styled inline code.
 
 - **All tool components are `'use client'`** - they use `useState`/`useEffect` for reactive conversion.

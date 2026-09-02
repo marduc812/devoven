@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from 'react'
-import { IoClipboardOutline, IoUnlinkSharp } from 'react-icons/io5';
+import { IoClipboardOutline } from 'react-icons/io5';
 import toast from 'react-hot-toast'
 
 type RelativeLuminanceViewTypes = {
@@ -15,13 +15,6 @@ const RelativeLuminanceView = (props: RelativeLuminanceViewTypes) => {
     const copyHandler = () => {
         navigator.clipboard.writeText(props.toValue.toFixed(props.fromAccuracy).toString());
         toast.success('Copied to clipboard');
-    }
-
-    const copyURLWithParams = () => {
-        navigator.clipboard.writeText(
-            document.location.origin.concat(document.location.pathname, '?from=', encodeURIComponent(`${props.fromColor},${props.fromAccuracy}`))
-        );
-        toast.success('Copied URL to clipboard');
     }
 
     const luminanceValue = props.toValue.toFixed(props.fromAccuracy);
@@ -75,13 +68,6 @@ const RelativeLuminanceView = (props: RelativeLuminanceViewTypes) => {
                     <span className="text-3xl font-light text-white font-mono">{luminanceValue}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <button
-                        onClick={copyURLWithParams}
-                        className="p-1.5 rounded-lg text-gray-600 hover:text-gray-300 hover:bg-gray-50 transition-all duration-200"
-                        aria-label="Copy as link"
-                    >
-                        <IoUnlinkSharp />
-                    </button>
                     <button
                         onClick={copyHandler}
                         className="p-1.5 rounded-lg text-gray-600 hover:text-gray-300 hover:bg-gray-50 transition-all duration-200"

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { decodeWsFrame, formatFrameResult, OPCODES, CLOSE_CODES } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const WsFrameDecoder = () => {
   const [hexInput, setHexInput] = useState('');
@@ -14,6 +15,9 @@ export const WsFrameDecoder = () => {
     const from = params.get('from');
     if (from) setHexInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: hexInput })
 
   const decode = () => {
     if (!hexInput.trim()) { setResult(''); setError(''); return; }

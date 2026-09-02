@@ -22,6 +22,7 @@ import {
   SELECT_CLASS,
   afterPaint,
 } from './controls';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const Pbkdf2 = () => {
   const [fromValue, setFromValue] = useState('');
@@ -49,6 +50,9 @@ export const Pbkdf2 = () => {
     const paramBits = params.get('bits');
     if (paramBits) setKeyBits(paramBits);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ salt, iterations, hash, bits: keyBits })
 
   const derive = useCallback(() => {
     if (!fromValue) {

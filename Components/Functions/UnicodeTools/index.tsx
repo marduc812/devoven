@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { analyzeInput, UNICODE_BLOCKS } from './logic';
 import type { CharInfo } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const UnicodeLookup = () => {
   const [input, setInput] = useState('');
@@ -13,6 +14,9 @@ export const UnicodeLookup = () => {
     const from = params.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const result = input.trim() ? analyzeInput(input) : null;
   const chars: CharInfo[] = Array.isArray(result) ? result : [];

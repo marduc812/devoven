@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import type { RecoveredKey } from './logic';
 import type { WorkerMessage } from './worker';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const labelClass = 'text-xs font-bold uppercase tracking-wider text-gray-500';
 const inputClass =
@@ -122,6 +123,9 @@ export function Sign2nTool() {
     ).get('from');
     if (from) setJwt1(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: jwt1 })
 
   const recover = () => {
     if (!jwt1.trim() || !jwt2.trim()) {

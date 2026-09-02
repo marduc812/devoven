@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { buildDohQuery, DOH_RECORD_TYPES, validateDomain, DohRecordType } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export function DohSimulator() {
   const [domain, setDomain] = useState('example.com');
@@ -18,6 +19,9 @@ export function DohSimulator() {
     const type = params.get('type') as DohRecordType;
     if (type && DOH_RECORD_TYPES.indexOf(type) >= 0) setRecordType(type);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: domain, type: recordType })
 
   const domainError = domain.trim() ? validateDomain(domain) : null;
   let result = null;

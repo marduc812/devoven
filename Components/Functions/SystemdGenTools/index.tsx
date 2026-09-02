@@ -24,6 +24,7 @@ import {
   ServiceType,
   SystemdGenOptions,
 } from './logic'
+import { useShareLink } from '@/Components/Functions/ShareLink'
 
 type TextKey = Exclude<keyof SystemdGenOptions, 'serviceType' | 'restart' | 'restartSec' | 'timeoutStartSec' | 'timeoutStopSec'>
 type NumberKey = 'restartSec' | 'timeoutStartSec' | 'timeoutStopSec'
@@ -99,6 +100,9 @@ export const SystemdUnitGenerator = () => {
 
     setOpts(seeded)
   }, [])
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ ...Object.fromEntries(URL_PARAM_KEYS.map((key) => [key, opts[key]])), type: opts.serviceType, restart: opts.restart })
 
   const unit = useMemo(() => buildSystemdUnit(opts), [opts])
   const forkingNeedsPid = opts.serviceType === 'forking' && !opts.pidFile.trim()

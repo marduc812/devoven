@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { calculateCompoundInterest } from './logic';
 import type { CompoundFrequency } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const FREQUENCIES: { value: CompoundFrequency; label: string }[] = [
   { value: 'annual', label: 'Annual (1×/yr)' },
@@ -26,6 +27,9 @@ export function CompoundInterestCalculator() {
     const from = p.get('from');
     if (from) setPrincipal(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: principal })
 
   const result = useMemo(() => {
     try {

@@ -20,6 +20,7 @@ import {
   type OhmsReport,
   type OhmsValues,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const ORDER: OhmsQuantity[] = ['V', 'I', 'R', 'P'];
 
@@ -133,6 +134,9 @@ export const OhmsLaw = () => {
 
     if (touched) setInputs(next);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink(Object.fromEntries(ORDER.map((key) => [key.toLowerCase(), inputs[key]])))
 
   const { report, error, fieldErrors, filled } = useMemo(() => {
     const known: OhmsValues = { V: null, I: null, R: null, P: null };

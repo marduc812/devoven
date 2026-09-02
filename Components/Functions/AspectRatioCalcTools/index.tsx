@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { parseDimensions, simplifyRatio, findCommonName, COMMON_WIDTHS } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export function AspectRatioCalc() {
   const [input, setInput] = useState('1920x1080');
@@ -11,6 +12,9 @@ export function AspectRatioCalc() {
     const from = p.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const result = useMemo(() => {
     if (!input.trim()) return null;

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { formatJson, validateJson, formatXml, minifyHtml, minifyCss, minifyJs, validateYaml, getRegexMatches, explainRegexFlags } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 // ─── JSON Formatter ──────────────────────────────────────────────────────────
 
@@ -21,6 +22,9 @@ export function JsonFormatter() {
     const ind = params.get('indent');
     if (ind && ['2', '4'].includes(ind)) setIndent(ind);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ indent })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }
@@ -79,6 +83,9 @@ export function XmlFormatter() {
     if (ind && ['2', '4'].includes(ind)) setIndent(ind);
   }, []);
 
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ indent })
+
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }
     try {
@@ -130,6 +137,9 @@ export function SqlFormatter() {
     const dl = params.get('dialect');
     if (dl && ['sql', 'mysql', 'postgresql', 'bigquery'].includes(dl)) setDialect(dl);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ dialect })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }
@@ -187,6 +197,9 @@ export function HtmlFormatter() {
     const m = params.get('mode');
     if (m && ['format', 'minify'].includes(m)) setMode(m);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ mode })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }
@@ -253,6 +266,9 @@ export function CssFormatter() {
     if (m && ['format', 'minify'].includes(m)) setMode(m);
   }, []);
 
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ mode })
+
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }
     if (mode === 'minify') {
@@ -317,6 +333,9 @@ export function JsFormatter() {
     const m = params.get('mode');
     if (m && ['format', 'minify'].includes(m)) setMode(m);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ mode })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }

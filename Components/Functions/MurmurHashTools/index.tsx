@@ -22,6 +22,7 @@ import {
   type InputMode,
   type MurmurStep,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const MODES: { id: InputMode; label: string; hint: string }[] = [
   { id: 'text', label: 'Text', hint: 'encoded as UTF-8' },
@@ -113,6 +114,9 @@ export const MurmurHashCalculator = () => {
     const seed = params.get('seed');
     if (seed) setSeedText(seed);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input, mode, seed: seedText })
 
   const parsed = useMemo(() => parseInput(input, mode), [input, mode]);
   const seed = useMemo(() => parseSeed(seedText), [seedText]);

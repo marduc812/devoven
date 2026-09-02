@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { hmacSm3, sm3 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const Sm3 = () => {
   const [fromValue, setFromValue] = useState('');
@@ -19,6 +20,9 @@ export const Sm3 = () => {
     const paramKey = params.get('key');
     if (paramKey) setKey(paramKey);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ key })
 
   useEffect(() => {
     if (!fromValue) {

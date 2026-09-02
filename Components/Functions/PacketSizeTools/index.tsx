@@ -9,6 +9,7 @@ import {
   STANDARD_MTUS,
   type PacketResult,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const PacketSizeCalculator = () => {
   const [payloadStr, setPayloadStr] = useState('1000');
@@ -25,6 +26,9 @@ export const PacketSizeCalculator = () => {
     const from = params.get('from') ?? '';
     if (from) setPayloadStr(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: payloadStr })
 
   useEffect(() => {
     try {

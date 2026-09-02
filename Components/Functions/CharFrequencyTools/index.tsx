@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { analyzeText, classifyChar, type CharCategory } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const labelClass = 'text-xs font-bold uppercase tracking-wider text-gray-500';
 
@@ -26,6 +27,9 @@ export const CharFrequencyTools = () => {
     if (from) setText(from);
     if (params.get('case') === 'insensitive') setIgnoreCase(true);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: text, case: ignoreCase })
 
   const analysis = useMemo(
     () => (text ? analyzeText(text, { ignoreCase, ignoreWhitespace }) : null),

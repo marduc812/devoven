@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { analyzeColor } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const labelClass = 'block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1';
 
@@ -49,6 +50,9 @@ export const ColorPickerHelper = () => {
     const from = params.get('from') || '';
     if (from) setHex(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: hex })
 
   const analysis = useMemo(() => {
     if (!hex.trim()) return null;

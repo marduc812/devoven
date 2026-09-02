@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { parseSshPublicKey } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const SAMPLE = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl user@example.com';
 
@@ -16,6 +17,9 @@ export const SshKeyInfo = () => {
       if (from) setInput(from);
     }
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const result = useMemo(() => {
     if (!input.trim()) return null;

@@ -11,6 +11,7 @@ import {
   StatusBadge,
 } from '@/Components/MainView/MainPanel/ResultUI';
 import { compareAnagram } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
   { label: 'listen / silent', value: ['listen', 'silent'] },
@@ -32,6 +33,9 @@ export function AnagramChecker() {
     if (first !== undefined) setA(first.trim());
     if (second !== undefined) setB(second.trim());
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: [a, b].join('\n') })
 
   const result = useMemo(() => (a.trim() || b.trim() ? compareAnagram(a, b) : null), [a, b]);
 

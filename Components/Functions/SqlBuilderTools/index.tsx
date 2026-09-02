@@ -18,6 +18,7 @@ import {
   type SqlIssue,
   type SqlTokenKind,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
   {
@@ -98,6 +99,9 @@ export function SqlAnalyzer() {
     const from = params.get('from');
     if (from) setSql(decodeURIComponent(from));
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: sql })
 
   const { analysis, issues, error } = useMemo(() => {
     if (!sql.trim()) return { analysis: null, issues: [], error: '' };

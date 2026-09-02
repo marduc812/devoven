@@ -9,6 +9,7 @@ import {
   SAMPLE_HEX,
   type DecodeResult,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const frameTypeColor: Record<string, string> = {
   DATA: 'bg-sky-50 text-sky-700 border-sky-200',
@@ -36,6 +37,9 @@ export const Http2FrameDecoder = () => {
     const from = params.get('from') ?? '';
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   useEffect(() => {
     if (!input.trim()) { setResult(null); return; }

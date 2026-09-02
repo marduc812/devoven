@@ -17,6 +17,7 @@ import {
   type CountingCase,
   type PermCombReport,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
   { label: '10 choose 3', value: { n: '10', r: '3' } },
@@ -118,6 +119,9 @@ export function PermutationCalculator() {
     if (n) setNInput(n);
     if (r) setRInput(r);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ n: nInput, r: rInput })
 
   const { report, error } = useMemo(() => {
     try {

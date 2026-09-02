@@ -4,6 +4,7 @@ import AdvancedConverter from "@/Components/MainView/MainPanel/AdvancedConverter
 import { PasswordElement } from "@/Components/View/PasswordElement";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useShareLink } from "@/Components/Functions/ShareLink";
 import CryptoJS from 'crypto-js'
 
 
@@ -12,7 +13,6 @@ export const HmacMD5 = () => {
     const [fromValue, setFromValue] = useState<string>('');
     const [toValue, setToValue] = useState<string>('');
     const [passwd, setPasswd] = useState<string>('')
-    const [extraLink, setExtraLink] = useState<string>('');
 
     useEffect(() => {
         const searchParams = new URLSearchParams(
@@ -23,15 +23,17 @@ export const HmacMD5 = () => {
         const passQuery = searchParams.get('pass') ?? '';
 
         if (from != '') {
-            if (passQuery && passQuery.length > 0) {
-                setPasswd(passwd)
-                setFromValue(from);
-            }
+            setFromValue(from);
+        }
+
+        if (passQuery != '') {
+            setPasswd(passQuery);
         }
     }, [])
 
+    useShareLink({ pass: passwd })
+
     useEffect(() => {
-        setExtraLink('&pass=' + passwd)
         if (fromValue.length > 0) {
             setToValue(CryptoJS.HmacMD5(fromValue, passwd).toString());
         } else {
@@ -51,7 +53,6 @@ export const HmacMD5 = () => {
             fromTitle='Text Input'
             toTitle='HMAC-MD5 Hash'
             extraElements={<PasswordElement passwd={passwd} setPasswd={setPasswd} />}
-            extraLink={extraLink}
             backColor='teal'
         />
     )

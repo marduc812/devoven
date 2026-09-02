@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import Diagram from './Diagram';
 import { SHAPE_DEFS, findShapeDef, measureShape, type ShapeDef } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const labelClass = 'text-xs font-bold uppercase tracking-wider text-gray-500';
 
@@ -39,6 +40,9 @@ export function GeometryCalculator() {
     setVariant(shape.variant);
     setValues({ ...defaultsFor(shape), ...parsed });
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: [variant, ...Object.entries(values).map(([k, v]) => `${k}=${v}`)].join('\n') })
 
   const selectShape = (next: ShapeDef) => {
     setVariant(next.variant);

@@ -10,6 +10,7 @@ import {
   type EmailHeaderAnalysis,
   type HeaderCategory,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const categoryColor: Record<HeaderCategory, string> = {
   routing: 'bg-sky-500/20 text-sky-300 border-sky-500/40',
@@ -41,6 +42,9 @@ export const EmailHeaderAnalyzer = () => {
     const from = params.get('from') ?? '';
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   useEffect(() => {
     if (!input.trim()) { setResult(null); return; }

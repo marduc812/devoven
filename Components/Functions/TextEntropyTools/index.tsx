@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { shannonEntropy } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 function charLabel(ch: string): string {
   if (ch === ' ') return '(space)';
@@ -30,6 +31,9 @@ export function TextEntropyCalculator() {
     const from = params.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const stats = useMemo(() => {
     if (!input.length) return null;

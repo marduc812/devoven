@@ -13,6 +13,7 @@ import {
   inputClass,
 } from '@/Components/MainView/MainPanel/ResultUI';
 import { parseFen, type FenParseResult } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const START_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
@@ -183,6 +184,9 @@ export function FenParser() {
     const from = p.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const result = useMemo(() => (input.trim() ? parseFen(input) : null), [input]);
 

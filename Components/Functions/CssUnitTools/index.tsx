@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { convertCssUnit } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const selectClass = 'border border-gray-300 bg-white text-gray-900 px-3 py-1.5 text-sm focus:outline-none focus:border-gray-900';
 const inputClass = 'border border-gray-300 bg-white text-gray-900 px-3 py-1.5 text-sm focus:outline-none focus:border-gray-900 w-24';
@@ -25,6 +26,9 @@ export function CssUnitConverterTool() {
     const unit = params.get('unit');
     if (unit && UNITS.includes(unit)) setFromUnit(unit);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ unit: fromUnit })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }

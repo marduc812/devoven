@@ -18,6 +18,7 @@ import {
   formatStatValue as fmt,
   parseNumbers,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
   { label: 'Dice rolls', value: '3, 5, 2, 6, 6, 1, 4, 5, 3, 6, 2, 4, 5, 5, 1, 3' },
@@ -33,6 +34,9 @@ export function StatisticsCalculator() {
     const from = p.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const { result, error } = useMemo(() => {
     if (!input.trim()) return { result: null, error: '' };

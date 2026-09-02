@@ -5,6 +5,7 @@ import { PanelType, colorName } from '@/types'
 import AdditionalTools from '@/Components/View/AdditionalTools'
 import ShareView from './ShareView'
 import FeedbackModal from '@/Components/Feedback/FeedbackModal'
+import ShareLinkButton from './ShareLinkButton'
 
 const categoryAccent: Record<string, string> = {
     yellow: 'bg-amber-400',
@@ -29,7 +30,10 @@ const Panel = (props: PanelType) => {
                 </div>
                 <div className="flex items-start justify-between gap-4">
                     <h1 className="text-3xl font-black text-gray-900 tracking-tight">{props.title}</h1>
-                    <FeedbackModal variant="report" />
+                    <div className="flex-shrink-0 flex items-center gap-2">
+                        <ShareLinkButton />
+                        <FeedbackModal variant="report" />
+                    </div>
                 </div>
                 <p className="text-sm text-gray-500 mt-2 leading-relaxed max-w-2xl">
                     {props.description.split("[1").map((part, index) => {

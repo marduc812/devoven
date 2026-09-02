@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { GRID_PATTERNS, generateGridCss, generateResponsiveGrid } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export function CssGridGenerator() {
   const [input, setInput] = useState('');
@@ -17,6 +18,9 @@ export function CssGridGenerator() {
       if (from) setInput(decodeURIComponent(from));
     }
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   useEffect(() => {
     setGeneratedCss(generateGridCss(input));

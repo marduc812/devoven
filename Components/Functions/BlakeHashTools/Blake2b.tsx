@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { BLAKE2B_SIZES, BlakeOutput, blake2bHash } from './logic';
 import { INPUT_CLASS, LABEL_CLASS, SELECT_CLASS } from './controls';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const Blake2b = () => {
   const [fromValue, setFromValue] = useState('');
@@ -28,6 +29,9 @@ export const Blake2b = () => {
     const format = params.get('output');
     if (format === 'hex' || format === 'base64') setOutput(format);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ bits, key, output })
 
   useEffect(() => {
     if (!fromValue) {

@@ -12,6 +12,7 @@ import {
   inputClass,
 } from '@/Components/MainView/MainPanel/ResultUI';
 import { analyzeIsbn, type IsbnReport } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
   { label: '0-306-40615-2', value: '0-306-40615-2' },
@@ -72,6 +73,9 @@ export function IsbnValidator() {
     const from = p.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const { report, error } = useMemo(() => {
     if (!input.trim()) return { report: null, error: '' };

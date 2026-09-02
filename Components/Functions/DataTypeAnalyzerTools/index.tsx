@@ -17,6 +17,7 @@ import {
   type ColumnStats,
   type InferredType,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const SAMPLE_CSV = `id,name,email,signup_date,active,score,notes
 1,Ada Lovelace,ada@example.com,2024-01-15,true,91.5,first user
@@ -148,6 +149,9 @@ export function DataTypeAnalyzer() {
     const from = p.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const { columns, error } = useMemo(() => {
     if (!input.trim()) return { columns: null, error: '' };

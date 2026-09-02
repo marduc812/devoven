@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { processBacon, BaconRepresentation } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const selectClass = 'border border-gray-300 bg-white text-gray-900 px-3 py-1.5 text-sm focus:outline-none focus:border-gray-900';
 const labelClass = 'text-xs text-gray-500 uppercase tracking-wider';
@@ -19,6 +20,9 @@ export function BaconCipher() {
     const r = params.get('repr');
     if (r === '01') setRepr('01');
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ repr })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }

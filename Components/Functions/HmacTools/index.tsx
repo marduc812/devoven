@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { generateAllHmacs, HmacAlgorithm, HmacResult } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const HmacGenerator = () => {
   const [message, setMessage] = useState('');
@@ -18,6 +19,9 @@ export const HmacGenerator = () => {
     const from = params.get('from') || '';
     if (from) setMessage(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: message })
 
   useEffect(() => {
     if (message && key) {

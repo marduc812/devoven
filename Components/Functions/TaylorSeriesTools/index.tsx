@@ -11,6 +11,7 @@ import {
   termValues,
   type SupportedFunction,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const labelClass = 'text-xs font-bold uppercase tracking-wider text-gray-500';
 
@@ -38,6 +39,9 @@ export function TaylorSeriesCalculator() {
     const fn = p.get('fn');
     if (fn && fn in FUNCTION_META) setFnName(fn as SupportedFunction);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: xText, fn: fnName })
 
   const meta = FUNCTION_META[fnName];
 

@@ -13,6 +13,7 @@ import {
   encodeBytes,
   formatBytes,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 type Direction = 'compress' | 'decompress';
 
@@ -49,6 +50,9 @@ const CompressionConverter = ({ format, title, description }: ConverterProps) =>
     const lvl = searchParams.get('level');
     if (lvl && /^[0-9]$/.test(lvl)) setLevel(lvl);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ mode: direction, encoding, level })
 
   useEffect(() => {
     if (!fromValue.trim()) {

@@ -12,6 +12,7 @@ import {
   StatusBadge,
 } from '@/Components/MainView/MainPanel/ResultUI';
 import { buildMerkleTree, merkleLevels, merkleProof } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
   { label: 'Transactions', value: 'tx-alpha\ntx-bravo\ntx-charlie\ntx-delta' },
@@ -33,6 +34,9 @@ export const MerkleTreeVisualizer = () => {
     const from = params.get('from') ?? '';
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const items = useMemo(
     () => input.split('\n').map(s => s.trim()).filter(s => s.length > 0),

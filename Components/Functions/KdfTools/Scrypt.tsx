@@ -20,6 +20,7 @@ import {
   SELECT_CLASS,
   afterPaint,
 } from './controls';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const Scrypt = () => {
   const [fromValue, setFromValue] = useState('');
@@ -51,6 +52,9 @@ export const Scrypt = () => {
       if (value) setter(value);
     }
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ salt, logn: logN, r, p, bits: keyBits })
 
   const nValue = Number(logN);
   // N is entered as its exponent: users think in "2^15", and it removes the

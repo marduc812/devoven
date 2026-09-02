@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { generateMakefile, ProjectType } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PROJECT_TYPES: { value: ProjectType; label: string }[] = [
   { value: 'node', label: 'Node.js' },
@@ -27,6 +28,9 @@ export function MakefileGen() {
     const pt = params.get('type') as ProjectType | null;
     if (pt && PROJECT_TYPES.find(t => t.value === pt)) setProjectType(pt);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ type: projectType })
 
   useEffect(() => {
     if (!fromValue.trim()) {

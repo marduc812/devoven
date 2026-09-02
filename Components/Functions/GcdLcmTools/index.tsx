@@ -16,6 +16,7 @@ import {
   formatFactorization,
   type GcdLcmReport,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
   { label: '12, 8', value: '12 8' },
@@ -82,6 +83,9 @@ export function GcdLcmCalculator() {
     const from = p.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const { report, error } = useMemo(() => {
     if (!input.trim()) return { report: null, error: '' };

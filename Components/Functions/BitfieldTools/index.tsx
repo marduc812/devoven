@@ -15,6 +15,7 @@ import {
   type BitWidth,
   type ByteBreakdown,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS: { label: string; value: string }[] = [
   { label: '255', value: '255' },
@@ -126,6 +127,9 @@ export function BitfieldViewer() {
     const w = Number(p.get('width'));
     if (BIT_WIDTHS.includes(w as BitWidth)) setWidth(w as BitWidth);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input, width })
 
   const { result, error } = useMemo(() => {
     if (!input.trim()) return { result: null, error: '' };

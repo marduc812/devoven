@@ -23,6 +23,7 @@ import {
   RateLimiterInput,
   RateUnit,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const ALGORITHMS: Array<{ id: RateLimitAlgorithm; label: string }> = [
   { id: 'token-bucket', label: 'Token bucket' },
@@ -93,6 +94,9 @@ export function RateLimiterCalculator() {
     setBurstText(String(next.burstSize));
     setTrafficText(next.trafficRate === undefined ? '' : String(next.trafficRate));
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ rate: rateText, burst: burstText, unit: config.unit, algorithm: config.algorithm, traffic: trafficText, trafficUnit: config.trafficUnit })
 
   const { result, error } = useMemo(() => {
     try {

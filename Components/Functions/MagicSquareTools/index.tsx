@@ -10,6 +10,7 @@ import {
   StatusBadge,
 } from '@/Components/MainView/MainPanel/ResultUI';
 import { generateMagicSquare } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const ORDERS = [3, 4, 5, 6, 7, 8, 9];
 
@@ -21,6 +22,9 @@ export function MagicSquareGenerator() {
     const from = parseInt(p.get('from') ?? '', 10);
     if (ORDERS.includes(from)) setOrder(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: order })
 
   const { result, error } = useMemo(() => {
     try {

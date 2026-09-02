@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { parseRsaKeyInfo, formatRsaKeyInfo, type RsaKeyInfo as RsaKeyInfoData } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const SAMPLE_RSA_PUBLIC = `-----BEGIN RSA PUBLIC KEY-----
 MIGJAoGBAMOST/DNt9VFuJeaE7h4zWNJKvL7tNEF3DFDxNOe2nWnHh4IrE8N
@@ -29,6 +30,9 @@ export const RsaKeyInfo = () => {
     const from = searchParams.get('from') ?? '';
     if (from) setInput(decodeURIComponent(from));
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   useEffect(() => {
     if (!input.trim()) {

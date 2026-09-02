@@ -13,6 +13,7 @@ import {
   ALL_ALGORITHMS,
   type JwtAlgorithm,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const DEFAULT_HEADER = JSON.stringify({ alg: 'HS256', typ: 'JWT' }, null, 2);
 const DEFAULT_PAYLOAD = JSON.stringify(
@@ -220,6 +221,9 @@ export function JwtEditor() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: token })
 
   const onTokenChange = (value: string) => {
     setToken(value);

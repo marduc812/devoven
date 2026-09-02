@@ -20,6 +20,7 @@ import {
   repeatText,
   formatDiffStats,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const REGEX_TIMEOUT_SECONDS = DEFAULT_TIMEOUT_MS / 1000;
 
@@ -37,6 +38,9 @@ export function CaseConverter() {
     const c = params.get('case');
     if (c) setCaseType(c);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ case: caseType })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }
@@ -82,6 +86,9 @@ export function WordCounter() {
     const from = params.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const words = countWords(input);
   const chars = countChars(input);
@@ -181,6 +188,9 @@ export function SortLines() {
     if (dir) setDirection(dir);
   }, []);
 
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ dir: direction })
+
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }
     setOutput(direction === 'asc' ? sortLinesAsc(input) : sortLinesDesc(input));
@@ -224,6 +234,9 @@ export function ReverseText() {
     const m = params.get('mode');
     if (m) setMode(m);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ mode })
 
   useEffect(() => {
     if (!input.trim()) { setOutput(''); return; }
@@ -338,6 +351,9 @@ export function RegexFindReplace() {
     const from = params.get('from');
     if (from) setText(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: text })
 
   // The replace runs in a worker: a pattern like `(a+)+$` backtracks for
   // minutes on a few dozen characters, and a running RegExp cannot be

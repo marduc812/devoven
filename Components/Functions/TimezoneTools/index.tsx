@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { convertTimezone, getExampleInput, TimezoneResult } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export const TimezoneConverter = () => {
   const [input, setInput] = useState('');
@@ -16,6 +17,9 @@ export const TimezoneConverter = () => {
     const from = searchParams.get('from') || '';
     setInput(from || getExampleInput());
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   useEffect(() => {
     if (!input.trim()) { setResults([]); setError(''); return; }

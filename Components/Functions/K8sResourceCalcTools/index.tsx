@@ -22,6 +22,7 @@ import {
   K8sResourceInput,
   QOS_EXPLANATIONS,
 } from './logic'
+import { useShareLink } from '@/Components/Functions/ShareLink'
 
 const EMPTY: K8sResourceInput = { cpuRequest: '', cpuLimit: '', memRequest: '', memLimit: '' }
 
@@ -64,6 +65,9 @@ export const K8sResourceCalculator = () => {
     }
     if (seeded) setInput(seeded)
   }, [])
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink(Object.fromEntries(FIELDS.map((field) => [field.id, input[field.id]])))
 
   const result = useMemo(() => calcK8sResources(input), [input])
   const yaml = useMemo(() => resourcesYaml(input), [input])

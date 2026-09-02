@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { computeReadabilityScores, interpretFleschEase, interpretGrade, ReadabilityScores } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const labelClass = 'block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1';
 
@@ -25,6 +26,9 @@ export function ReadabilityGrade() {
     const from = p.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   useEffect(() => {
     if (!input.trim()) { setScores(null); return; }

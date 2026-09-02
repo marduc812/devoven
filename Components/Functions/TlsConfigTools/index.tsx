@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { generateTlsConfig, TLS_PROFILES, TlsProfile } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 export function TlsConfigGenerator() {
   const [profile, setProfile] = useState<TlsProfile>('intermediate');
@@ -15,6 +16,9 @@ export function TlsConfigGenerator() {
     const from = params.get('from') as TlsProfile;
     if (from && ['modern', 'intermediate', 'old'].indexOf(from) >= 0) setProfile(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: profile })
 
   const config = generateTlsConfig(profile);
 

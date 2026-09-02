@@ -10,6 +10,7 @@ import {
   describeDefang,
   fangText,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 type Direction = 'defang' | 'fang';
 
@@ -47,6 +48,9 @@ const UrlDefanger = () => {
     if (searchParams.get('separator') === 'true') setSeparator(true);
     if (searchParams.get('at') === 'false') setAt(false);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ mode: direction, style: dotStyle, scope, scheme, separator, at })
 
   useEffect(() => {
     if (!fromValue.trim()) {

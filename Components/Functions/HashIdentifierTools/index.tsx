@@ -11,6 +11,7 @@ import {
   identifyLines,
   modeLabel,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PLACEHOLDER = `5f4dcc3b5aa765d61d8327deb882cf99
 $2y$12$Dwt1BZj6pcyc3Dy1FWZ5ieeUznr71EeNkJkUlypTsgbGxflSKlXX2
@@ -216,6 +217,9 @@ export const HashIdentifier = () => {
     const from = params.get('from') ?? '';
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const results = useMemo(() => identifyLines(input), [input]);
   const total = results.reduce((sum, r) => sum + r.candidates.length, 0);

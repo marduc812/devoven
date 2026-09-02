@@ -21,6 +21,7 @@ import {
   type FingerName,
   type LayoutAnalysis,
 } from './logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
   { label: 'Pangram', value: 'The quick brown fox jumps over the lazy dog' },
@@ -203,6 +204,9 @@ export function KeyboardLayoutAnalyzer() {
     const from = params.get('from');
     if (from) setInput(from);
   }, []);
+
+  // Mirrors the params read above, so the header's copy-link button carries them.
+  useShareLink({ from: input })
 
   const { analyses, error } = useMemo(() => {
     if (!input.trim()) return { analyses: null, error: '' };
