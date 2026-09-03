@@ -77,7 +77,7 @@ export function AesEncrypt() {
           />
           <label className="text-xs text-gray-400 uppercase tracking-wider">Password</label>
           <input
-            type="password"
+            type="text"
             className="bg-white backdrop-blur-sm text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none transition-colors duration-200 font-mono text-sm"
             placeholder="Enter password…"
             value={password}
@@ -167,7 +167,7 @@ export function AesDecrypt() {
           />
           <label className="text-xs text-gray-400 uppercase tracking-wider">Password</label>
           <input
-            type="password"
+            type="text"
             className="bg-white backdrop-blur-sm text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none transition-colors duration-200 font-mono text-sm"
             placeholder="Enter password…"
             value={password}

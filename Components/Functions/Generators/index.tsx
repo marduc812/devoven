@@ -405,7 +405,7 @@ export function BcryptGenerator() {
           <div className="flex flex-col gap-1">
             <label className={labelClass}>Password</label>
             <input
-              type="password"
+              type="text"
               value={password}
               onChange={e => setPassword(e.target.value)}
               placeholder="Enter password"
@@ -518,7 +518,7 @@ export function HtpasswdGenerator() {
           <div className="flex flex-col gap-1">
             <label className={labelClass}>Password</label>
             <input
-              type="password"
+              type="text"
               value={password}
               onChange={e => setPassword(e.target.value)}
               placeholder="Enter password"
