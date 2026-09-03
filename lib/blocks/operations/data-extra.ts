@@ -22,7 +22,6 @@ export const dataExtraOperations: Operation[] = [
     name: 'JSON Minify',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => minifyJson(input),
   },
   {
@@ -42,7 +41,6 @@ export const dataExtraOperations: Operation[] = [
         default: '2',
       },
     ],
-    chainable: true,
     fn: (input, p) => beautifyJson(input, p.indent === 'tab' ? '\t' : parseInt(p.indent ?? '2')),
   },
   {
@@ -50,7 +48,6 @@ export const dataExtraOperations: Operation[] = [
     name: 'JSON Sort Keys',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => sortJsonKeys(input),
   },
   {
@@ -58,7 +55,6 @@ export const dataExtraOperations: Operation[] = [
     name: 'JSON Flatten',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => flattenJson(input),
   },
   {
@@ -66,7 +62,6 @@ export const dataExtraOperations: Operation[] = [
     name: 'JSON Unflatten',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => unflattenJson(input),
   },
   {
@@ -74,7 +69,6 @@ export const dataExtraOperations: Operation[] = [
     name: 'JSONL → JSON',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => jsonlToJson(input),
   },
   {
@@ -82,7 +76,6 @@ export const dataExtraOperations: Operation[] = [
     name: 'JSON → JSONL',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => jsonToJsonl(input),
   },
   {
@@ -90,7 +83,6 @@ export const dataExtraOperations: Operation[] = [
     name: 'INI → JSON',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => iniToJson(input),
   },
   {
@@ -98,7 +90,6 @@ export const dataExtraOperations: Operation[] = [
     name: 'JSON → INI',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => jsonToIni(input),
   },
   {
@@ -106,7 +97,6 @@ export const dataExtraOperations: Operation[] = [
     name: 'Properties → JSON',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => propertiesToJson(input),
   },
   {
@@ -114,7 +104,6 @@ export const dataExtraOperations: Operation[] = [
     name: 'JSON → Properties',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => jsonToProperties(input),
   },
   {
@@ -122,7 +111,6 @@ export const dataExtraOperations: Operation[] = [
     name: 'YAML → TOML',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => yamlToToml(input),
   },
   {
@@ -130,7 +118,6 @@ export const dataExtraOperations: Operation[] = [
     name: 'TOML → YAML',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => tomlToYaml(input),
   },
   {
@@ -138,7 +125,6 @@ export const dataExtraOperations: Operation[] = [
     name: 'JSON → SQL INSERT',
     category: 'data',
     params: [{ id: 'table', label: 'Table name', kind: 'text', default: 'table_name' }],
-    chainable: true,
     fn: (input, p) => jsonToSqlInsert(input, p.table || 'table_name'),
   },
   {
@@ -146,7 +132,6 @@ export const dataExtraOperations: Operation[] = [
     name: 'SQL Formatter',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => formatSql(input),
   },
   {
@@ -154,7 +139,6 @@ export const dataExtraOperations: Operation[] = [
     name: 'GraphQL Formatter',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => formatGraphQL(input),
   },
   {
@@ -174,7 +158,6 @@ export const dataExtraOperations: Operation[] = [
         default: 'auto',
       },
     ],
-    chainable: true,
     fn: (input, p) => minifyCode(input, (p.lang ?? 'auto') as CodeLanguage).minified,
   },
   {
@@ -182,7 +165,6 @@ export const dataExtraOperations: Operation[] = [
     name: 'HTML → JSX',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => htmlToJsx(input),
   },
   {
@@ -190,7 +172,6 @@ export const dataExtraOperations: Operation[] = [
     name: 'SVG Cleaner',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => cleanSvg(input),
   },
   {
@@ -198,7 +179,6 @@ export const dataExtraOperations: Operation[] = [
     name: 'SVG → Data URI',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => svgToDataUri(input),
   },
 ];

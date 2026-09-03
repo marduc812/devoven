@@ -64,7 +64,24 @@ function validateBlock(raw: unknown): BlockState | null {
     clean[def.id] = value;
   }
 
-  return { id, operationId, params: clean, enabled };
+  if (!op.inputs || op.inputs.length === 0) {
+    return { id, operationId, params: clean, enabled };
+  }
+
+  // A multi-input block also carries one value per field, and the name of the
+  // field the previous block feeds. A link that names a field the operation
+  // does not have falls back to the first field, like a missing one.
+  for (const field of op.inputs) {
+    const value = own(params, field.id);
+    clean[field.id] = typeof value === 'string' && value.length <= MAX_PARAM_LENGTH ? value : '';
+  }
+  const linked = own(raw, 'linked');
+  const linkedClean =
+    linked === null ? null
+    : typeof linked === 'string' && op.inputs.some((f) => f.id === linked) ? linked
+    : op.inputs[0].id;
+
+  return { id, operationId, params: clean, enabled, linked: linkedClean };
 }
 
 /** The one gate between a decoded payload and a pipeline the app will run. */

@@ -15,6 +15,7 @@ import ColorInputAnalytics from '../HexToRGB/ColorInputAnalytics';
 import toast from 'react-hot-toast';
 import CMYKToRGBView from '../View/CMYKToRGB';
 import UnixTimestampView from '../View/UnixTimestamp';
+import { rgbToCmyk, cmykToRgb } from './CmykTools/logic';
 
 export const ETHPubToAddr = () => {
   const [fromValue, setFromValue] = useState<string>('');
@@ -269,34 +270,6 @@ export const RGBToCMYK = () => {
   }, [])
 
 
-  const rgbToCmyk = (r: number, g: number, b: number) => {
-    let c = 1 - (r / 255);
-    let m = 1 - (g / 255);
-    let y = 1 - (b / 255);
-    let k = Math.min(c, Math.min(m, y));
-
-    c = (c - k) / (1 - k);
-    m = (m - k) / (1 - k);
-    y = (y - k) / (1 - k);
-
-    c = Math.round(c * 10000) / 100;
-    m = Math.round(m * 10000) / 100;
-    y = Math.round(y * 10000) / 100;
-    k = Math.round(k * 10000) / 100;
-
-    c = isNaN(c) ? 0 : c;
-    m = isNaN(m) ? 0 : m;
-    y = isNaN(y) ? 0 : y;
-    k = isNaN(k) ? 0 : k;
-
-    return {
-      c: Math.round(c),
-      m: Math.round(m),
-      y: Math.round(y),
-      k: Math.round(k)
-    }
-  }
-
   useEffect(() => {
     if (validateInput(fromRed) && validateInput(fromGreen) && validateInput(fromBlue)) {
       setToRGBColor(rgbToHex(Number(fromRed), Number(fromGreen), Number(fromBlue)))
@@ -459,30 +432,9 @@ export const CMYKToRGB = () => {
     }
   }, [])
 
-  const cmyk2rgb = function (c: number, m: number, y: number, k: number) {
-    c = (c / 100);
-    m = (m / 100);
-    y = (y / 100);
-    k = (k / 100);
-
-    c = c * (1 - k) + k;
-    m = m * (1 - k) + k;
-    y = y * (1 - k) + k;
-
-    var r = 1 - c;
-    var g = 1 - m;
-    var b = 1 - y;
-
-    return {
-      r: Math.round(r * 255),
-      g: Math.round(g * 255),
-      b: Math.round(b * 255)
-    }
-  }
-
   useEffect(() => {
     if (validateInput(fromCyan) && validateInput(fromMagenta) && validateInput(fromYellow) && validateInput(fromKey)) {
-      const rgbColors = cmyk2rgb(Number(fromCyan), Number(fromMagenta), Number(fromYellow), Number(fromKey))
+      const rgbColors = cmykToRgb(Number(fromCyan), Number(fromMagenta), Number(fromYellow), Number(fromKey))
       setToRGBColor(rgbToHex(rgbColors.r, rgbColors.g, rgbColors.b))
       setToValue(rgbColors)
     } else {

@@ -51,9 +51,16 @@ export function railFenceDecode(text: string, rails: number): string {
   return result.join('');
 }
 
-export function railFenceAsciiArt(text: string, rails: number): string {
+export const ART_MAX_COLUMNS = 120;
+
+/**
+ * The zigzag grid, one row per rail, spaces where the fence has no letter.
+ * Long inputs are cut to `maxColumns` so the diagram stays a diagram; the
+ * caller decides how to say the rest was trimmed.
+ */
+export function railFenceAsciiArt(text: string, rails: number, maxColumns: number = ART_MAX_COLUMNS): string {
   if (rails < 2 || text.length === 0) return '';
-  const n = Math.min(text.length, 40); // cap display
+  const n = Math.min(text.length, maxColumns);
   const display = text.slice(0, n);
   const grid: string[][] = [];
   for (let i = 0; i < rails; i++) {
@@ -72,10 +79,11 @@ export function railFenceAsciiArt(text: string, rails: number): string {
   return grid.map(row => row.join('')).join('\n');
 }
 
+/**
+ * The cipher result on its own. The zigzag is rendered separately, under the
+ * output, so what the user copies is the ciphertext and nothing else.
+ */
 export function processRailFence(text: string, rails: number, mode: 'encode' | 'decode'): string {
   if (!text.trim()) return '';
-  const result = mode === 'encode' ? railFenceEncode(text, rails) : railFenceDecode(text, rails);
-  const artInput = mode === 'encode' ? text : result;
-  const art = railFenceAsciiArt(artInput, rails);
-  return result + '\n\n---\nZigzag pattern (' + String(rails) + ' rails):\n' + art;
+  return mode === 'encode' ? railFenceEncode(text, rails) : railFenceDecode(text, rails);
 }

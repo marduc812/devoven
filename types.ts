@@ -35,6 +35,9 @@ export type AdvancedCoversionType = {
     extraElements: React.JSX.Element;
     fromTitle: string;
     toTitle: string;
+    // Rendered under the output textarea, for tools with a second, non-textual
+    // view of the result (a diagram, a grid) that must not pollute the output.
+    belowOutput?: React.ReactNode;
     pageTitle?: string;
     backColor: MainViewColorVariants;
 }

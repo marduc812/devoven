@@ -2,9 +2,10 @@
 
 import React from 'react';
 import { IoReorderThreeOutline, IoCloseOutline, IoClipboardOutline } from 'react-icons/io5';
-import { BlockState, BlockResult } from '@/lib/blocks/types';
+import { BlockState, BlockResult, linkedField } from '@/lib/blocks/types';
 import { OPERATION_MAP } from '@/lib/blocks/registry';
 import BlockParams from './BlockParams';
+import BlockInputs from './BlockInputs';
 import TerminalArtifact from './TerminalArtifact';
 import { categoryAccent, categoryShortLabel } from './categoryMeta';
 import toast from 'react-hot-toast';
@@ -16,12 +17,15 @@ type BlockItemProps = {
   onToggle: () => void;
   onRemove: () => void;
   onParamChange: (paramId: string, value: string) => void;
+  onLinkChange: (fieldId: string | null) => void;
+  /** What this block receives: the pipeline input, or the previous block's output. */
+  upstream: string;
   dragHandleProps: React.HTMLAttributes<HTMLDivElement>;
   isDragging?: boolean;
   unreachable?: boolean;
 };
 
-export default function BlockItem({ block, index, result, onToggle, onRemove, onParamChange, dragHandleProps, isDragging, unreachable }: BlockItemProps) {
+export default function BlockItem({ block, index, result, onToggle, onRemove, onParamChange, onLinkChange, upstream, dragHandleProps, isDragging, unreachable }: BlockItemProps) {
   const op = OPERATION_MAP[block.operationId];
   const hasError = result?.error !== null && result?.error !== undefined;
   const outputPreview = result?.output ?? '';
@@ -91,6 +95,21 @@ export default function BlockItem({ block, index, result, onToggle, onRemove, on
           <IoCloseOutline className="text-lg" />
         </button>
       </div>
+
+      {/* Named inputs of a multi-input operation. The first block's fields are
+          the pipeline input pane itself, so only later blocks show them here. */}
+      {op?.inputs && op.inputs.length > 0 && index > 0 && (
+        <div className="border-b border-gray-200">
+          <BlockInputs
+            fields={op.inputs}
+            values={block.params}
+            linked={linkedField(op, block)}
+            upstream={upstream}
+            onChange={onParamChange}
+            onLinkChange={onLinkChange}
+          />
+        </div>
+      )}
 
       {/* Params */}
       {op && op.params.length > 0 && (

@@ -29,7 +29,6 @@ export const hashingExtraOperations: Operation[] = [
     name: 'CRC32',
     category: 'hashing',
     params: [caseParam],
-    chainable: true,
     fn: (input, p) => renderNumber(crc32(input), p.case ?? 'lower', 8),
   },
   {
@@ -37,7 +36,6 @@ export const hashingExtraOperations: Operation[] = [
     name: 'Adler-32',
     category: 'hashing',
     params: [caseParam],
-    chainable: true,
     fn: (input, p) => renderNumber(computeFletcherAll(input).adler32.decimal, p.case ?? 'lower', 8),
   },
   {
@@ -45,7 +43,6 @@ export const hashingExtraOperations: Operation[] = [
     name: 'Fletcher-16',
     category: 'hashing',
     params: [caseParam],
-    chainable: true,
     fn: (input, p) => renderNumber(computeFletcherAll(input).fletcher16.decimal, p.case ?? 'lower', 4),
   },
   {
@@ -53,7 +50,6 @@ export const hashingExtraOperations: Operation[] = [
     name: 'Fletcher-32',
     category: 'hashing',
     params: [caseParam],
-    chainable: true,
     fn: (input, p) => renderNumber(computeFletcherAll(input).fletcher32.decimal, p.case ?? 'lower', 8),
   },
   {
@@ -64,7 +60,6 @@ export const hashingExtraOperations: Operation[] = [
       { id: 'seed', label: 'Seed', kind: 'text', default: '0' },
       caseParam,
     ],
-    chainable: true,
     fn: (input, p) => {
       const seed = parseInt(p.seed ?? '0');
       if (isNaN(seed)) throw new Error('Seed must be a number');
@@ -100,7 +95,6 @@ export const hashingExtraOperations: Operation[] = [
         default: 'lower',
       },
     ],
-    chainable: true,
     fn: (input, p) => {
       const all = computeFnvAll(input);
       const variant = (p.variant ?? 'fnv1a_32') as keyof typeof all;
@@ -115,7 +109,6 @@ export const hashingExtraOperations: Operation[] = [
     name: 'Identify Hash Type',
     category: 'hashing',
     params: [],
-    chainable: false,
     terminal: true,
     fn: (input) => formatIdentifyReport(input),
   },

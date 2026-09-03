@@ -14,7 +14,16 @@ import { toPigLatin, fromPigLatin } from '@/Components/Functions/PigLatinTools/l
 import { textToBraille } from '@/Components/Functions/BrailleTools/logic';
 import { Operation } from '../types';
 
-const keyParam = { id: 'key', label: 'Key', kind: 'text' as const, default: '' };
+// Ciphers take the text and the key as two named fields, so a block shows
+// both boxes and either one can be fed by the previous block.
+const keyedFields = [
+  { id: 'text', label: 'Text' },
+  { id: 'key', label: 'Key' },
+];
+const keywordFields = [
+  { id: 'text', label: 'Text' },
+  { id: 'keyword', label: 'Keyword' },
+];
 
 const affineAParam = {
   id: 'a',
@@ -57,7 +66,6 @@ export const cipherOperations: Operation[] = [
     name: 'Atbash Cipher',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => atbash(input, false),
   },
   {
@@ -65,7 +73,6 @@ export const cipherOperations: Operation[] = [
     name: 'Affine Encrypt',
     category: 'encoding',
     params: [affineAParam, affineBParam],
-    chainable: true,
     fn: (input, p) => affineEncrypt(input, parseInt(p.a ?? '5'), parseInt(p.b ?? '8')),
   },
   {
@@ -73,15 +80,14 @@ export const cipherOperations: Operation[] = [
     name: 'Affine Decrypt',
     category: 'encoding',
     params: [affineAParam, affineBParam],
-    chainable: true,
     fn: (input, p) => affineDecrypt(input, parseInt(p.a ?? '5'), parseInt(p.b ?? '8')),
   },
   {
     id: 'xor-encrypt',
     name: 'XOR Encrypt → Hex',
     category: 'encoding',
+    inputs: keyedFields,
     params: [
-      keyParam,
       {
         id: 'format',
         label: 'Key Format',
@@ -93,15 +99,14 @@ export const cipherOperations: Operation[] = [
         default: 'text',
       },
     ],
-    chainable: true,
-    fn: (input, p) => xorEncrypt(input, parseKey(p.key ?? '', (p.format ?? 'text') as XorKeyFormat)),
+    fn: (_input, p) => xorEncrypt(p.text ?? '', parseKey(p.key ?? '', (p.format ?? 'text') as XorKeyFormat)),
   },
   {
     id: 'xor-decrypt',
     name: 'XOR Decrypt (Hex in)',
     category: 'encoding',
+    inputs: keyedFields,
     params: [
-      keyParam,
       {
         id: 'format',
         label: 'Key Format',
@@ -113,39 +118,37 @@ export const cipherOperations: Operation[] = [
         default: 'text',
       },
     ],
-    chainable: true,
-    fn: (input, p) => xorDecrypt(input, parseKey(p.key ?? '', (p.format ?? 'text') as XorKeyFormat)),
+    fn: (_input, p) => xorDecrypt(p.text ?? '', parseKey(p.key ?? '', (p.format ?? 'text') as XorKeyFormat)),
   },
   {
     id: 'vigenere-encrypt',
     name: 'Vigenère Encrypt',
     category: 'encoding',
-    params: [keyParam],
-    chainable: true,
-    fn: (input, p) => vigenereEncrypt(input, p.key ?? ''),
+    inputs: keyedFields,
+    params: [],
+    fn: (_input, p) => vigenereEncrypt(p.text ?? '', p.key ?? ''),
   },
   {
     id: 'vigenere-decrypt',
     name: 'Vigenère Decrypt',
     category: 'encoding',
-    params: [keyParam],
-    chainable: true,
-    fn: (input, p) => vigenereDecrypt(input, p.key ?? ''),
+    inputs: keyedFields,
+    params: [],
+    fn: (_input, p) => vigenereDecrypt(p.text ?? '', p.key ?? ''),
   },
   {
     id: 'beaufort',
     name: 'Beaufort Cipher',
     category: 'encoding',
-    params: [keyParam],
-    chainable: true,
-    fn: (input, p) => beaufortProcess(input, p.key ?? ''),
+    inputs: keyedFields,
+    params: [],
+    fn: (_input, p) => beaufortProcess(p.text ?? '', p.key ?? ''),
   },
   {
     id: 'rail-fence-encode',
     name: 'Rail Fence Encode',
     category: 'encoding',
     params: [railsParam],
-    chainable: true,
     fn: (input, p) => railFenceEncode(input, parseInt(p.rails ?? '3')),
   },
   {
@@ -153,7 +156,6 @@ export const cipherOperations: Operation[] = [
     name: 'Rail Fence Decode',
     category: 'encoding',
     params: [railsParam],
-    chainable: true,
     fn: (input, p) => railFenceDecode(input, parseInt(p.rails ?? '3')),
   },
   {
@@ -161,7 +163,6 @@ export const cipherOperations: Operation[] = [
     name: "Bacon's Cipher Encode",
     category: 'encoding',
     params: [baconReprParam],
-    chainable: true,
     fn: (input, p) => encodeToBacon(input, (p.repr ?? 'AB') as BaconRepresentation),
   },
   {
@@ -169,63 +170,61 @@ export const cipherOperations: Operation[] = [
     name: "Bacon's Cipher Decode",
     category: 'encoding',
     params: [baconReprParam],
-    chainable: true,
     fn: (input, p) => decodeFromBacon(input, (p.repr ?? 'AB') as BaconRepresentation),
   },
   {
     id: 'polybius-encode',
     name: 'Polybius Square Encode',
     category: 'encoding',
-    params: [{ id: 'keyword', label: 'Keyword', kind: 'text', default: '' }],
-    chainable: true,
-    fn: (input, p) => encodePolybius(input, buildSquare(p.keyword ?? '')),
+    inputs: keywordFields,
+    params: [],
+    fn: (_input, p) => encodePolybius(p.text ?? '', buildSquare(p.keyword ?? '')),
   },
   {
     id: 'polybius-decode',
     name: 'Polybius Square Decode',
     category: 'encoding',
-    params: [{ id: 'keyword', label: 'Keyword', kind: 'text', default: '' }],
-    chainable: true,
-    fn: (input, p) => decodePolybius(input, buildSquare(p.keyword ?? '')),
+    inputs: keywordFields,
+    params: [],
+    fn: (_input, p) => decodePolybius(p.text ?? '', buildSquare(p.keyword ?? '')),
   },
   {
     id: 'columnar-encrypt',
     name: 'Columnar Transposition Encrypt',
     category: 'encoding',
-    params: [keyParam],
-    chainable: true,
-    fn: (input, p) => columnarEncrypt(input, p.key ?? ''),
+    inputs: keyedFields,
+    params: [],
+    fn: (_input, p) => columnarEncrypt(p.text ?? '', p.key ?? ''),
   },
   {
     id: 'columnar-decrypt',
     name: 'Columnar Transposition Decrypt',
     category: 'encoding',
-    params: [keyParam],
-    chainable: true,
-    fn: (input, p) => columnarDecrypt(input, p.key ?? ''),
+    inputs: keyedFields,
+    params: [],
+    fn: (_input, p) => columnarDecrypt(p.text ?? '', p.key ?? ''),
   },
   {
     id: 'playfair-encrypt',
     name: 'Playfair Encrypt',
     category: 'encoding',
-    params: [keyParam],
-    chainable: true,
-    fn: (input, p) => playfairEncrypt(input, p.key ?? ''),
+    inputs: keyedFields,
+    params: [],
+    fn: (_input, p) => playfairEncrypt(p.text ?? '', p.key ?? ''),
   },
   {
     id: 'playfair-decrypt',
     name: 'Playfair Decrypt',
     category: 'encoding',
-    params: [keyParam],
-    chainable: true,
-    fn: (input, p) => playfairDecrypt(input, p.key ?? ''),
+    inputs: keyedFields,
+    params: [],
+    fn: (_input, p) => playfairDecrypt(p.text ?? '', p.key ?? ''),
   },
   {
     id: 'tap-code-encode',
     name: 'Tap Code Encode',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => tapEncode(input),
   },
   {
@@ -233,7 +232,6 @@ export const cipherOperations: Operation[] = [
     name: 'Tap Code Decode',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => tapDecode(input),
   },
   {
@@ -241,7 +239,6 @@ export const cipherOperations: Operation[] = [
     name: 'Leet Speak',
     category: 'text',
     params: [],
-    chainable: true,
     fn: (input) => toLeet(input),
   },
   {
@@ -249,7 +246,6 @@ export const cipherOperations: Operation[] = [
     name: 'Leet Speak Decode',
     category: 'text',
     params: [],
-    chainable: true,
     fn: (input) => fromLeet(input),
   },
   {
@@ -257,7 +253,6 @@ export const cipherOperations: Operation[] = [
     name: 'Pig Latin',
     category: 'text',
     params: [],
-    chainable: true,
     fn: (input) => toPigLatin(input),
   },
   {
@@ -265,7 +260,6 @@ export const cipherOperations: Operation[] = [
     name: 'Pig Latin Decode',
     category: 'text',
     params: [],
-    chainable: true,
     fn: (input) => fromPigLatin(input),
   },
   {
@@ -273,7 +267,6 @@ export const cipherOperations: Operation[] = [
     name: 'Text → Braille',
     category: 'text',
     params: [],
-    chainable: true,
     fn: (input) => textToBraille(input).map((c) => c.brailleChar).join(''),
   },
 ];

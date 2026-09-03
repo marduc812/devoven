@@ -31,7 +31,6 @@ export const textUtilsOperations: Operation[] = [
         default: 'lower',
       },
     ],
-    chainable: true,
     fn: (input, p) => convertCase(input, p.case ?? 'lower'),
   },
   {
@@ -39,7 +38,6 @@ export const textUtilsOperations: Operation[] = [
     name: 'Remove Duplicate Lines',
     category: 'text',
     params: [],
-    chainable: true,
     fn: (input) => removeDuplicateLines(input),
   },
   {
@@ -47,7 +45,6 @@ export const textUtilsOperations: Operation[] = [
     name: 'Sort Lines A\u2192Z',
     category: 'text',
     params: [],
-    chainable: true,
     fn: (input) => sortLinesAsc(input),
   },
   {
@@ -55,7 +52,6 @@ export const textUtilsOperations: Operation[] = [
     name: 'Sort Lines Z\u2192A',
     category: 'text',
     params: [],
-    chainable: true,
     fn: (input) => sortLinesDesc(input),
   },
   {
@@ -63,7 +59,6 @@ export const textUtilsOperations: Operation[] = [
     name: 'Reverse Text',
     category: 'text',
     params: [],
-    chainable: true,
     fn: (input) => reverseString(input),
   },
   {
@@ -71,7 +66,6 @@ export const textUtilsOperations: Operation[] = [
     name: 'Reverse Lines',
     category: 'text',
     params: [],
-    chainable: true,
     fn: (input) => reverseLines(input),
   },
   {
@@ -79,7 +73,6 @@ export const textUtilsOperations: Operation[] = [
     name: 'Text to Slug',
     category: 'text',
     params: [],
-    chainable: true,
     fn: (input) => toSlug(input),
   },
   {
@@ -87,7 +80,6 @@ export const textUtilsOperations: Operation[] = [
     name: 'Trim Lines',
     category: 'text',
     params: [],
-    chainable: true,
     fn: (input) => trimLines(input),
   },
   {
@@ -95,7 +87,6 @@ export const textUtilsOperations: Operation[] = [
     name: 'Collapse Spaces',
     category: 'text',
     params: [],
-    chainable: true,
     fn: (input) => collapseSpaces(input),
   },
   {
@@ -103,7 +94,6 @@ export const textUtilsOperations: Operation[] = [
     name: 'Remove Blank Lines',
     category: 'text',
     params: [],
-    chainable: true,
     fn: (input) => removeBlankLines(input),
   },
   {
@@ -130,7 +120,6 @@ export const textUtilsOperations: Operation[] = [
         default: '',
       },
     ],
-    chainable: true,
     fn: (input, p) => regexFindReplace(input, p.pattern ?? '', p.flags ?? 'g', p.replacement ?? ''),
   },
 ];

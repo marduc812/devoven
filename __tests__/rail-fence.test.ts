@@ -44,18 +44,40 @@ describe('railFenceAsciiArt', () => {
     const art = railFenceAsciiArt('HELLO', 3);
     expect(art.split('\n')).toHaveLength(3);
   });
+  it('draws the zigzag with spaces for empty cells', () => {
+    expect(railFenceAsciiArt('HELLO', 3).split('\n')).toEqual([
+      'H   O',
+      ' E L ',
+      '  L  ',
+    ]);
+  });
+  it('rows are all the same width', () => {
+    const rows = railFenceAsciiArt('WEAREDISCOVERED', 4).split('\n');
+    expect(new Set(rows.map(r => r.length))).toEqual(new Set([15]));
+  });
+  it('caps the grid at maxColumns', () => {
+    const rows = railFenceAsciiArt('A'.repeat(500), 3, 40).split('\n');
+    expect(rows.every(r => r.length === 40)).toBe(true);
+  });
   it('returns empty for empty text', () => {
     expect(railFenceAsciiArt('', 3)).toBe('');
   });
 });
 
 describe('processRailFence', () => {
-  it('encode mode returns result and art', () => {
+  it('returns the ciphertext alone, with no diagram appended', () => {
     const r = processRailFence('HELLO', 3, 'encode');
-    expect(r).toContain('---');
-    expect(r).toContain('Zigzag');
+    expect(r).toBe(railFenceEncode('HELLO', 3));
+    expect(r).not.toContain('\n');
+  });
+  it('decode mode reverses encode mode', () => {
+    const encoded = processRailFence('WEAREDISCOVERED', 4, 'encode');
+    expect(processRailFence(encoded, 4, 'decode')).toBe('WEAREDISCOVERED');
   });
   it('returns empty for empty input', () => {
     expect(processRailFence('', 3, 'encode')).toBe('');
+  });
+  it('propagates the rails error', () => {
+    expect(() => processRailFence('HELLO', 1, 'encode')).toThrow(/at least 2/);
   });
 });

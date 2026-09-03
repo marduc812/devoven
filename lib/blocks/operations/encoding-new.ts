@@ -21,7 +21,6 @@ export const newEncodingOperations: Operation[] = [
     name: 'Base32 Encode',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => base32Encode(input),
   },
   {
@@ -29,7 +28,6 @@ export const newEncodingOperations: Operation[] = [
     name: 'Base32 Decode',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => base32Decode(input),
   },
   {
@@ -37,7 +35,6 @@ export const newEncodingOperations: Operation[] = [
     name: 'Base58 Encode',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => base58Encode(input),
   },
   {
@@ -45,7 +42,6 @@ export const newEncodingOperations: Operation[] = [
     name: 'Base58 Decode',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => base58Decode(input),
   },
   {
@@ -53,7 +49,6 @@ export const newEncodingOperations: Operation[] = [
     name: 'Ascii85 Encode',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => ascii85Encode(input),
   },
   {
@@ -61,7 +56,6 @@ export const newEncodingOperations: Operation[] = [
     name: 'Ascii85 Decode',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => ascii85Decode(input),
   },
   {
@@ -69,7 +63,6 @@ export const newEncodingOperations: Operation[] = [
     name: 'ROT13',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => rot13(input),
   },
   {
@@ -77,7 +70,6 @@ export const newEncodingOperations: Operation[] = [
     name: 'ROT47',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => rot47(input),
   },
   {
@@ -93,7 +85,6 @@ export const newEncodingOperations: Operation[] = [
         default: '3',
       },
     ],
-    chainable: true,
     fn: (input, params) => caesarEncode(input, parseInt(params.shift ?? '3')),
   },
   {
@@ -109,7 +100,6 @@ export const newEncodingOperations: Operation[] = [
         default: '3',
       },
     ],
-    chainable: true,
     fn: (input, params) => caesarDecode(input, parseInt(params.shift ?? '3')),
   },
   {
@@ -117,7 +107,6 @@ export const newEncodingOperations: Operation[] = [
     name: 'Morse Encode',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => morseEncode(input),
   },
   {
@@ -125,7 +114,6 @@ export const newEncodingOperations: Operation[] = [
     name: 'Morse Decode',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => morseDecode(input),
   },
   {
@@ -133,7 +121,6 @@ export const newEncodingOperations: Operation[] = [
     name: 'Quoted-Printable Encode',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => quotedPrintableEncode(input),
   },
   {
@@ -141,7 +128,6 @@ export const newEncodingOperations: Operation[] = [
     name: 'Quoted-Printable Decode',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => quotedPrintableDecode(input),
   },
   {
@@ -149,7 +135,6 @@ export const newEncodingOperations: Operation[] = [
     name: 'JWT Decode',
     category: 'encoding',
     params: [],
-    chainable: false,
     fn: (input) => jwtDecode(input),
   },
 ];

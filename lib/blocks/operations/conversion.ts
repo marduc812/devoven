@@ -1,6 +1,6 @@
 import { keccak_256 } from 'js-sha3';
 import { hexToBytes, stringToHex, hexToString, numberToHex, hexToNumber } from 'web3-utils';
-import { hexToRgb, rgbToHex, textToBinary, binaryToString, hexToBinary as hexToBinaryFn } from '@/Components/Functions/Utils';
+import { hexToRgb, textToBinary, binaryToString, hexToBinary as hexToBinaryFn } from '@/Components/Functions/Utils';
 import { generateColorScheme } from '@/Components/Functions/ColorSchemeTools/logic';
 import { toEIP55Checksum } from '@/Components/Functions/EthChecksumTools/logic';
 import { Operation } from '../types';
@@ -10,7 +10,6 @@ const ethPublicToAddress: Operation = {
   name: 'ETH Public Key → Address',
   category: 'conversion',
   params: [],
-  chainable: false,
   fn: (input) => {
     const userInput = input.replace('0x', '');
     let formattedInput = userInput.replace(/^04/, '');
@@ -26,7 +25,6 @@ const ethChecksum: Operation = {
   name: 'ETH Address → EIP-55 Checksum',
   category: 'conversion',
   params: [],
-  chainable: true,
   fn: (input) => {
     const result = toEIP55Checksum(input);
     if (!result.checksummed) throw new Error(result.error ?? 'Invalid Ethereum address');
@@ -39,24 +37,10 @@ const hexToRgbOp: Operation = {
   name: 'Hex → RGB',
   category: 'conversion',
   params: [],
-  chainable: false,
   fn: (input) => {
     const rgb = hexToRgb(input);
     if (!rgb) throw new Error('Invalid hex color');
     return `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
-  },
-};
-
-const rgbToHexOp: Operation = {
-  id: 'rgb-to-hex',
-  name: 'RGB → Hex',
-  category: 'conversion',
-  params: [],
-  chainable: false,
-  fn: (input) => {
-    const match = input.match(/(\d+)[,\s]+(\d+)[,\s]+(\d+)/);
-    if (!match) throw new Error('Invalid RGB input. Expected format: r, g, b');
-    return rgbToHex(parseInt(match[1]), parseInt(match[2]), parseInt(match[3]));
   },
 };
 
@@ -78,7 +62,6 @@ const textReplace: Operation = {
       default: 'plain',
     },
   ],
-  chainable: true,
   fn: (input, params) => {
     const find = params['find'] ?? '';
     const replace = params['replace'] ?? '';
@@ -96,7 +79,6 @@ const stringToBinary: Operation = {
   name: 'String to Binary',
   category: 'conversion',
   params: [],
-  chainable: true,
   fn: (input) => textToBinary(input),
 };
 
@@ -105,7 +87,6 @@ const binaryToStringOp: Operation = {
   name: 'Binary to String',
   category: 'conversion',
   params: [],
-  chainable: true,
   fn: (input) => binaryToString(input),
 };
 
@@ -114,7 +95,6 @@ const binaryToHex: Operation = {
   name: 'Binary to Hex',
   category: 'conversion',
   params: [],
-  chainable: true,
   fn: (input) => {
     if (!/\b[01]+\b/.test(input) || input === '') throw new Error('Invalid binary input');
     const groups = input.replace(/\s/g, '').match(/.{4}/g);
@@ -128,7 +108,6 @@ const hexToBinary: Operation = {
   name: 'Hex to Binary',
   category: 'conversion',
   params: [],
-  chainable: true,
   fn: (input) => hexToBinaryFn(input),
 };
 
@@ -137,7 +116,6 @@ const textToHex: Operation = {
   name: 'Text to Hex',
   category: 'conversion',
   params: [],
-  chainable: true,
   fn: (input) => {
     let result = '';
     for (let i = 0; i < input.length; i++) {
@@ -152,7 +130,6 @@ const hexToText: Operation = {
   name: 'Hex to Text',
   category: 'conversion',
   params: [],
-  chainable: true,
   fn: (input) => {
     const cleaned = input.replace(/0x/g, '').replace(/\s+/g, '');
     const hexValues = cleaned.match(/.{1,2}/g) || [];
@@ -165,7 +142,6 @@ const stringToBytes32: Operation = {
   name: 'String to Bytes32',
   category: 'conversion',
   params: [],
-  chainable: true,
   fn: (input) => stringToHex(input),
 };
 
@@ -174,7 +150,6 @@ const bytes32ToString: Operation = {
   name: 'Bytes32 to String',
   category: 'conversion',
   params: [],
-  chainable: true,
   fn: (input) => {
     const hexChunks = input.split(' ').map((chunk) => (chunk.startsWith('0x') ? chunk.slice(2) : chunk));
     const normalized = '0x' + hexChunks.join('');
@@ -188,7 +163,6 @@ const numberToBytes32: Operation = {
   name: 'Number to Bytes32',
   category: 'conversion',
   params: [],
-  chainable: true,
   fn: (input) => numberToHex(input),
 };
 
@@ -197,7 +171,6 @@ const bytes32ToNumber: Operation = {
   name: 'Bytes32 to Number',
   category: 'conversion',
   params: [],
-  chainable: true,
   fn: (input) => {
     const hexChunks = input.split(' ').map((chunk) => (chunk.startsWith('0x') ? chunk.slice(2) : chunk));
     const normalized = '0x' + hexChunks.join('');
@@ -211,7 +184,6 @@ const decToHex: Operation = {
   name: 'Dec to Hex',
   category: 'conversion',
   params: [],
-  chainable: true,
   fn: (input) => {
     const num = parseInt(input, 10);
     if (isNaN(num)) throw new Error('Invalid decimal input');
@@ -224,7 +196,6 @@ const hexToDec: Operation = {
   name: 'Hex to Dec',
   category: 'conversion',
   params: [],
-  chainable: true,
   fn: (input) => {
     const cleaned = input.startsWith('0x') || input.startsWith('0X') ? input.slice(2) : input;
     const num = parseInt(cleaned, 16);
@@ -238,7 +209,6 @@ const decToOctal: Operation = {
   name: 'Dec to Octal',
   category: 'conversion',
   params: [],
-  chainable: true,
   fn: (input) => {
     const num = parseInt(input, 10);
     if (isNaN(num)) throw new Error('Invalid decimal input');
@@ -251,7 +221,6 @@ const octalToDec: Operation = {
   name: 'Octal to Dec',
   category: 'conversion',
   params: [],
-  chainable: true,
   fn: (input) => {
     if (!/^[0-7]+$/.test(input)) throw new Error('Invalid octal input');
     return parseInt(input, 8).toString(10);
@@ -275,7 +244,6 @@ const timestampToHuman: Operation = {
       default: 'auto',
     },
   ],
-  chainable: true,
   fn: (input, params) => {
     const raw = input.trim();
     if (!/^-?\d+(\.\d+)?$/.test(raw)) throw new Error('Invalid timestamp');
@@ -307,7 +275,6 @@ const humanToTimestamp: Operation = {
       default: 'ms',
     },
   ],
-  chainable: true,
   fn: (input, params) => {
     const d = new Date(input.trim());
     if (isNaN(d.getTime())) throw new Error('Invalid date string');
@@ -323,7 +290,6 @@ const colorScheme: Operation = {
   name: 'Hex → Colour Scheme',
   category: 'conversion',
   params: [],
-  chainable: false,
   terminal: true,
   fn: (input) => generateColorScheme(input.trim()),
 };
@@ -332,7 +298,6 @@ export const conversionOperations: Operation[] = [
   ethPublicToAddress,
   ethChecksum,
   hexToRgbOp,
-  rgbToHexOp,
   textReplace,
   stringToBinary,
   binaryToStringOp,

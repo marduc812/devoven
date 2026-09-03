@@ -142,6 +142,25 @@ function parseHsvString(hsv: string): { h: number; s: number; v: number } {
   return { h: parts[0], s: parts[1], v: parts[2] };
 }
 
+// ─── Channel-level entry points ──────────────────────────────────────────────
+// The Blocks builder collects H, S and L as separate fields, so it needs the
+// maths without the string parsing.
+
+export function hslChannelsToHex(h: number, s: number, l: number): string {
+  const { r, g, b } = hslChannelsToRgb(h, s, l);
+  return rgbToHexLocal(r, g, b);
+}
+
+export function hslChannelsToRgbString(h: number, s: number, l: number): string {
+  const { r, g, b } = hslChannelsToRgb(h, s, l);
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+export function hsvChannelsToHex(h: number, s: number, v: number): string {
+  const { r, g, b } = hsvChannelsToRgb(h, s, v);
+  return rgbToHexLocal(r, g, b);
+}
+
 // ─── HEX ↔ HSL ───────────────────────────────────────────────────────────────
 
 export function hexToHsl(hex: string): string {

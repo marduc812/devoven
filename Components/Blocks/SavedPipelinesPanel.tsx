@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { createPortal } from 'react-dom';
 import { SavedPipeline, PipelineState } from '@/lib/blocks/types';
-import { loadSavedPipelines, savePipeline, deletePipeline } from '@/lib/blocks/storage';
-import { IoCloseOutline, IoTrashOutline, IoDownloadOutline } from 'react-icons/io5';
+import { loadSavedPipelines, savePipeline, deletePipeline, exportPipelineJson, importPipelineJson } from '@/lib/blocks/storage';
+import { IoCloseOutline, IoTrashOutline, IoDownloadOutline, IoCodeDownloadOutline, IoFolderOpenOutline } from 'react-icons/io5';
 
 type SavedPipelinesPanelProps = {
   currentPipeline: PipelineState;
@@ -29,6 +30,28 @@ function SavedPipelinesPanelContent({ currentPipeline, onLoad, onClose }: SavedP
   const handleDelete = (name: string) => {
     deletePipeline(name);
     setSavedPipelines(loadSavedPipelines());
+  };
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // The JSON file is the pipeline's own format: what a `?p=` link carries,
+  // readable and diffable, so it can live in a repo or be sent around.
+  const downloadJson = (pipeline: PipelineState, name: string) => {
+    const blob = new Blob([exportPipelineJson(pipeline, name)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${name.replace(/[^\w.-]+/g, '-').replace(/^-+|-+$/g, '') || 'blocks'}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportFile = async (file: File | undefined) => {
+    if (!file) return;
+    const loaded = importPipelineJson(await file.text());
+    if (!loaded) { toast.error('That file is not a blocks pipeline'); return; }
+    onLoad(loaded);
+    onClose();
   };
 
   const formatDate = (ts: number) =>
@@ -69,6 +92,32 @@ function SavedPipelinesPanelContent({ currentPipeline, onLoad, onClose }: SavedP
               Save
             </button>
           </div>
+          <div className="flex gap-2 mt-2">
+            <button
+              onClick={() => downloadJson(currentPipeline, saveName.trim() || 'blocks')}
+              disabled={currentPipeline.blocks.length === 0}
+              title="Download the current pipeline as a JSON file"
+              className="flex items-center gap-1 text-xs px-2.5 py-1 border border-gray-300 text-gray-500 hover:border-gray-900 hover:text-gray-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors duration-150"
+            >
+              <IoCodeDownloadOutline className="text-sm" />
+              Export JSON
+            </button>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              title="Load a pipeline from a JSON file"
+              className="flex items-center gap-1 text-xs px-2.5 py-1 border border-gray-300 text-gray-500 hover:border-gray-900 hover:text-gray-900 transition-colors duration-150"
+            >
+              <IoFolderOpenOutline className="text-sm" />
+              Import JSON
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="application/json,.json"
+              className="hidden"
+              onChange={(e) => { void handleImportFile(e.target.files?.[0]); e.target.value = ''; }}
+            />
+          </div>
         </div>
 
         {/* Saved list */}
@@ -89,6 +138,13 @@ function SavedPipelinesPanelContent({ currentPipeline, onLoad, onClose }: SavedP
                 </span>
               </div>
               <div className="flex gap-2 flex-shrink-0 ml-2">
+                <button
+                  onClick={() => downloadJson(sp.pipeline, sp.name)}
+                  title="Export as JSON"
+                  className="text-gray-400 hover:text-gray-900 transition-colors"
+                >
+                  <IoCodeDownloadOutline className="text-lg" />
+                </button>
                 <button
                   onClick={() => { onLoad(sp.pipeline); onClose(); }}
                   title="Load pipeline"
