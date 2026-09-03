@@ -87,28 +87,47 @@ and shows it on the block.
 
 | Field | Meaning |
 |---|---|
-| `category` | `encoding` / `hashing` / `conversion` / `data` / `text` / `network` / `analysis` — picker grouping and accent color, from `Components/Blocks/categoryMeta.ts` |
+| `category` | `encoding` / `hashing` / `conversion` / `data` / `text` / `network` / `analysis` / `logic` / `flow` — picker grouping and accent color, from `Components/Blocks/categoryMeta.ts` |
 | `params` | `select` (needs `options`, and `default` must be one of them) or free `text` |
-| `chainable: false` | warns in the picker that the output is awkward to feed onward |
+| `inputs` | named fields for an operation that takes several values at once (`[{ id: 'r', label: 'R' }, …]`, or message and key, or two texts). One box per field on the block; the previous output flows into the linked field (`BlockState.linked`, first by default) and the user types the rest. `fn` reads them from `params` by id. A second operand is a field, never a `text` param: `params` is for settings. See `lib/blocks/operations/color.ts`, `compare.ts`, and the HMACs in `hashing.ts` |
 | `terminal: true` | the output is a final result, not a value — the pipeline *stops* here, downstream blocks are marked unreachable, and the picker tags it `END` |
 | `output` | `'qr'` / `'barcode'` renders an image instead of text; `fn` returns the payload and `TerminalArtifact.tsx` draws it. Always terminal |
+| `control` | `'each'` / `'collect'` / `'remember'` / `'recall'` — a flow block the runner handles itself; `fn` is never called. Only `lib/blocks/operations/flow.ts` sets this |
+
+Two runtime facts every operation can rely on: a text param or input field
+may contain `{name}` references that the runner has already replaced with a
+value remembered upstream, and throwing `DroppedItem` (from `lib/blocks/types.ts`)
+removes the current item without an error, which inside an Each Line section
+filters that line out.
 
 Which side of the line:
 
-- **In, chainable** — anything a user would keep transforming: encoders, ciphers,
-  hashes, format converters, text reshapers, address/number conversions.
+- **In** — anything a user would keep transforming: encoders, ciphers,
+  hashes, format converters, text reshapers, address/number conversions. There
+  is no "chainable" flag: any string output can feed the next block.
 - **In, terminal** — anything whose result is a report or a picture: entropy,
   readability, frequency tables, validators, decoders that explain a value, QR
   and barcode.
-- **Out** — media and file tools; anything needing two inputs (diff, similarity);
+- **In, with `inputs`** — anything that takes more than one value: colour
+  channels, a message and a key, a password and a salt, two strings to
+  compare, two dates. Never make the user type comma-separated values into one
+  field, and never park the second value in `params`.
+- **Out** — media and file tools; anything needing two long texts (diff);
   reference tables; interactive or stateful generators.
 
 Register in the file under `lib/blocks/operations/` that matches the operation
 (`ciphers.ts`, `hashing-extra.ts`, `data-extra.ts`, `text-extra.ts`,
 `network.ts`, `analysis.ts`, …), or start a new file and add it to
 `lib/blocks/registry.ts`. `__tests__/blocks-pipeline.test.ts` enforces the
-registry invariants — unique ids, no terminal-and-chainable, every `select`
-default present in its own options — so a sloppy entry fails the suite.
+registry invariants — unique ids, rendered outputs only on terminal blocks,
+every `select` default present in its own options, field ids distinct from
+param ids — so a sloppy entry fails the suite.
+
+The input pane at the top of `/blocks` follows the first block: no blocks means
+no input or output pane at all, a single-input block gets the textarea, and a
+multi-input block gets one box per field (the linked field is
+`pipeline.input`, the rest are the block's values). The block card at index 0
+hides its own field row for that reason.
 
 ## View primitives
 
@@ -179,6 +198,7 @@ and shows progress while it runs. Never a silent 30 MB fetch.
 
 - Logic left inside the component, so `__tests__/` can't reach it.
 - Registering in `menu.ts` but forgetting `lib/blocks/operations/` for a text op.
+- A block that parses `r, g, b` out of its one input instead of declaring `inputs`.
 - Adding a block whose output is a report or a picture without `terminal: true`,
   so the builder lets users chain garbage onto the end of it.
 - New category color added to `menu.ts` only — the type union and the three

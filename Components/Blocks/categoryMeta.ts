@@ -8,6 +8,8 @@ export const CATEGORY_ORDER: OperationCategory[] = [
   'text',
   'network',
   'analysis',
+  'logic',
+  'flow',
 ];
 
 export const categoryLabel: Record<OperationCategory, string> = {
@@ -18,6 +20,8 @@ export const categoryLabel: Record<OperationCategory, string> = {
   text:       'Text',
   network:    'Network',
   analysis:   'Analysis',
+  logic:      'Logic',
+  flow:       'Flow',
 };
 
 export const categoryShortLabel: Record<OperationCategory, string> = {
@@ -28,6 +32,8 @@ export const categoryShortLabel: Record<OperationCategory, string> = {
   text:       'Text',
   network:    'Network',
   analysis:   'Analysis',
+  logic:      'Logic',
+  flow:       'Flow',
 };
 
 export const categoryAccent: Record<OperationCategory, string> = {
@@ -38,4 +44,6 @@ export const categoryAccent: Record<OperationCategory, string> = {
   text:       'bg-rose-400',
   network:    'bg-sky-400',
   analysis:   'bg-lime-400',
+  logic:      'bg-orange-400',
+  flow:       'bg-violet-400',
 };

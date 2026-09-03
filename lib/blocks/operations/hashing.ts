@@ -11,12 +11,12 @@ import {
 } from 'js-sha3';
 import { Operation } from '../types';
 
-const keyParam = {
-  id: 'key',
-  label: 'Secret Key',
-  kind: 'text' as const,
-  default: '',
-};
+// An HMAC takes the message and the secret as two named fields, so either one
+// can be fed by the previous block (derive a key upstream, say).
+const hmacFields = [
+  { id: 'message', label: 'Message' },
+  { id: 'key', label: 'Secret Key' },
+];
 
 export const hashingOperations: Operation[] = [
   {
@@ -24,7 +24,6 @@ export const hashingOperations: Operation[] = [
     name: 'MD5',
     category: 'hashing',
     params: [],
-    chainable: true,
     fn: (input) => CryptoJS.MD5(input).toString(),
   },
   {
@@ -32,7 +31,6 @@ export const hashingOperations: Operation[] = [
     name: 'SHA1',
     category: 'hashing',
     params: [],
-    chainable: true,
     fn: (input) => CryptoJS.SHA1(input).toString(),
   },
   {
@@ -40,7 +38,6 @@ export const hashingOperations: Operation[] = [
     name: 'SHA224',
     category: 'hashing',
     params: [],
-    chainable: true,
     fn: (input) => CryptoJS.SHA224(input).toString(),
   },
   {
@@ -48,7 +45,6 @@ export const hashingOperations: Operation[] = [
     name: 'SHA256',
     category: 'hashing',
     params: [],
-    chainable: true,
     fn: (input) => CryptoJS.SHA256(input).toString(),
   },
   {
@@ -56,7 +52,6 @@ export const hashingOperations: Operation[] = [
     name: 'SHA384',
     category: 'hashing',
     params: [],
-    chainable: true,
     fn: (input) => CryptoJS.SHA384(input).toString(),
   },
   {
@@ -64,7 +59,6 @@ export const hashingOperations: Operation[] = [
     name: 'SHA512',
     category: 'hashing',
     params: [],
-    chainable: true,
     fn: (input) => CryptoJS.SHA512(input).toString(),
   },
   {
@@ -72,7 +66,6 @@ export const hashingOperations: Operation[] = [
     name: 'SHA3-224',
     category: 'hashing',
     params: [],
-    chainable: true,
     fn: (input) => sha3_224(input),
   },
   {
@@ -80,7 +73,6 @@ export const hashingOperations: Operation[] = [
     name: 'SHA3-256',
     category: 'hashing',
     params: [],
-    chainable: true,
     fn: (input) => sha3_256(input),
   },
   {
@@ -88,7 +80,6 @@ export const hashingOperations: Operation[] = [
     name: 'SHA3-384',
     category: 'hashing',
     params: [],
-    chainable: true,
     fn: (input) => sha3_384(input),
   },
   {
@@ -96,7 +87,6 @@ export const hashingOperations: Operation[] = [
     name: 'SHA3-512',
     category: 'hashing',
     params: [],
-    chainable: true,
     fn: (input) => sha3_512(input),
   },
   {
@@ -104,7 +94,6 @@ export const hashingOperations: Operation[] = [
     name: 'Keccak-224',
     category: 'hashing',
     params: [],
-    chainable: true,
     fn: (input) => keccak224(input),
   },
   {
@@ -112,7 +101,6 @@ export const hashingOperations: Operation[] = [
     name: 'Keccak-256',
     category: 'hashing',
     params: [],
-    chainable: true,
     fn: (input) => keccak256(input),
   },
   {
@@ -120,7 +108,6 @@ export const hashingOperations: Operation[] = [
     name: 'Keccak-384',
     category: 'hashing',
     params: [],
-    chainable: true,
     fn: (input) => keccak384(input),
   },
   {
@@ -128,7 +115,6 @@ export const hashingOperations: Operation[] = [
     name: 'Keccak-512',
     category: 'hashing',
     params: [],
-    chainable: true,
     fn: (input) => keccak512(input),
   },
   {
@@ -136,71 +122,70 @@ export const hashingOperations: Operation[] = [
     name: 'RIPEMD160',
     category: 'hashing',
     params: [],
-    chainable: true,
     fn: (input) => CryptoJS.RIPEMD160(input).toString(),
   },
   {
     id: 'hmac-md5',
     name: 'HMAC-MD5',
     category: 'hashing',
-    params: [keyParam],
-    chainable: true,
-    fn: (input, params) => CryptoJS.HmacMD5(input, params.key || '').toString(),
+    inputs: hmacFields,
+    params: [],
+    fn: (_input, p) => CryptoJS.HmacMD5(p.message ?? '', p.key || '').toString(),
   },
   {
     id: 'hmac-sha1',
     name: 'HMAC-SHA1',
     category: 'hashing',
-    params: [keyParam],
-    chainable: true,
-    fn: (input, params) => CryptoJS.HmacSHA1(input, params.key || '').toString(),
+    inputs: hmacFields,
+    params: [],
+    fn: (_input, p) => CryptoJS.HmacSHA1(p.message ?? '', p.key || '').toString(),
   },
   {
     id: 'hmac-sha224',
     name: 'HMAC-SHA224',
     category: 'hashing',
-    params: [keyParam],
-    chainable: true,
-    fn: (input, params) => CryptoJS.HmacSHA224(input, params.key || '').toString(),
+    inputs: hmacFields,
+    params: [],
+    fn: (_input, p) => CryptoJS.HmacSHA224(p.message ?? '', p.key || '').toString(),
   },
   {
     id: 'hmac-sha256',
     name: 'HMAC-SHA256',
     category: 'hashing',
-    params: [keyParam],
-    chainable: true,
-    fn: (input, params) => CryptoJS.HmacSHA256(input, params.key || '').toString(),
+    inputs: hmacFields,
+    params: [],
+    fn: (_input, p) => CryptoJS.HmacSHA256(p.message ?? '', p.key || '').toString(),
   },
   {
     id: 'hmac-sha384',
     name: 'HMAC-SHA384',
     category: 'hashing',
-    params: [keyParam],
-    chainable: true,
-    fn: (input, params) => CryptoJS.HmacSHA384(input, params.key || '').toString(),
+    inputs: hmacFields,
+    params: [],
+    fn: (_input, p) => CryptoJS.HmacSHA384(p.message ?? '', p.key || '').toString(),
   },
   {
     id: 'hmac-sha512',
     name: 'HMAC-SHA512',
     category: 'hashing',
-    params: [keyParam],
-    chainable: true,
-    fn: (input, params) => CryptoJS.HmacSHA512(input, params.key || '').toString(),
+    inputs: hmacFields,
+    params: [],
+    fn: (_input, p) => CryptoJS.HmacSHA512(p.message ?? '', p.key || '').toString(),
   },
   {
     id: 'hmac-sha3',
     name: 'HMAC-SHA3',
     category: 'hashing',
-    params: [keyParam],
-    chainable: true,
-    fn: (input, params) => CryptoJS.HmacSHA3(input, params.key || '').toString(),
+    inputs: hmacFields,
+    params: [],
+    fn: (_input, p) => CryptoJS.HmacSHA3(p.message ?? '', p.key || '').toString(),
   },
   {
     id: 'hmac-ripemd160',
     name: 'HMAC-RIPEMD160',
     category: 'hashing',
-    params: [keyParam],
-    chainable: true,
-    fn: (input, params) => CryptoJS.HmacRIPEMD160(input, params.key || '').toString(),
+    inputs: hmacFields,
+    params: [],
+    fn: (_input, p) => CryptoJS.HmacRIPEMD160(p.message ?? '', p.key || '').toString(),
   },
 ];

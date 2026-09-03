@@ -72,14 +72,40 @@ into a pipeline where each block's output feeds the next. It imports the tools'
 - **Registry**: `lib/blocks/registry.ts` concatenates the files in
   `lib/blocks/operations/` (`encoding.ts`, `encoding-new.ts`, `encoding-extra.ts`,
   `ciphers.ts`, `hashing.ts`, `hashing-extra.ts`, `conversion.ts`,
-  `data-format.ts`, `data-extra.ts`, `text-utils.ts`, `text-extra.ts`,
-  `network.ts`, `analysis.ts`). Add to the file that matches the operation, or
+  `color.ts`, `data-format.ts`, `data-extra.ts`, `text-utils.ts`,
+  `text-extra.ts`, `network.ts`, `analysis.ts`, `compare.ts`, `logic.ts`, `flow.ts`). Add to the file that matches the operation, or
   start a new one and wire it into the registry.
 - **Shape**: an `Operation` is `(input: string, params) => string`. It throws an
   `Error` with a human-readable message on bad input; the pipeline catches it and
   shows it on the block. No async, no DOM.
-- **`chainable`**: `false` warns in the picker that the output is awkward to feed
-  onward (e.g. a color string).
+- **`inputs`**: for an operation that takes several values at once (R, G, B;
+  message and key; two texts), a list of named fields instead of one input
+  string. The block renders one box per field; the previous block's output
+  flows into the *linked* field (`BlockState.linked`, first field by default,
+  `null` for none) and the user types the rest. `fn` reads every field from
+  `params` by id. Never parse comma-separated values out of `input`, and never
+  hide a second operand (a key, a salt) in `params`: `params` is for settings.
+- **The input pane follows the first block**: with no blocks the page shows
+  neither input nor output; a single-input first block gets the textarea; a
+  multi-input first block gets one box per field at the top of the page (the
+  linked one is `pipeline.input`, the rest are the block's own values), and
+  the block card itself hides its field row.
+- **Logic** (`logic.ts`): Length, Arithmetic, Round, Compare, And/Or/Xor/Not,
+  Choose and Keep If. Booleans travel as the strings `true`/`false` and numbers
+  as decimal text, so they chain like anything else. Keep If throws
+  `DroppedItem` (from `types.ts`) to remove the current item without an error.
+- **Flow** (`flow.ts`): blocks with `control` set, which the runner in
+  `pipeline.ts` handles itself and never calls `fn` on. `each` (Each Line)
+  splits the value and runs every later block once per item until `collect`
+  (Collect) joins them or the pipeline ends; a block's shown output is the
+  items joined back with the separator. `remember` stores the value under a
+  name and `recall` brings it back; any later text param or field may write
+  `{name}`, and only names actually remembered upstream are substituted, so a
+  regex quantifier like `{2,3}` is left alone. Inside an Each Line section a
+  Remember is per item. Do not name these after CyberChef's Fork, Merge,
+  Register or Jump.
+- There is no "chainable" flag. Every non-terminal output is a string someone
+  can feed onward, so the only thing that stops a chain is `terminal`.
 - **`terminal: true`**: the output is a final result, not a value - a rendered
   artifact or a human-readable report. The pipeline *stops* at a terminal block:
   everything after it is marked unreachable, and the picker tags it `END`. Set
@@ -87,11 +113,19 @@ into a pipeline where each block's output feeds the next. It imports the tools'
 - **`output`**: `'qr'` or `'barcode'` makes the block render an image instead of
   text (see `Components/Blocks/TerminalArtifact.tsx`). Rendered outputs are
   always terminal; `fn` returns the payload and the component draws it.
-- **Not everything belongs**: media, file, and multi-input tools (diff, anything
-  needing two texts) stay out. Reference tables and interactive generators stay
-  out. Anything whose result is a report can go in as `terminal`.
+- **Not everything belongs**: media and file tools stay out, as does anything
+  needing two long texts (diff). Multi-value inputs use `inputs`. Reference
+  tables and interactive generators stay out. Anything whose result is a
+  report can go in as `terminal`.
+- **Persistence**: the pipeline is saved as a draft in local storage on every
+  change and restored when `/blocks` opens without `?p=`; the address bar is
+  kept in sync with `?p=` while the encoded pipeline fits in a URL. The
+  Save / Load panel also exports and imports the pipeline as JSON
+  (`exportPipelineJson` / `importPipelineJson` in `lib/blocks/storage.ts`),
+  validated the same way a share link is.
 - Tests live in `__tests__/blocks-pipeline.test.ts`, which enforces the registry
-  invariants (unique ids, no terminal-and-chainable, select defaults valid).
+  invariants (unique ids, rendered outputs only on terminal blocks, select
+  defaults valid, field ids distinct from param ids).
 
 ### View Components (`Components/MainView/MainPanel/`)
 

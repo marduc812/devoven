@@ -27,6 +27,53 @@ describe('serializePipeline / deserializePipeline', () => {
   });
 });
 
+describe('multi-input blocks in a shared pipeline', () => {
+  const rgb = (extra: Record<string, unknown>) =>
+    validatePipeline({ input: '', blocks: [{ id: 'b1', operationId: 'rgb-to-hex', params: { r: '1', g: '2', b: '3' }, enabled: true, ...extra }] })?.blocks[0];
+
+  it('round-trips the field values and the link', () => {
+    const state: PipelineState = {
+      input: '255',
+      blocks: [{ id: 'b1', operationId: 'rgb-to-hex', params: { r: '', g: '0', b: '0' }, enabled: true, linked: 'r' }],
+    };
+    expect(deserializePipeline(serializePipeline(state))).toEqual(state);
+  });
+
+  it('keeps a deliberate null link', () => {
+    expect(rgb({ linked: null })?.linked).toBeNull();
+  });
+
+  it('links the first field when the link is missing or names a field the operation lacks', () => {
+    expect(rgb({})?.linked).toBe('r');
+    expect(rgb({ linked: 'alpha' })?.linked).toBe('r');
+    expect(rgb({ linked: 42 })?.linked).toBe('r');
+  });
+
+  it('fills a missing or oversized field with an empty string', () => {
+    const loaded = validatePipeline({
+      input: '',
+      blocks: [{ id: 'b1', operationId: 'rgb-to-hex', params: { r: 'x'.repeat(2001), g: 7 }, enabled: true }],
+    });
+    expect(loaded?.blocks[0].params).toEqual({ r: '', g: '', b: '' });
+  });
+
+  it('upgrades a link saved when the key was still a param', () => {
+    const encoded = serializePipeline({
+      input: 'hello',
+      blocks: [{ id: 'b1', operationId: 'hmac-sha256', params: { key: 'secret' }, enabled: true }],
+    });
+    const loaded = deserializePipeline(encoded);
+    expect(loaded?.blocks[0].params).toEqual({ message: '', key: 'secret' });
+    expect(loaded?.blocks[0].linked).toBe('message');
+  });
+
+  it('never adds a link to a single-input block', () => {
+    expect(deserializePipeline(serializePipeline(rot13))?.blocks[0]).not.toHaveProperty('linked');
+    const loaded = validatePipeline({ input: 'x', blocks: [{ id: 'b1', operationId: 'rot13', params: {}, enabled: true, linked: 'r' }] });
+    expect(loaded?.blocks[0]).not.toHaveProperty('linked');
+  });
+});
+
 describe('validation of a shared pipeline', () => {
   it('rejects an operation id that is not in the registry', () => {
     expect(link({ input: 'x', blocks: [{ id: 'b1', operationId: 'nope', params: {}, enabled: true }] })).toBeNull();

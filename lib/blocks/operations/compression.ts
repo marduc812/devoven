@@ -33,7 +33,6 @@ export const compressionOperations: Operation[] = [
     name: 'Gzip Compress',
     category: 'encoding',
     params: [encodingParam, levelParam],
-    chainable: true,
     fn: (input, params) => compressText(input, 'gzip', encodingOf(params), params.level),
   },
   {
@@ -41,7 +40,6 @@ export const compressionOperations: Operation[] = [
     name: 'Gzip Decompress',
     category: 'encoding',
     params: [encodingParam],
-    chainable: true,
     fn: (input, params) => decompressText(input, 'gzip', encodingOf(params)),
   },
   {
@@ -49,7 +47,6 @@ export const compressionOperations: Operation[] = [
     name: 'Zlib Deflate',
     category: 'encoding',
     params: [encodingParam, levelParam],
-    chainable: true,
     fn: (input, params) => compressText(input, 'zlib', encodingOf(params), params.level),
   },
   {
@@ -57,7 +54,6 @@ export const compressionOperations: Operation[] = [
     name: 'Zlib Inflate',
     category: 'encoding',
     params: [encodingParam],
-    chainable: true,
     fn: (input, params) => decompressText(input, 'zlib', encodingOf(params)),
   },
   {
@@ -65,7 +61,6 @@ export const compressionOperations: Operation[] = [
     name: 'Raw Deflate',
     category: 'encoding',
     params: [encodingParam, levelParam],
-    chainable: true,
     fn: (input, params) => compressText(input, 'raw', encodingOf(params), params.level),
   },
   {
@@ -73,7 +68,6 @@ export const compressionOperations: Operation[] = [
     name: 'Raw Inflate',
     category: 'encoding',
     params: [encodingParam],
-    chainable: true,
     fn: (input, params) => decompressText(input, 'raw', encodingOf(params)),
   },
 ];

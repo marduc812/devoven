@@ -20,7 +20,6 @@ export const dataFormatOperations: Operation[] = [
     name: 'JSON \u2192 YAML',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => jsonToYaml(input),
   },
   {
@@ -28,7 +27,6 @@ export const dataFormatOperations: Operation[] = [
     name: 'YAML \u2192 JSON',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => yamlToJson(input),
   },
   {
@@ -36,7 +34,6 @@ export const dataFormatOperations: Operation[] = [
     name: 'JSON \u2192 XML',
     category: 'data',
     params: [],
-    chainable: false,
     fn: (input) => jsonToXml(input),
   },
   {
@@ -44,7 +41,6 @@ export const dataFormatOperations: Operation[] = [
     name: 'XML \u2192 JSON',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => xmlToJson(input),
   },
   {
@@ -52,7 +48,6 @@ export const dataFormatOperations: Operation[] = [
     name: 'JSON \u2192 CSV',
     category: 'data',
     params: [],
-    chainable: false,
     fn: (input) => jsonToCsv(input),
   },
   {
@@ -60,7 +55,6 @@ export const dataFormatOperations: Operation[] = [
     name: 'CSV \u2192 JSON',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => csvToJson(input),
   },
   {
@@ -68,7 +62,6 @@ export const dataFormatOperations: Operation[] = [
     name: 'JSON \u2192 TOML',
     category: 'data',
     params: [],
-    chainable: false,
     fn: (input) => jsonToToml(input),
   },
   {
@@ -76,7 +69,6 @@ export const dataFormatOperations: Operation[] = [
     name: 'TOML \u2192 JSON',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => tomlToJson(input),
   },
   {
@@ -84,7 +76,6 @@ export const dataFormatOperations: Operation[] = [
     name: 'CSV \u2192 Markdown Table',
     category: 'data',
     params: [],
-    chainable: false,
     fn: (input) => csvToMarkdownTable(input),
   },
   {
@@ -92,7 +83,6 @@ export const dataFormatOperations: Operation[] = [
     name: 'Markdown Table \u2192 CSV',
     category: 'data',
     params: [],
-    chainable: true,
     fn: (input) => markdownTableToCsv(input),
   },
   {
@@ -100,7 +90,6 @@ export const dataFormatOperations: Operation[] = [
     name: 'Markdown \u2192 HTML',
     category: 'data',
     params: [],
-    chainable: false,
     fn: (input) => markdownToHtml(input),
   },
   {
@@ -108,7 +97,6 @@ export const dataFormatOperations: Operation[] = [
     name: 'HTML \u2192 Markdown',
     category: 'data',
     params: [],
-    chainable: false,
     fn: (input) => htmlToMarkdown(input),
   },
   {
@@ -116,7 +104,6 @@ export const dataFormatOperations: Operation[] = [
     name: 'JSON \u2192 TypeScript Interface',
     category: 'data',
     params: [],
-    chainable: false,
     fn: (input) => jsonToTypeScriptInterface(input),
   },
   {
@@ -124,7 +111,6 @@ export const dataFormatOperations: Operation[] = [
     name: 'JSON \u2192 Go Struct',
     category: 'data',
     params: [],
-    chainable: false,
     fn: (input) => jsonToGoStruct(input),
   },
   {
@@ -132,7 +118,6 @@ export const dataFormatOperations: Operation[] = [
     name: 'JSON \u2192 Zod Schema',
     category: 'data',
     params: [],
-    chainable: false,
     fn: (input) => jsonToZodSchema(input),
   },
   {
@@ -151,7 +136,6 @@ export const dataFormatOperations: Operation[] = [
         default: '2',
       },
     ],
-    chainable: true,
     fn: (input, params) => formatJsonInline(input, parseInt(params.indent ?? '2')),
   },
 ];

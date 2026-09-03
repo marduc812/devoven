@@ -6,7 +6,6 @@ const urlEncode: Operation = {
   name: 'URL Encode',
   category: 'encoding',
   params: [],
-  chainable: true,
   fn: (input) => encodeURIComponent(input),
 };
 
@@ -15,7 +14,6 @@ const urlDecode: Operation = {
   name: 'URL Decode',
   category: 'encoding',
   params: [],
-  chainable: true,
   fn: (input) => decodeURIComponent(input),
 };
 
@@ -24,7 +22,6 @@ const htmlEncode: Operation = {
   name: 'HTML Encode',
   category: 'encoding',
   params: [],
-  chainable: true,
   fn: (input) =>
     input
       .replace(/&/g, '&amp;')
@@ -39,7 +36,6 @@ const htmlDecode: Operation = {
   name: 'HTML Decode',
   category: 'encoding',
   params: [],
-  chainable: true,
   fn: (input) => {
     const area = document.createElement('textarea');
     area.innerHTML = input;
@@ -65,7 +61,6 @@ const base64Encode: Operation = {
       default: 'utf-8',
     },
   ],
-  chainable: true,
   fn: (input, params) =>
     Buffer.from(input, (params.encoding || 'utf-8') as BufferEncoding).toString('base64'),
 };
@@ -88,7 +83,6 @@ const base64Decode: Operation = {
       default: 'utf-8',
     },
   ],
-  chainable: true,
   fn: (input, params) =>
     Buffer.from(input, 'base64').toString((params.encoding || 'utf-8') as BufferEncoding),
 };

@@ -64,6 +64,11 @@ function AddBlockModalContent({ insertAtIndex, onAdd, onClose }: AddBlockModalPr
           <p className="text-xs text-gray-400 mt-2">
             <span className="text-[10px] font-bold uppercase tracking-wider px-1 py-px border border-gray-300 text-gray-500">End</span>
             {' '}marks a terminal block — it produces a final result, so nothing runs after it.
+            A block tagged with field names, like{' '}
+            <span className="text-[10px] font-mono px-1 py-px bg-gray-100 text-gray-500">R·G·B</span>, takes several
+            values: the previous output feeds one field, you type the rest. Flow blocks change how the rest runs:
+            Each Line runs every later block once per line, and Remember stores a value you can write as{' '}
+            <span className="text-[10px] font-mono px-1 py-px bg-gray-100 text-gray-500">{'{name}'}</span> in any later field.
           </p>
         </div>
 
@@ -86,15 +91,18 @@ function AddBlockModalContent({ insertAtIndex, onAdd, onClose }: AddBlockModalPr
                   <button
                     key={op.id}
                     onClick={() => { onAdd(op.id, insertAtIndex); onClose(); }}
-                    title={
-                      op.terminal
-                        ? 'Terminal: produces a final result — nothing can run after it'
-                        : op.chainable ? undefined : 'Warning: output may not chain well'
-                    }
+                    title={op.terminal ? 'Terminal: produces a final result — nothing can run after it' : undefined}
                     className="flex items-center gap-1.5 text-sm px-3 py-1.5 border border-gray-300 text-gray-700 font-medium hover:border-gray-900 hover:text-gray-900 hover:bg-gray-50 transition-colors duration-150"
                   >
-                    {!op.chainable && !op.terminal && <span title="Non-chainable output">⚠</span>}
                     {op.name}
+                    {op.inputs && op.inputs.length > 0 && (
+                      <span
+                        className="text-[10px] font-mono px-1 py-px bg-gray-100 text-gray-500"
+                        title={`Takes ${op.inputs.length} inputs: ${op.inputs.map((f) => f.label).join(', ')}`}
+                      >
+                        {op.inputs.map((f) => f.label).join('·')}
+                      </span>
+                    )}
                     {op.terminal && (
                       <span className="text-[10px] font-bold uppercase tracking-wider px-1 py-px border border-gray-400 text-gray-500">
                         End

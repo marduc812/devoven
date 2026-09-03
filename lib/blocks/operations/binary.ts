@@ -36,7 +36,6 @@ export const binaryOperations: Operation[] = [
     name: 'Detect File Type',
     category: 'analysis',
     params: [sourceParam],
-    chainable: false,
     terminal: true,
     fn: (input, params) => {
       const bytes = toBytes(input, params);
@@ -75,7 +74,6 @@ export const binaryOperations: Operation[] = [
         default: 'ascii',
       },
     ],
-    chainable: true,
     fn: (input, params) => {
       const bytes = toBytes(input, params);
       const minLength = parseInt(params.minLength, 10);
@@ -92,7 +90,6 @@ export const binaryOperations: Operation[] = [
     name: 'Scan for Embedded Files',
     category: 'analysis',
     params: [sourceParam],
-    chainable: false,
     terminal: true,
     fn: (input, params) => {
       const bytes = toBytes(input, params);

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { PipelineState, BlockState } from '@/lib/blocks/types';
+import { PipelineState, BlockState, linkedField } from '@/lib/blocks/types';
 import { finalBlock } from '@/lib/blocks/pipeline';
 import { usePipelineResults } from './usePipelineResults';
 import { serializePipeline, deserializePipeline } from '@/lib/blocks/serialization';
@@ -11,9 +11,15 @@ import PipelineOutput from './PipelineOutput';
 import BlockList from './BlockList';
 import AddBlockModal from './AddBlockModal';
 import SavedPipelinesPanel from './SavedPipelinesPanel';
-import { IoAddOutline, IoSaveOutline, IoLayersOutline } from 'react-icons/io5';
+import { IoAddOutline, IoSaveOutline, IoLinkOutline } from 'react-icons/io5';
+import toast from 'react-hot-toast';
+import { loadDraft, saveDraft, clearDraft } from '@/lib/blocks/storage';
 
 const EMPTY_PIPELINE: PipelineState = { input: '', blocks: [] };
+
+// Longest `?p=` the address bar is kept in sync with. The server refuses
+// query strings past ~16KB, so a longer pipeline is only shared on demand.
+const MAX_SYNCED_LINK = 8_000;
 
 function generateId(): string {
   return Math.random().toString(36).slice(2, 10);
@@ -22,7 +28,18 @@ function generateId(): string {
 function buildDefaultParams(operationId: string): Record<string, string> {
   const op = OPERATION_MAP[operationId];
   if (!op) return {};
-  return Object.fromEntries(op.params.map((p) => [p.id, p.default]));
+  return Object.fromEntries([
+    ...op.params.map((p) => [p.id, p.default]),
+    ...(op.inputs ?? []).map((f) => [f.id, '']),
+  ]);
+}
+
+function newBlock(operationId: string): BlockState {
+  const op = OPERATION_MAP[operationId];
+  const block: BlockState = { id: generateId(), operationId, params: buildDefaultParams(operationId), enabled: true };
+  // A multi-input block starts with its first field fed by the previous block.
+  if (op?.inputs && op.inputs.length > 0) block.linked = op.inputs[0].id;
+  return block;
 }
 
 export default function BlocksPage() {
@@ -41,19 +58,46 @@ export default function BlocksPage() {
       const loaded = deserializePipeline(encoded);
       if (loaded) { setPipeline(loaded); return; }
     }
+    const draft = loadDraft();
+    if (draft) setPipeline(draft);
   }, []);
+
+  // Every change is kept: as a draft in local storage, and in the address bar
+  // as `?p=` while it fits, so the URL is always a link to what is on screen.
+  useEffect(() => {
+    if (!isInitialized.current) return;
+    const timer = window.setTimeout(() => {
+      saveDraft(pipeline);
+      const url = new URL(window.location.href);
+      if (pipeline.blocks.length === 0) {
+        url.searchParams.delete('p');
+      } else {
+        const encoded = serializePipeline(pipeline);
+        if (encoded.length <= MAX_SYNCED_LINK) url.searchParams.set('p', encoded);
+        else url.searchParams.delete('p');
+      }
+      if (url.toString() !== window.location.href) history.replaceState(null, '', url.toString());
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [pipeline]);
 
   const updatePipeline = useCallback(
     (updater: (prev: PipelineState) => PipelineState) => setPipeline((prev) => updater(prev)),
     []
   );
 
-  const handleShare = useCallback((state: PipelineState) => {
-    const encoded = serializePipeline(state);
+  /** A link to the current pipeline, whatever its length. */
+  const shareUrl = useCallback((state: PipelineState) => {
     const url = new URL(window.location.href);
-    url.searchParams.set('p', encoded);
-    history.replaceState(null, '', url.toString());
+    url.searchParams.set('p', serializePipeline(state));
+    return url.toString();
   }, []);
+
+  const handleCopyLink = async () => {
+    if (pipeline.blocks.length === 0) { toast.error('Add a block first'); return; }
+    await navigator.clipboard.writeText(shareUrl(pipeline));
+    toast.success('Copied link to these blocks');
+  };
 
   // The pipeline runs in a worker: an operation given a hostile parameter (a
   // regex from a share link, say) can take minutes, and a worker can be killed
@@ -75,11 +119,30 @@ export default function BlocksPage() {
 
   const handleInputChange = (value: string) => updatePipeline((prev) => ({ ...prev, input: value }));
 
+  // The input pane takes the shape of the first block. A block with named
+  // fields puts those fields at the top of the page: the linked one is the
+  // pipeline input, the others are the block's own values.
+  const firstBlock = pipeline.blocks[0] ?? null;
+  const firstOp = firstBlock ? OPERATION_MAP[firstBlock.operationId] : null;
+  const firstFields = firstOp?.inputs && firstOp.inputs.length > 0 ? firstOp.inputs : null;
+  const firstLinked = firstOp && firstBlock ? linkedField(firstOp, firstBlock) : null;
+  const firstFieldValues = useMemo(() => {
+    if (!firstFields || !firstBlock) return undefined;
+    return Object.fromEntries(
+      firstFields.map((f) => [f.id, f.id === firstLinked ? pipeline.input : firstBlock.params[f.id] ?? ''])
+    );
+  }, [firstFields, firstBlock, firstLinked, pipeline.input]);
+  const handleFirstFieldChange = (fieldId: string, value: string) => {
+    if (!firstBlock) return;
+    if (fieldId === firstLinked) handleInputChange(value);
+    else handleParamChange(firstBlock.id, fieldId, value);
+  };
+
   const handleAddBlock = (operationId: string, atIndex: number) => {
-    const newBlock: BlockState = { id: generateId(), operationId, params: buildDefaultParams(operationId), enabled: true };
+    const block = newBlock(operationId);
     updatePipeline((prev) => {
       const blocks = [...prev.blocks];
-      blocks.splice(atIndex, 0, newBlock);
+      blocks.splice(atIndex, 0, block);
       return { ...prev, blocks };
     });
   };
@@ -93,6 +156,9 @@ export default function BlocksPage() {
   const handleParamChange = (blockId: string, paramId: string, value: string) =>
     updatePipeline((prev) => ({ ...prev, blocks: prev.blocks.map((b) => b.id === blockId ? { ...b, params: { ...b.params, [paramId]: value } } : b) }));
 
+  const handleLinkChange = (blockId: string, fieldId: string | null) =>
+    updatePipeline((prev) => ({ ...prev, blocks: prev.blocks.map((b) => (b.id === blockId ? { ...b, linked: fieldId } : b)) }));
+
   const handleReorder = (newBlocks: BlockState[]) => updatePipeline((prev) => ({ ...prev, blocks: newBlocks }));
 
   const handleAddAt = (index: number) => { setInsertAtIndex(index); setShowAddModal(true); };
@@ -101,6 +167,7 @@ export default function BlocksPage() {
 
   const handleClearPipeline = () => {
     updatePipeline(() => EMPTY_PIPELINE);
+    clearDraft();
     const url = new URL(window.location.href);
     url.searchParams.delete('p');
     history.replaceState(null, '', url.toString());
@@ -123,6 +190,14 @@ export default function BlocksPage() {
           </div>
           <div className="flex gap-2 flex-shrink-0 mt-1">
             <button
+              onClick={handleCopyLink}
+              title="Copy a link that opens these blocks, input and settings included"
+              className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 text-sm font-medium text-gray-600 hover:border-gray-900 hover:text-gray-900 transition-colors duration-150"
+            >
+              <IoLinkOutline className="text-base" />
+              Copy link
+            </button>
+            <button
               onClick={handleClearPipeline}
               className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 text-sm font-medium text-gray-500 hover:border-red-400 hover:text-red-600 hover:bg-red-50 transition-colors duration-150"
             >
@@ -141,7 +216,15 @@ export default function BlocksPage() {
 
       {/* Main content */}
       <div className="max-w-3xl mx-auto px-8 md:px-12 py-8 space-y-6">
-        <PipelineInput value={pipeline.input} onChange={handleInputChange} />
+        {firstBlock && (
+          <PipelineInput
+            value={pipeline.input}
+            onChange={handleInputChange}
+            fields={firstFields ?? undefined}
+            fieldValues={firstFieldValues}
+            onFieldChange={handleFirstFieldChange}
+          />
+        )}
 
         {note && (
           <div className="border border-red-300 bg-red-50 px-4 py-3 text-sm font-mono text-red-700">
@@ -159,12 +242,20 @@ export default function BlocksPage() {
             </span>
           </div>
 
+          {pipeline.blocks.length === 0 && (
+            <p className="text-sm text-gray-400 py-2">
+              Add a block to start. The input pane takes the shape of the first block: one box, or one per named field.
+            </p>
+          )}
+
           <BlockList
+            input={pipeline.input}
             blocks={pipeline.blocks}
             results={results}
             onToggle={handleToggle}
             onRemove={handleRemove}
             onParamChange={handleParamChange}
+            onLinkChange={handleLinkChange}
             onReorder={handleReorder}
             onAddAt={handleAddAt}
           />
@@ -178,12 +269,14 @@ export default function BlocksPage() {
           </button>
         </div>
 
-        <PipelineOutput
-          value={finalOutput}
-          onShare={() => { handleShare(pipeline); return window.location.href; }}
-          terminalOp={terminalOp}
-          terminalParams={lastBlock?.params}
-        />
+        {firstBlock && (
+          <PipelineOutput
+            value={finalOutput}
+            onShare={() => shareUrl(pipeline)}
+            terminalOp={terminalOp}
+            terminalParams={lastBlock?.params}
+          />
+        )}
       </div>
 
       {showAddModal && (

@@ -1,6 +1,6 @@
 import { OPERATIONS, OPERATION_MAP } from '@/lib/blocks/registry';
 import { runPipeline, getFinalOutput, terminalBlockIndex, finalBlock } from '@/lib/blocks/pipeline';
-import { BlockState, PipelineState } from '@/lib/blocks/types';
+import { BlockState, PipelineState, linkedField } from '@/lib/blocks/types';
 
 let nextBlockId = 0;
 
@@ -8,6 +8,11 @@ function block(operationId: string, params: Record<string, string> = {}, enabled
   const op = OPERATION_MAP[operationId];
   const defaults = Object.fromEntries((op?.params ?? []).map((p) => [p.id, p.default]));
   return { id: `b${nextBlockId++}`, operationId, params: { ...defaults, ...params }, enabled };
+}
+
+/** A multi-input block with every field typed in and nothing linked. */
+function fields(operationId: string, params: Record<string, string>, linked: string | null = null): BlockState {
+  return { ...block(operationId, params), linked };
 }
 
 function pipeline(input: string, ...blocks: BlockState[]): PipelineState {
@@ -18,11 +23,6 @@ describe('block registry', () => {
   it('has no duplicate operation ids', () => {
     const ids = OPERATIONS.map((op) => op.id);
     expect(new Set(ids).size).toBe(ids.length);
-  });
-
-  it('never marks a terminal operation as chainable', () => {
-    const bad = OPERATIONS.filter((op) => op.terminal && op.chainable).map((op) => op.id);
-    expect(bad).toEqual([]);
   });
 
   it('only gives rendered output kinds to terminal operations', () => {
@@ -41,6 +41,125 @@ describe('block registry', () => {
       }
     }
     expect(bad).toEqual([]);
+  });
+});
+
+describe('multi-input operations', () => {
+  it('declares at least two fields, each with a unique id that is not also a param', () => {
+    const bad: string[] = [];
+    for (const op of OPERATIONS) {
+      if (!op.inputs) continue;
+      if (op.inputs.length < 2) bad.push(`${op.id}: ${op.inputs.length} field`);
+      const ids = op.inputs.map((f) => f.id);
+      if (new Set(ids).size !== ids.length) bad.push(`${op.id}: duplicate field id`);
+      for (const p of op.params) if (ids.includes(p.id)) bad.push(`${op.id}.${p.id}: field and param`);
+    }
+    expect(bad).toEqual([]);
+  });
+
+  it('feeds the first field from upstream unless the block says otherwise', () => {
+    const op = OPERATION_MAP['rgb-to-hex'];
+    expect(linkedField(op, {})).toBe('r');
+    expect(linkedField(op, { linked: 'b' })).toBe('b');
+    expect(linkedField(op, { linked: null })).toBeNull();
+    expect(linkedField(OPERATION_MAP['rot13'], {})).toBeNull();
+  });
+
+  it('converts typed-in fields with nothing linked', () => {
+    expect(getFinalOutput(pipeline('', fields('rgb-to-hex', { r: '255', g: '128', b: '0' })))).toBe('#FF8000');
+  });
+
+  it('puts the upstream value into the linked field', () => {
+    const state = pipeline('255', { ...block('rgb-to-hex', { r: '', g: '128', b: '0' }), linked: 'r' });
+    expect(getFinalOutput(state)).toBe('#FF8000');
+    // The stored value of the linked field is what the user typed before linking; upstream wins.
+    const stale = pipeline('0', { ...block('rgb-to-hex', { r: '255', g: '128', b: '0' }), linked: 'r' });
+    expect(getFinalOutput(stale)).toBe('#008000'.toUpperCase());
+  });
+
+  it('links the first field for a block that never set one', () => {
+    expect(getFinalOutput(pipeline('255', block('rgb-to-hex', { g: '0', b: '0' })))).toBe('#FF0000');
+  });
+
+  it('chains a block output into a field of the next block', () => {
+    const state = pipeline('ff', block('hex-to-dec'), { ...block('rgb-to-hex', { g: '0', b: '255' }), linked: 'r' });
+    expect(getFinalOutput(state)).toBe('#FF00FF');
+  });
+
+  it('names the field that is wrong', () => {
+    expect(runPipeline(pipeline('', fields('rgb-to-hex', { r: '255', g: '', b: '0' })))[0].error).toBe('G is empty');
+    expect(runPipeline(pipeline('', fields('rgb-to-hex', { r: '255', g: '300', b: '0' })))[0].error).toBe('G must be a number between 0 and 255');
+    expect(runPipeline(pipeline('', fields('hsl-to-hex', { h: '400', s: '50', l: '50' })))[0].error).toBe('H must be a number between 0 and 360');
+  });
+
+  it('converts the other colour spaces', () => {
+    expect(getFinalOutput(pipeline('', fields('rgb-to-cmyk', { r: '164', g: '55', b: '55' })))).toBe('cmyk(0%, 66%, 66%, 36%)');
+    expect(getFinalOutput(pipeline('', fields('rgb-to-cmyk', { r: '0', g: '0', b: '0' })))).toBe('cmyk(0%, 0%, 0%, 100%)');
+    expect(getFinalOutput(pipeline('', fields('cmyk-to-rgb', { c: '85', m: '0', y: '75', k: '14' })))).toBe('rgb(33, 219, 55)');
+    expect(getFinalOutput(pipeline('', fields('hsl-to-hex', { h: '0', s: '100', l: '50' })))).toBe('#FF0000');
+    expect(getFinalOutput(pipeline('', fields('hsl-to-rgb', { h: '120', s: '100', l: '50' })))).toBe('rgb(0, 255, 0)');
+    expect(getFinalOutput(pipeline('', fields('hsv-to-hex', { h: '240', s: '100', v: '100' })))).toBe('#0000FF');
+    expect(getFinalOutput(pipeline('#ff0000', block('hex-to-hsl')))).toBe('hsl(0, 100%, 50%)');
+    expect(getFinalOutput(pipeline('rgb(0, 255, 0)', block('rgb-to-hsl')))).toBe('hsl(120, 100%, 50%)');
+    expect(getFinalOutput(pipeline('#0000ff', block('hex-to-hsv')))).toBe('hsv(240, 100%, 100%)');
+  });
+
+  it('round-trips through the colour spaces', () => {
+    const state = pipeline('', fields('hsl-to-hex', { h: '210', s: '50', l: '40' }), block('hex-to-hsl'));
+    expect(getFinalOutput(state)).toBe('hsl(210, 50%, 40%)');
+  });
+
+  it('reports contrast as a terminal block', () => {
+    const state = pipeline('#000000', { ...block('color-contrast', { bg: '#ffffff' }), linked: 'fg' }, block('rot13'));
+    const results = runPipeline(state);
+    expect(results[0].error).toBeNull();
+    expect(results[0].output).toContain('Contrast ratio: 21.00:1');
+    expect(results[0].output).toContain('Normal text  AA pass  AAA pass');
+    expect(results[1].error).toMatch(/Unreachable/);
+    expect(runPipeline(pipeline('', fields('color-contrast', { fg: '#767676', bg: '#ffffff' })))[0].output).toContain('Normal text  AA pass  AAA fail');
+    expect(runPipeline(pipeline('', fields('color-contrast', { fg: '', bg: '#fff' })))[0].error).toBe('Text is empty');
+  });
+});
+
+describe('keyed operations as named fields', () => {
+  const keyed = OPERATIONS.filter((op) => op.inputs?.some((f) => f.id === 'key' || f.id === 'keyword' || f.id === 'salt'));
+
+  it('covers every cipher, HMAC and KDF that needs a second value', () => {
+    const ids = keyed.map((op) => op.id);
+    for (const id of ['xor-encrypt', 'vigenere-encrypt', 'beaufort', 'polybius-encode', 'columnar-encrypt',
+      'playfair-encrypt', 'hmac-sha256', 'hmac-md5', 'pbkdf2', 'hkdf', 'scrypt', 'argon2']) {
+      expect(ids).toContain(id);
+    }
+  });
+
+  it('never keeps the key as a param as well', () => {
+    for (const op of keyed) {
+      expect(op.params.map((p) => p.id)).not.toContain('key');
+      expect(op.params.map((p) => p.id)).not.toContain('salt');
+    }
+  });
+
+  it('feeds the message from upstream and takes the key from the block', () => {
+    const out = getFinalOutput(pipeline('hello', block('hmac-sha256', { key: 'secret' })));
+    expect(out).toBe('88aab3ede8d3adf94d26ab90d3bafd4a2083070c3bcce9c014ee04a443847c0b');
+  });
+
+  it('can feed the key from upstream instead', () => {
+    const viaKey = getFinalOutput(pipeline('secret', fields('hmac-sha256', { message: 'hello' }, 'key')));
+    const viaMessage = getFinalOutput(pipeline('hello', block('hmac-sha256', { key: 'secret' })));
+    expect(viaKey).toBe(viaMessage);
+  });
+
+  it('derives a key upstream and hands it to the cipher', () => {
+    const hashed = getFinalOutput(pipeline('pw', block('md5')));
+    const direct = getFinalOutput(pipeline('attack at dawn', block('vigenere-encrypt', { key: hashed })));
+    const chained = getFinalOutput(pipeline('pw', block('md5'), fields('vigenere-encrypt', { text: 'attack at dawn' }, 'key')));
+    expect(chained).toBe(direct);
+  });
+
+  it('runs the XOR round trip with the key format still a param', () => {
+    const hex = getFinalOutput(pipeline('secret', block('xor-encrypt', { key: '6b', format: 'hex' })));
+    expect(getFinalOutput(pipeline(hex, block('xor-decrypt', { key: 'k' })))).toBe('secret');
   });
 });
 

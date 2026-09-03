@@ -24,7 +24,6 @@ export const textExtraOperations: Operation[] = [
       { id: 'start', label: 'Start at', kind: 'text', default: '1' },
       { id: 'separator', label: 'Separator', kind: 'text', default: '. ' },
     ],
-    chainable: true,
     fn: (input, p) => addLineNumbers(input, parseInt(p.start ?? '1') || 1, p.separator ?? '. '),
   },
   {
@@ -32,7 +31,6 @@ export const textExtraOperations: Operation[] = [
     name: 'Remove Line Numbers',
     category: 'text',
     params: [],
-    chainable: true,
     fn: (input) => removeLineNumbers(input),
   },
   {
@@ -48,7 +46,6 @@ export const textExtraOperations: Operation[] = [
         default: '2',
       },
     ],
-    chainable: true,
     fn: (input, p) => indentText(input, parseInt(p.spaces ?? '2')),
   },
   {
@@ -56,7 +53,6 @@ export const textExtraOperations: Operation[] = [
     name: 'Dedent',
     category: 'text',
     params: [],
-    chainable: true,
     fn: (input) => dedentText(input),
   },
   {
@@ -64,7 +60,6 @@ export const textExtraOperations: Operation[] = [
     name: 'Word Wrap',
     category: 'text',
     params: [{ id: 'width', label: 'Width', kind: 'select', options: widthOptions, default: '80' }],
-    chainable: true,
     fn: (input, p) => wrapText(input, parseInt(p.width ?? '80')),
   },
   {
@@ -72,7 +67,6 @@ export const textExtraOperations: Operation[] = [
     name: 'Unwrap Paragraphs',
     category: 'text',
     params: [],
-    chainable: true,
     fn: (input) => unwrapText(input),
   },
   {
@@ -93,7 +87,6 @@ export const textExtraOperations: Operation[] = [
       },
       { id: 'width', label: 'Width', kind: 'select', options: widthOptions, default: '80' },
     ],
-    chainable: true,
     fn: (input, p) =>
       alignLines(input, (p.alignment ?? 'left') as 'left' | 'right' | 'center', parseInt(p.width ?? '80')),
   },
@@ -102,7 +95,6 @@ export const textExtraOperations: Operation[] = [
     name: 'Align Columns',
     category: 'text',
     params: [{ id: 'delimiter', label: 'Delimiter', kind: 'text', default: '\t' }],
-    chainable: true,
     fn: (input, p) => columnAlign(input, p.delimiter || '\t'),
   },
   {
@@ -113,7 +105,6 @@ export const textExtraOperations: Operation[] = [
       { id: 'delimiter', label: 'Delimiter', kind: 'text', default: ',' },
       { id: 'columns', label: 'Columns (1-based, comma-separated)', kind: 'text', default: '1' },
     ],
-    chainable: true,
     fn: (input, p) => {
       const columns = (p.columns ?? '1')
         .split(',')
@@ -142,7 +133,6 @@ export const textExtraOperations: Operation[] = [
       { id: 'limit', label: 'Limit', kind: 'text', default: '100' },
       { id: 'ellipsis', label: 'Ellipsis', kind: 'text', default: '...' },
     ],
-    chainable: true,
     fn: (input, p) => {
       const limit = parseInt(p.limit ?? '100');
       if (isNaN(limit) || limit < 0) throw new Error('Limit must be a non-negative number');
@@ -160,7 +150,6 @@ export const textExtraOperations: Operation[] = [
       { id: 'times', label: 'Times', kind: 'text', default: '2' },
       { id: 'separator', label: 'Separator', kind: 'text', default: '\n' },
     ],
-    chainable: true,
     fn: (input, p) => {
       const times = parseInt(p.times ?? '2');
       if (isNaN(times) || times < 1) throw new Error('Times must be at least 1');
@@ -172,7 +161,6 @@ export const textExtraOperations: Operation[] = [
     name: 'Remove Emojis',
     category: 'text',
     params: [],
-    chainable: true,
     fn: (input) => removeEmojis(input),
   },
   {
@@ -180,7 +168,6 @@ export const textExtraOperations: Operation[] = [
     name: 'Extract Emojis',
     category: 'text',
     params: [],
-    chainable: true,
     fn: (input) => extractEmojis(input),
   },
   {
@@ -201,7 +188,6 @@ export const textExtraOperations: Operation[] = [
         default: 'words',
       },
     ],
-    chainable: true,
     fn: (input, p) => tokenize(input, (p.mode ?? 'words') as TokenMode).join('\n'),
   },
   {
@@ -209,7 +195,6 @@ export const textExtraOperations: Operation[] = [
     name: 'Soundex Codes',
     category: 'text',
     params: [],
-    chainable: false,
     terminal: true,
     fn: (input) => soundexBatch(input),
   },
@@ -229,7 +214,6 @@ export const textExtraOperations: Operation[] = [
         default: 'lines',
       },
     ],
-    chainable: false,
     terminal: true,
     fn: (input, p) => (p.mode === 'words' ? findDuplicateWords(input) : findDuplicateLines(input)),
   },

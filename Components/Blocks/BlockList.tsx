@@ -7,16 +7,18 @@ import BlockItem from './BlockItem';
 import { IoAddOutline } from 'react-icons/io5';
 
 type BlockListProps = {
+  input: string;
   blocks: BlockState[];
   results: BlockResult[];
   onToggle: (id: string) => void;
   onRemove: (id: string) => void;
   onParamChange: (id: string, paramId: string, value: string) => void;
+  onLinkChange: (id: string, fieldId: string | null) => void;
   onReorder: (newBlocks: BlockState[]) => void;
   onAddAt: (index: number) => void;
 };
 
-export default function BlockList({ blocks, results, onToggle, onRemove, onParamChange, onReorder, onAddAt }: BlockListProps) {
+export default function BlockList({ input, blocks, results, onToggle, onRemove, onParamChange, onLinkChange, onReorder, onAddAt }: BlockListProps) {
   const [dragSrcIndex, setDragSrcIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [hoveredInsert, setHoveredInsert] = useState<number | null>(null);
@@ -55,6 +57,10 @@ export default function BlockList({ blocks, results, onToggle, onRemove, onParam
 
       {blocks.map((block, index) => {
         const result = results.find((r) => r.blockId === block.id);
+        // What flows into this block: the pipeline input for the first one,
+        // otherwise the previous block's result (empty when that block failed).
+        const previous = index === 0 ? null : results.find((r) => r.blockId === blocks[index - 1].id);
+        const upstream = index === 0 ? input : previous && !previous.error ? previous.output : '';
         const isDragging = dragSrcIndex === index;
         const isDragOver = dragOverIndex === index;
 
@@ -75,6 +81,8 @@ export default function BlockList({ blocks, results, onToggle, onRemove, onParam
                 onToggle={() => onToggle(block.id)}
                 onRemove={() => onRemove(block.id)}
                 onParamChange={(paramId, value) => onParamChange(block.id, paramId, value)}
+                onLinkChange={(fieldId) => onLinkChange(block.id, fieldId)}
+                upstream={upstream}
                 isDragging={isDragging}
                 dragHandleProps={{}}
                 unreachable={endsAt !== -1 && index > endsAt}

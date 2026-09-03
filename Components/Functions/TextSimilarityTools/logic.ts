@@ -177,6 +177,11 @@ export function formatSimilarityOutput(input: string): string {
 
   if (!text1 || !text2) return 'Both text blocks must be non-empty.';
 
+  return formatSimilarityPair(text1, text2);
+}
+
+/** The report for two texts that are already separated (the Blocks builder hands them over as two fields). */
+export function formatSimilarityPair(text1: string, text2: string): string {
   const r = computeSimilarity(text1, text2);
 
   const lines: string[] = [];

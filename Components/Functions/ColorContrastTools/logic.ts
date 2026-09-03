@@ -60,3 +60,15 @@ export function checkContrast(hex1: string, hex2: string): WcagResult {
   };
 }
 
+
+/** The WCAG verdicts as plain text, for the Blocks builder's terminal block. */
+export function formatContrastResult(result: WcagResult): string {
+  const mark = (pass: boolean) => (pass ? 'pass' : 'fail');
+  return [
+    `${result.color1} on ${result.color2}`,
+    `Contrast ratio: ${result.ratioFormatted}`,
+    '',
+    `Normal text  AA ${mark(result.normalAA)}  AAA ${mark(result.normalAAA)}`,
+    `Large text   AA ${mark(result.largeAA)}  AAA ${mark(result.largeAAA)}`,
+  ].join('\n');
+}

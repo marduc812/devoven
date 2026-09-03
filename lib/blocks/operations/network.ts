@@ -17,7 +17,6 @@ export const networkOperations: Operation[] = [
     name: 'IPv4 → Integer',
     category: 'network',
     params: [],
-    chainable: true,
     fn: (input) => ipv4ToInt(input.trim()).toString(),
   },
   {
@@ -25,7 +24,6 @@ export const networkOperations: Operation[] = [
     name: 'Integer → IPv4',
     category: 'network',
     params: [],
-    chainable: true,
     fn: (input) => {
       const n = Number(input.trim());
       if (!Number.isFinite(n)) throw new Error('Invalid integer');
@@ -37,7 +35,6 @@ export const networkOperations: Operation[] = [
     name: 'IPv4 → Binary',
     category: 'network',
     params: [],
-    chainable: true,
     fn: (input) => ipv4ToBinary(input.trim()),
   },
   {
@@ -45,7 +42,6 @@ export const networkOperations: Operation[] = [
     name: 'Binary → IPv4',
     category: 'network',
     params: [],
-    chainable: true,
     fn: (input) => binaryToIpv4(input.trim()),
   },
   {
@@ -53,7 +49,6 @@ export const networkOperations: Operation[] = [
     name: 'IPv6 Expand',
     category: 'network',
     params: [],
-    chainable: true,
     fn: (input) => expandIpv6(input.trim()),
   },
   {
@@ -61,7 +56,6 @@ export const networkOperations: Operation[] = [
     name: 'IPv6 Compress',
     category: 'network',
     params: [],
-    chainable: true,
     fn: (input) => compressIpv6(input.trim()),
   },
   {
@@ -69,7 +63,6 @@ export const networkOperations: Operation[] = [
     name: 'URL → JSON',
     category: 'network',
     params: [],
-    chainable: true,
     fn: (input) => JSON.stringify(parseUrl(input), null, 2),
   },
   {
@@ -92,7 +85,6 @@ export const networkOperations: Operation[] = [
         default: 'urls',
       },
     ],
-    chainable: true,
     fn: (input, p) => {
       const type = (p.type ?? 'urls') as ExtractType;
       return formatExtractResults(extractFromText(input, type), type);
@@ -103,7 +95,6 @@ export const networkOperations: Operation[] = [
     name: 'Cookie Header Parser',
     category: 'network',
     params: [],
-    chainable: false,
     terminal: true,
     fn: (input) => formatParsedCookies(parseCookieHeader(input)),
   },
@@ -112,7 +103,6 @@ export const networkOperations: Operation[] = [
     name: 'IPv4 Classifier',
     category: 'network',
     params: [],
-    chainable: false,
     terminal: true,
     fn: (input) => formatIpClassification(input.trim()),
   },
@@ -121,7 +111,6 @@ export const networkOperations: Operation[] = [
     name: 'User-Agent Parser',
     category: 'network',
     params: [],
-    chainable: false,
     terminal: true,
     fn: (input) => formatParsedUserAgent(parseUserAgent(input.trim())),
   },
@@ -152,7 +141,6 @@ export const networkOperations: Operation[] = [
         default: 'indicators',
       },
     ],
-    chainable: true,
     fn: (input, params) =>
       defangText(input, {
         dotStyle: (params.style as DotStyle) || 'brackets',
@@ -164,7 +152,6 @@ export const networkOperations: Operation[] = [
     name: 'Fang Indicators',
     category: 'network',
     params: [],
-    chainable: true,
     fn: (input) => fangText(input),
   },
 ];

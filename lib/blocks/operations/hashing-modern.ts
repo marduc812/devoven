@@ -77,6 +77,13 @@ function num(value: string | undefined, fallback: number, label: string): number
   return parsed;
 }
 
+// A KDF takes the secret and the salt as two named fields; the cost settings
+// stay parameters.
+const kdfFields = [
+  { id: 'password', label: 'Password' },
+  { id: 'salt', label: 'Salt' },
+];
+
 export const hashingModernOperations: Operation[] = [
   {
     id: 'blake2b',
@@ -87,7 +94,6 @@ export const hashingModernOperations: Operation[] = [
       { id: 'key', label: 'Key (optional)', kind: 'text', default: '' },
       outputParam(),
     ],
-    chainable: true,
     fn: (input, p) =>
       blake2bHash(input, {
         bits: num(p.bits, 512, 'Digest size'),
@@ -104,7 +110,6 @@ export const hashingModernOperations: Operation[] = [
       { id: 'key', label: 'Key (optional)', kind: 'text', default: '' },
       outputParam(),
     ],
-    chainable: true,
     fn: (input, p) =>
       blake2sHash(input, {
         bits: num(p.bits, 256, 'Digest size'),
@@ -121,7 +126,6 @@ export const hashingModernOperations: Operation[] = [
       { id: 'context', label: 'Derivation context (optional)', kind: 'text', default: '' },
       outputParam(),
     ],
-    chainable: true,
     fn: (input, p) =>
       blake3Hash(input, {
         bits: num(p.bits, 256, 'Output size'),
@@ -134,7 +138,6 @@ export const hashingModernOperations: Operation[] = [
     name: 'MD4',
     category: 'hashing',
     params: [],
-    chainable: true,
     fn: (input) => md4(input),
   },
   {
@@ -142,7 +145,6 @@ export const hashingModernOperations: Operation[] = [
     name: 'Whirlpool',
     category: 'hashing',
     params: [],
-    chainable: true,
     fn: (input) => whirlpool(input),
   },
   {
@@ -150,25 +152,23 @@ export const hashingModernOperations: Operation[] = [
     name: 'SM3',
     category: 'hashing',
     params: [{ id: 'key', label: 'HMAC key (optional)', kind: 'text', default: '' }],
-    chainable: true,
     fn: (input, p) => (p.key ? hmacSm3(input, p.key) : sm3(input)),
   },
   {
     id: 'pbkdf2',
     name: 'PBKDF2',
     category: 'hashing',
+    inputs: kdfFields,
     params: [
-      { id: 'salt', label: 'Salt', kind: 'text', default: '' },
       saltFormatParam,
       { id: 'iterations', label: 'Iterations', kind: 'text', default: '100000' },
       hashParam,
       { id: 'bits', label: 'Key size (bits)', kind: 'text', default: '256' },
       outputParam(),
     ],
-    chainable: true,
-    fn: (input, p) =>
+    fn: (_input, p) =>
       encodeKey(
-        derivePbkdf2(input, {
+        derivePbkdf2(p.password ?? '', {
           salt: decodeBytes(p.salt ?? '', (p.saltFormat ?? 'utf8') as ByteFormat, 'Salt'),
           iterations: num(p.iterations, 100000, 'Iterations'),
           hash: (p.hash ?? 'sha256') as KdfHash,
@@ -181,18 +181,20 @@ export const hashingModernOperations: Operation[] = [
     id: 'hkdf',
     name: 'HKDF',
     category: 'hashing',
+    inputs: [
+      { id: 'ikm', label: 'Key material' },
+      { id: 'salt', label: 'Salt', placeholder: 'optional' },
+    ],
     params: [
-      { id: 'salt', label: 'Salt (optional)', kind: 'text', default: '' },
       saltFormatParam,
       { id: 'info', label: 'Info (context)', kind: 'text', default: '' },
       hashParam,
       { id: 'bits', label: 'Key size (bits)', kind: 'text', default: '256' },
       outputParam(),
     ],
-    chainable: true,
-    fn: (input, p) =>
+    fn: (_input, p) =>
       encodeKey(
-        deriveHkdf(input, {
+        deriveHkdf(p.ikm ?? '', {
           salt: p.salt
             ? decodeBytes(p.salt, (p.saltFormat ?? 'utf8') as ByteFormat, 'Salt')
             : undefined,
@@ -207,8 +209,8 @@ export const hashingModernOperations: Operation[] = [
     id: 'scrypt',
     name: 'scrypt',
     category: 'hashing',
+    inputs: kdfFields,
     params: [
-      { id: 'salt', label: 'Salt', kind: 'text', default: '' },
       saltFormatParam,
       // Blocks run on every keystroke upstream, so the default cost here is a
       // fraction of what a password store should use. The tool page defaults to
@@ -219,14 +221,13 @@ export const hashingModernOperations: Operation[] = [
       { id: 'bits', label: 'Key size (bits)', kind: 'text', default: '256' },
       outputParam(),
     ],
-    chainable: true,
-    fn: (input, p) => {
+    fn: (_input, p) => {
       const exponent = num(p.logn, 14, 'log2(N)');
       if (!Number.isInteger(exponent) || exponent < 1 || exponent > 24) {
         throw new Error('log2(N) must be a whole number between 1 and 24');
       }
       return encodeKey(
-        deriveScrypt(input, {
+        deriveScrypt(p.password ?? '', {
           salt: decodeBytes(p.salt ?? '', (p.saltFormat ?? 'utf8') as ByteFormat, 'Salt'),
           N: 2 ** exponent,
           r: num(p.r, 8, 'r'),
@@ -241,6 +242,10 @@ export const hashingModernOperations: Operation[] = [
     id: 'argon2',
     name: 'Argon2',
     category: 'hashing',
+    inputs: [
+      { id: 'password', label: 'Password' },
+      { id: 'salt', label: 'Salt', placeholder: 'at least 8 bytes' },
+    ],
     params: [
       {
         id: 'variant',
@@ -253,7 +258,6 @@ export const hashingModernOperations: Operation[] = [
         ],
         default: 'argon2id',
       },
-      { id: 'salt', label: 'Salt (min 8 bytes)', kind: 'text', default: 'somesalt' },
       saltFormatParam,
       { id: 't', label: 't (passes)', kind: 'text', default: '2' },
       { id: 'm', label: 'm (KiB)', kind: 'text', default: '16384' },
@@ -271,8 +275,7 @@ export const hashingModernOperations: Operation[] = [
         default: 'phc',
       },
     ],
-    chainable: true,
-    fn: (input, p) => {
+    fn: (_input, p) => {
       const options = {
         salt: decodeBytes(p.salt ?? '', (p.saltFormat ?? 'utf8') as ByteFormat, 'Salt'),
         t: num(p.t, 2, 't'),
@@ -281,7 +284,7 @@ export const hashingModernOperations: Operation[] = [
         variant: (p.variant ?? 'argon2id') as 'argon2id' | 'argon2i' | 'argon2d',
         dkLen: bitsToBytes(num(p.bits, 256, 'Key size')),
       };
-      const key = deriveArgon2(input, options);
+      const key = deriveArgon2(p.password ?? '', options);
       return p.output === 'phc' || p.output === undefined
         ? argon2PhcString(key, options)
         : encodeKey(key, p.output as KdfOutput);

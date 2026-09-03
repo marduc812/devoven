@@ -36,7 +36,6 @@ export const encodingExtraOperations: Operation[] = [
     name: 'Base64URL Encode',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => base64urlEncode(input),
   },
   {
@@ -44,7 +43,6 @@ export const encodingExtraOperations: Operation[] = [
     name: 'Base64URL Decode',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => base64urlDecode(input),
   },
   {
@@ -52,7 +50,6 @@ export const encodingExtraOperations: Operation[] = [
     name: 'Base62 Encode',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => base62EncodeText(input),
   },
   {
@@ -60,7 +57,6 @@ export const encodingExtraOperations: Operation[] = [
     name: 'Base62 Decode',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => base62DecodeText(input),
   },
   {
@@ -68,7 +64,6 @@ export const encodingExtraOperations: Operation[] = [
     name: 'Punycode Encode',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => punycodeEncode(input),
   },
   {
@@ -76,7 +71,6 @@ export const encodingExtraOperations: Operation[] = [
     name: 'Punycode Decode',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => punycodeDecode(input),
   },
   {
@@ -84,7 +78,6 @@ export const encodingExtraOperations: Operation[] = [
     name: 'Unicode Escape',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => encodeUnicodeEscapes(input),
   },
   {
@@ -92,7 +85,6 @@ export const encodingExtraOperations: Operation[] = [
     name: 'Unicode Unescape',
     category: 'encoding',
     params: [],
-    chainable: true,
     fn: (input) => decodeUnicodeEscapes(input),
   },
   {
@@ -115,7 +107,6 @@ export const encodingExtraOperations: Operation[] = [
         default: 'html',
       },
     ],
-    chainable: true,
     fn: (input, p) => {
       const flavor = (p.flavor ?? 'html') as keyof typeof escapeFlavors;
       const fn = escapeFlavors[flavor];
@@ -139,7 +130,6 @@ export const encodingExtraOperations: Operation[] = [
         default: 'html',
       },
     ],
-    chainable: true,
     fn: (input, p) => {
       const flavor = (p.flavor ?? 'html') as keyof typeof unescapeFlavors;
       const fn = unescapeFlavors[flavor];
@@ -160,7 +150,6 @@ export const encodingExtraOperations: Operation[] = [
         default: 'NFC',
       },
     ],
-    chainable: true,
     fn: (input, p) => normalizeText(input, (p.form ?? 'NFC') as NormalizationForm),
   },
   {
@@ -175,7 +164,6 @@ export const encodingExtraOperations: Operation[] = [
         default: 'text/plain',
       },
     ],
-    chainable: true,
     fn: (input, p) => textToDataUrl(input, p.mime || 'text/plain'),
   },
   {
@@ -198,7 +186,6 @@ export const encodingExtraOperations: Operation[] = [
         default: '16',
       },
     ],
-    chainable: false,
     terminal: true,
     fn: (input, p) =>
       toHexDump(input, parseInt(p.width ?? '16'), (p.encoding ?? 'utf-8') as HexDumpEncoding),
