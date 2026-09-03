@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { VscBug } from 'react-icons/vsc';
 
 type FeedbackModalProps = {
-  variant?: 'footer' | 'report';
+  variant?: 'footer' | 'report' | 'contact';
 };
 
 const FeedbackModal = ({ variant = 'footer' }: FeedbackModalProps) => {
@@ -63,6 +63,15 @@ const FeedbackModal = ({ variant = 'footer' }: FeedbackModalProps) => {
         >
           <VscBug className="text-base" />
           <span className="uppercase tracking-wide text-xs font-semibold">Report bug</span>
+        </button>
+      ) : variant === 'contact' ? (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label="Send a message about your data"
+          className="self-start border border-gray-900 dark:border-white/15 px-3 py-1.5 text-gray-900 dark:text-white hover:bg-gray-900 hover:text-white dark:hover:bg-white/10 transition-colors duration-150 uppercase tracking-wide text-xs font-semibold"
+        >
+          Send a message
         </button>
       ) : (
         <button

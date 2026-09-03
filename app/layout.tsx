@@ -9,6 +9,7 @@ import { ThemeProvider } from 'next-themes';
 import ToolUsageTracker from '@/Components/Functions/ToolUsageTracker';
 import { ConsentProvider } from '@/Components/Consent/ConsentProvider';
 import AnalyticsGate from '@/Components/Consent/AnalyticsGate';
+import BaselineAnalytics from '@/Components/Consent/BaselineAnalytics';
 import CookieBanner from '@/Components/Consent/CookieBanner';
 import { ShareLinkProvider } from '@/Components/Functions/ShareLink';
 
@@ -73,6 +74,7 @@ export default function RootLayout({
             <ShareLinkProvider>
               <div id='overlays'></div>
 
+              <BaselineAnalytics />
               <AnalyticsGate />
               <ToolUsageTracker />
               <NavigationHeader />

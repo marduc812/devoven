@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { sanitizeAnalyticsUrl } from '@/lib/analytics';
 
 export async function POST(request: NextRequest) {
   let body: { message?: unknown; email?: unknown; website?: unknown };
@@ -36,7 +37,12 @@ export async function POST(request: NextRequest) {
 
   // Cap attacker-controllable headers so the assembled message stays well under
   // Telegram's 4096-char sendMessage limit (message itself is already capped at 2000).
-  const referer = (request.headers.get('referer') || 'unknown').slice(0, 300);
+  // The referer is a tool page, and tool state travels in the query string, so
+  // the raw header can carry whatever the sender pasted into the tool. Only the
+  // page they were on is useful here.
+  const referer = sanitizeAnalyticsUrl(
+    (request.headers.get('referer') || 'unknown').slice(0, 300),
+  );
   const userAgent = (request.headers.get('user-agent') || 'unknown').slice(0, 300);
   const text =
     `🛎️ New DevOven feedback\n\n` +

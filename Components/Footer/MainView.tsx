@@ -24,6 +24,13 @@ const FooterMainView = () => {
                     >
                         Source
                     </Link>
+                    <Link
+                        href='/privacy'
+                        prefetch={false}
+                        className='text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors text-sm'
+                    >
+                        Privacy
+                    </Link>
                     <FeedbackModal />
                     <CookiePreferencesLink />
                     <p className='text-gray-400 text-sm'>

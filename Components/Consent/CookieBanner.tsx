@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useConsent } from './ConsentProvider'
 
 const CookieBanner = () => {
@@ -15,8 +16,14 @@ const CookieBanner = () => {
         >
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-900">Cookies</p>
             <p className="mt-2 text-sm text-gray-600">
-                We use analytics cookies to see which tools people use. Decline and nothing is
-                loaded or stored - the tools work the same either way.
+                We count page views without cookies either way, to know which tools get used.
+                Accept and Google Analytics is loaded too, which does set cookies. Decline and
+                it never loads. What you type into a tool stays in your browser regardless.
+            </p>
+            <p className="mt-2 text-sm text-gray-600">
+                <Link href="/privacy" prefetch={false} className="underline hover:text-gray-900">
+                    What we collect
+                </Link>
             </p>
             <div className="mt-4 flex flex-row gap-2">
                 <button
