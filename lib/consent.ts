@@ -1,10 +1,13 @@
 /**
  * Analytics consent, kept per browser in localStorage.
  *
- * Nothing analytics-related loads until someone says yes: "declined" and "not
- * asked yet" are treated the same, so a visitor who ignores the banner is never
- * measured. The tools themselves still run - this covers only Google Analytics
- * and Vercel Analytics, both of which reach off the page.
+ * This gates one thing: Google Analytics, which sets cookies and so needs a
+ * yes. "Declined" and "not asked yet" are treated the same, so a visitor who
+ * ignores the banner never loads it.
+ *
+ * It does not gate the cookieless page count in BaselineAnalytics, which runs
+ * either way and is disclosed on /privacy rather than asked about. The tools
+ * themselves never send anything anywhere.
  */
 
 export const CONSENT_KEY = 'devoven:cookie-consent';
