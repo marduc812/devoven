@@ -49,7 +49,7 @@ const WiFiQRCodeView = (props: WiFiQRCodeTypes) => {
                 </div>
                 <div>
                     <label className={labelClass}>Password</label>
-                    <input className={inputClass} type="password" value={props.wifiKey} onChange={e => props.setWifiKey(e.target.value)} placeholder="••••••••" />
+                    <input className={inputClass} type="text" value={props.wifiKey} onChange={e => props.setWifiKey(e.target.value)} placeholder="Network password" />
                 </div>
             </div>
 

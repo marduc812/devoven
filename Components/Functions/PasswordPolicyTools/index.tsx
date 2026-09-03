@@ -28,7 +28,7 @@ function strengthTone(score: number): BadgeTone {
 
 export const PasswordPolicy = () => {
   const [password, setPassword] = useState('');
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
 
   const result = useMemo(() => (password ? checkPolicy(password) : null), [password]);
 

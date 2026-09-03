@@ -110,7 +110,7 @@ export function ConnectionStringBuilder() {
               <label className={labelClass}>Password</label>
               <input
                 className={inputClass}
-                type="password"
+                type="text"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="(leave blank if none)"
