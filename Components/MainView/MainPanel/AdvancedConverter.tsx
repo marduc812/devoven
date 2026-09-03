@@ -94,6 +94,8 @@ const AdvancedConverter = (props: AdvancedCoversionType) => {
                     value={props.toValue}
                     readOnly
                 />
+
+                {props.belowOutput}
             </div>
 
             <div className="border-t border-gray-200 px-8 md:px-12">
