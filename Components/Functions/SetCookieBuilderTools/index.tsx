@@ -38,7 +38,7 @@ export const SetCookieBuilder = () => {
   const inputClass =
     'bg-white text-gray-900 border border-gray-300 focus:outline-none focus:border-gray-900 px-2 py-1 text-sm font-mono w-full';
   const btnClass =
-    'px-3 py-1.5 text-xs border border-gray-200 bg-gray-50 text-gray-300 hover:text-gray-900 hover:border-gray-400 transition-colors';
+    'px-3 py-1.5 text-xs border border-gray-200 bg-gray-50 text-gray-600 hover:text-gray-900 hover:border-gray-400 transition-colors';
   const activeBtnClass =
     'px-3 py-1.5 text-xs border border-emerald-500/50 bg-emerald-500/10 text-emerald-300';
 

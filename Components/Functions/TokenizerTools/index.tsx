@@ -210,7 +210,7 @@ export const TextTokenizer = () => {
                             {i + 1}
                           </span>
                           <span className="font-mono text-xs text-gray-900 whitespace-pre-wrap break-words min-w-0">
-                            {t || <span className="text-gray-300 italic">(empty)</span>}
+                            {t || <span className="text-gray-400 italic">(empty)</span>}
                           </span>
                           <span className="font-mono text-[10px] text-gray-400 ml-auto flex-shrink-0 pt-0.5">
                             {t.length}

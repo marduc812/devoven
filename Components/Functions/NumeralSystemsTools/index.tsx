@@ -79,9 +79,9 @@ export function NumeralSystems() {
                     {refTable.map(row => (
                       <tr key={row.decimal} className="border-b border-gray-200 hover:bg-gray-50">
                         <td className="py-1 pr-3 text-gray-900 font-mono">{row.decimal}</td>
-                        <td className="py-1 pr-3 text-gray-300 font-mono text-xs">{row.binary}</td>
-                        <td className="py-1 pr-3 text-gray-300 font-mono">{row.octal}</td>
-                        <td className="py-1 pr-3 text-gray-300 font-mono">{row.hex}</td>
+                        <td className="py-1 pr-3 text-gray-700 font-mono text-xs">{row.binary}</td>
+                        <td className="py-1 pr-3 text-gray-700 font-mono">{row.octal}</td>
+                        <td className="py-1 pr-3 text-gray-700 font-mono">{row.hex}</td>
                         <td className="py-1 text-gray-900 font-mono">{row.char}</td>
                       </tr>
                     ))}

@@ -125,7 +125,7 @@ export function PrimeFactors() {
                       <span className="text-gray-400">{result.number} =</span>
                       {result.factors.map((f, i) => (
                         <React.Fragment key={f.base}>
-                          {i > 0 && <span className="text-gray-300 text-xl">×</span>}
+                          {i > 0 && <span className="text-gray-400 text-xl">×</span>}
                           <span>
                             {f.base}
                             {f.exp > 1 && <span className="text-xl">{superscript(f.exp)}</span>}
@@ -194,7 +194,7 @@ export function PrimeFactors() {
                       </span>
                       {expanded.map((f, i) => (
                         <React.Fragment key={i}>
-                          {i > 0 && <span className="text-gray-300 text-xs">×</span>}
+                          {i > 0 && <span className="text-gray-400 text-xs">×</span>}
                           <span
                             className={`border px-2 py-0.5 font-mono text-xs font-bold ${f.swatch}`}
                           >

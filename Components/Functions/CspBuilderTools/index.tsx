@@ -56,7 +56,7 @@ export function CspBuilder() {
         <div className="flex flex-col gap-6 w-full">
           {/* Site features */}
           <div className="border border-gray-200 bg-gray-50 p-4 flex flex-col gap-4">
-            <h3 className="text-gray-300 text-sm font-semibold">Site Features</h3>
+            <h3 className="text-gray-900 text-sm font-semibold">Site Features</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {boolOptions.map(({ key, label, hint }) => (
                 <label key={key} className="flex items-start gap-3 cursor-pointer">
@@ -71,7 +71,7 @@ export function CspBuilder() {
                     </div>
                   </div>
                   <div>
-                    <div className="text-gray-300 text-sm">{label}</div>
+                    <div className="text-gray-700 text-sm">{label}</div>
                     <div className="text-gray-600 text-xs">{hint}</div>
                   </div>
                 </label>
@@ -81,7 +81,7 @@ export function CspBuilder() {
 
           {/* Domain inputs */}
           <div className="border border-gray-200 bg-gray-50 p-4 flex flex-col gap-3">
-            <h3 className="text-gray-300 text-sm font-semibold">External Domains (comma-separated)</h3>
+            <h3 className="text-gray-900 text-sm font-semibold">External Domains (comma-separated)</h3>
             {domainOptions.map(({ key, label }) => (
               <div key={key} className="flex flex-col gap-1">
                 <label className="text-gray-400 text-xs">{label}</label>

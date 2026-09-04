@@ -38,7 +38,7 @@ export function IamPolicyAnalyzer() {
     'px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer border ' +
     (activeTab === tab
       ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-      : 'text-gray-500 hover:text-gray-300 border-gray-200 hover:border-gray-400');
+      : 'text-gray-500 hover:text-gray-900 border-gray-200 hover:border-gray-400');
 
   const content = (
     <div className="flex flex-col gap-5">
@@ -138,7 +138,7 @@ export function IamPolicyAnalyzer() {
                           <div className="flex flex-wrap gap-1">
                             {g.actions.slice(0, 20).map(function(a) {
                               return (
-                                <span key={a} className="text-xs font-mono bg-white border border-gray-200 rounded px-2 py-0.5 text-gray-300">
+                                <span key={a} className="text-xs font-mono bg-white border border-gray-200 rounded px-2 py-0.5 text-gray-700">
                                   {a}
                                 </span>
                               );
@@ -184,7 +184,7 @@ export function IamPolicyAnalyzer() {
                   <div className="flex flex-col gap-1">
                     {analysis.resourceSummary.map(function(r) {
                       return (
-                        <div key={r} className="font-mono text-xs bg-gray-50 px-3 py-1.5 border border-gray-200 text-gray-300 break-all">
+                        <div key={r} className="font-mono text-xs bg-gray-50 px-3 py-1.5 border border-gray-200 text-gray-700 break-all">
                           {r}
                         </div>
                       );

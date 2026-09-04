@@ -56,32 +56,32 @@ const ColorContrastCalculatorView = (props: ColorContrastCalculatorTypes) => {
                                 </thead>
                                 <tbody className='divide-y divide-white/5'>
                                     <tr>
-                                        <td className='px-4 py-2 text-gray-300 text-sm'>Normal</td>
-                                        <td className='px-4 py-2 text-gray-300 text-sm'>WCAG AA</td>
+                                        <td className='px-4 py-2 text-gray-700 text-sm'>Normal</td>
+                                        <td className='px-4 py-2 text-gray-700 text-sm'>WCAG AA</td>
                                         <td className='px-4 py-2'><span className={`text-xs font-bold px-2 py-0.5 rounded-full ${props.contrastRatio > 4.5 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>{props.contrastRatio > 4.5 ? 'PASS' : 'FAIL'}</span></td>
                                         <td className='px-4 py-2'><div className='rounded text-center w-32 text-sm px-1' style={{backgroundColor: props.fromBg, color: props.fromFg}}>contrast &gt; 4.5</div></td>
                                     </tr>
                                     <tr>
-                                        <td className='px-4 py-2 text-gray-300 text-sm'>Normal</td>
-                                        <td className='px-4 py-2 text-gray-300 text-sm'>WCAG AAA</td>
+                                        <td className='px-4 py-2 text-gray-700 text-sm'>Normal</td>
+                                        <td className='px-4 py-2 text-gray-700 text-sm'>WCAG AAA</td>
                                         <td className='px-4 py-2'><span className={`text-xs font-bold px-2 py-0.5 rounded-full ${props.contrastRatio > 7 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>{props.contrastRatio > 7 ? 'PASS' : 'FAIL'}</span></td>
                                         <td className='px-4 py-2'><div className='rounded text-center w-32 text-sm px-1' style={{backgroundColor: props.fromBg, color: props.fromFg}}>contrast &gt; 7</div></td>
                                     </tr>
                                     <tr>
-                                        <td className='px-4 py-2 text-gray-300 text-sm'>Large</td>
-                                        <td className='px-4 py-2 text-gray-300 text-sm'>WCAG AA</td>
+                                        <td className='px-4 py-2 text-gray-700 text-sm'>Large</td>
+                                        <td className='px-4 py-2 text-gray-700 text-sm'>WCAG AA</td>
                                         <td className='px-4 py-2'><span className={`text-xs font-bold px-2 py-0.5 rounded-full ${props.contrastRatio > 4.5 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>{props.contrastRatio > 4.5 ? 'PASS' : 'FAIL'}</span></td>
                                         <td className='px-4 py-2'><div className='rounded text-center w-32 text-lg px-1' style={{backgroundColor: props.fromBg, color: props.fromFg}}>contrast &gt; 4.5</div></td>
                                     </tr>
                                     <tr>
-                                        <td className='px-4 py-2 text-gray-300 text-sm'>Large</td>
-                                        <td className='px-4 py-2 text-gray-300 text-sm'>WCAG AAA</td>
+                                        <td className='px-4 py-2 text-gray-700 text-sm'>Large</td>
+                                        <td className='px-4 py-2 text-gray-700 text-sm'>WCAG AAA</td>
                                         <td className='px-4 py-2'><span className={`text-xs font-bold px-2 py-0.5 rounded-full ${props.contrastRatio > 3 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>{props.contrastRatio > 3 ? 'PASS' : 'FAIL'}</span></td>
                                         <td className='px-4 py-2'><div className='rounded text-center w-32 text-lg px-1' style={{backgroundColor: props.fromBg, color: props.fromFg}}>contrast &gt; 3</div></td>
                                     </tr>
                                     <tr>
-                                        <td className='px-4 py-2 text-gray-300 text-sm'>UI Components</td>
-                                        <td className='px-4 py-2 text-gray-300 text-sm'>WCAG AA</td>
+                                        <td className='px-4 py-2 text-gray-700 text-sm'>UI Components</td>
+                                        <td className='px-4 py-2 text-gray-700 text-sm'>WCAG AA</td>
                                         <td className='px-4 py-2'><span className={`text-xs font-bold px-2 py-0.5 rounded-full ${props.contrastRatio > 3 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>{props.contrastRatio > 3 ? 'PASS' : 'FAIL'}</span></td>
                                         <td className='px-4 py-2'><input className='rounded text-center w-32 text-sm px-1' style={{backgroundColor: props.fromBg, color: props.fromFg}} value={'contrast > 3'} readOnly /></td>
                                     </tr>

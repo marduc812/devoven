@@ -39,7 +39,7 @@ const FINGERS: FingerName[] = ['pinky', 'ring', 'middle', 'index'];
 
 /** Usage heat, from untouched to hottest key in the text. */
 function heatClass(count: number, max: number): string {
-  if (count === 0) return 'bg-white border-gray-200 text-gray-300';
+  if (count === 0) return 'bg-white border-gray-200 text-gray-400';
   const ratio = max === 0 ? 0 : count / max;
   if (ratio > 0.66) return 'bg-rose-200 border-rose-400 text-rose-900 font-bold';
   if (ratio > 0.33) return 'bg-amber-100 border-amber-300 text-amber-900';

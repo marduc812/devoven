@@ -26,12 +26,12 @@ function scoreColor(score: number): string {
 
 function severityBg(severity: string): string {
   switch (severity) {
-    case 'None': return 'bg-gray-500/20 text-gray-300 border-gray-500/40';
+    case 'None': return 'bg-gray-500/20 text-gray-700 border-gray-500/40';
     case 'Low': return 'bg-sky-500/20 text-sky-300 border-sky-500/40';
     case 'Medium': return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40';
     case 'High': return 'bg-orange-500/20 text-orange-300 border-orange-500/40';
     case 'Critical': return 'bg-rose-500/20 text-rose-300 border-rose-500/40';
-    default: return 'bg-gray-500/20 text-gray-300';
+    default: return 'bg-gray-500/20 text-gray-700';
   }
 }
 
@@ -101,7 +101,7 @@ export function CvssCalculator() {
               const current = metrics[key] as string;
               return (
                 <div key={key} className="border border-gray-200 bg-gray-50 p-3 flex flex-col gap-2">
-                  <label className="text-gray-300 text-xs font-semibold">{def.label}</label>
+                  <label className="text-gray-700 text-xs font-semibold">{def.label}</label>
                   <div className="flex flex-wrap gap-1.5">
                     {def.options.map(opt => (
                       <button
@@ -131,15 +131,15 @@ export function CvssCalculator() {
             <h3 className="text-gray-400 text-xs uppercase tracking-wide">Score Breakdown</h3>
             <div className="grid grid-cols-3 gap-3 text-center">
               <div>
-                <div className="text-gray-300 text-sm font-mono">{result.iss.toFixed(4)}</div>
+                <div className="text-gray-900 text-sm font-mono">{result.iss.toFixed(4)}</div>
                 <div className="text-gray-600 text-xs">ISS (Impact Sub-Score)</div>
               </div>
               <div>
-                <div className="text-gray-300 text-sm font-mono">{result.impact.toFixed(4)}</div>
+                <div className="text-gray-900 text-sm font-mono">{result.impact.toFixed(4)}</div>
                 <div className="text-gray-600 text-xs">Impact Score</div>
               </div>
               <div>
-                <div className="text-gray-300 text-sm font-mono">{result.exploitability.toFixed(4)}</div>
+                <div className="text-gray-900 text-sm font-mono">{result.exploitability.toFixed(4)}</div>
                 <div className="text-gray-600 text-xs">Exploitability Score</div>
               </div>
             </div>

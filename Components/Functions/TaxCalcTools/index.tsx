@@ -33,7 +33,7 @@ export function TaxCalculator() {
   }, [input, mode]);
 
   const modeSelector = (
-    <div className="flex items-center gap-2 text-sm text-gray-300">
+    <div className="flex items-center gap-2 text-sm text-gray-700">
       <span className="text-gray-500">Mode:</span>
       <select
         className="bg-white text-gray-900 border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:border-white/30"

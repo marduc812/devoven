@@ -86,7 +86,7 @@ export function SecurityHeadersGenerator() {
         <div className="flex flex-col gap-6 w-full">
           {/* Site requirements */}
           <div className="border border-gray-200 bg-gray-50 p-4 flex flex-col gap-4">
-            <h3 className="text-gray-300 text-sm font-semibold">Site Requirements</h3>
+            <h3 className="text-gray-900 text-sm font-semibold">Site Requirements</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {checkboxItems.map(({ key, label, hint }) => (
                 <label key={key} className="flex items-start gap-3 cursor-pointer group">
@@ -109,7 +109,7 @@ export function SecurityHeadersGenerator() {
                     </div>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-gray-300 text-sm">{label}</span>
+                    <span className="text-gray-700 text-sm">{label}</span>
                     <span className="text-gray-600 text-xs">{hint}</span>
                   </div>
                 </label>

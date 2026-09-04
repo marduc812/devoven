@@ -18,7 +18,7 @@ const categoryColor: Record<HeaderCategory, string> = {
   authentication: 'bg-purple-500/20 text-purple-300 border-purple-500/40',
   content: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
   spam: 'bg-rose-500/20 text-rose-300 border-rose-500/40',
-  other: 'bg-gray-500/20 text-gray-300 border-gray-500/40',
+  other: 'bg-gray-500/20 text-gray-700 border-gray-500/40',
 };
 
 const authColor = (val: string | null) => {
@@ -27,7 +27,7 @@ const authColor = (val: string | null) => {
   if (v === 'pass') return 'text-emerald-400';
   if (v === 'fail') return 'text-rose-400';
   if (v === 'softfail' || v === 'neutral') return 'text-amber-400';
-  return 'text-gray-300';
+  return 'text-gray-700';
 };
 
 export const EmailHeaderAnalyzer = () => {

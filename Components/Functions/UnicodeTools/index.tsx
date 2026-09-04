@@ -99,9 +99,9 @@ export const UnicodeLookup = () => {
                 <tbody>
                   {UNICODE_BLOCKS.map((b, i) => (
                     <tr key={i} className="border-b border-gray-200">
-                      <td className="py-1.5 pr-4 text-gray-300">{b.name}</td>
+                      <td className="py-1.5 pr-4 text-gray-700">{b.name}</td>
                       <td className="py-1.5 pr-4 text-gray-400 font-mono whitespace-nowrap">U+{b.start.toString(16).toUpperCase().padStart(4, '0')}–U+{b.end.toString(16).toUpperCase().padStart(4, '0')}</td>
-                      <td className="py-1.5 text-gray-300">{b.example}</td>
+                      <td className="py-1.5 text-gray-700">{b.example}</td>
                     </tr>
                   ))}
                 </tbody>

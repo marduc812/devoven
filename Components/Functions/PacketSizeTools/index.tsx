@@ -127,7 +127,7 @@ export const PacketSizeCalculator = () => {
                   ))}
                   <div className="flex items-center gap-3 text-sm py-1.5 font-semibold">
                     <span className="text-gray-400 font-mono w-32 shrink-0">Payload</span>
-                    <span className="text-gray-300 font-mono w-12 shrink-0">{result.payloadSize} B</span>
+                    <span className="text-gray-700 font-mono w-12 shrink-0">{result.payloadSize} B</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm py-1.5 border-t border-gray-200 font-semibold">
                     <span className="text-gray-900 font-mono w-32 shrink-0">Total</span>
@@ -166,9 +166,9 @@ export const PacketSizeCalculator = () => {
                           <tbody>
                             {result.fragments.map(f => (
                               <tr key={f.fragmentNumber} className="border-b border-gray-200">
-                                <td className="py-1 pr-4 text-gray-300">{f.fragmentNumber}</td>
+                                <td className="py-1 pr-4 text-gray-700">{f.fragmentNumber}</td>
                                 <td className="py-1 pr-4 text-sky-300">{f.payloadBytes}</td>
-                                <td className="py-1 pr-4 text-gray-300">{f.totalBytes}</td>
+                                <td className="py-1 pr-4 text-gray-700">{f.totalBytes}</td>
                                 <td className="py-1 text-gray-500">{f.offset}</td>
                               </tr>
                             ))}

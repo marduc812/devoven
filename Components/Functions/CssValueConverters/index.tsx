@@ -44,7 +44,7 @@ export const CssValueConverters = () => {
         <option value="px-to-rem">px → rem</option>
         <option value="rem-to-px">rem → px</option>
       </select>
-      <label className="flex items-center gap-2 text-gray-300 text-sm">
+      <label className="flex items-center gap-2 text-gray-700 text-sm">
         Base:
         <input
           type="number"

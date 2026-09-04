@@ -147,7 +147,7 @@ export function SudokuValidator() {
                                 : sameValue
                                   ? 'bg-indigo-50 text-gray-900'
                                   : value === 0
-                                    ? 'bg-white text-gray-300'
+                                    ? 'bg-white text-gray-400'
                                     : 'bg-white text-gray-900'
                           }`}
                       >

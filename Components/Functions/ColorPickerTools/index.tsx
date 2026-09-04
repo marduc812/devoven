@@ -124,7 +124,7 @@ export const ColorPickerHelper = () => {
                       >
                         <td className="px-4 py-2 text-gray-400 text-xs font-bold uppercase tracking-wider w-16">{label}</td>
                         <td className="px-4 py-2 text-gray-900 font-mono text-xs">{value}</td>
-                        <td className="px-4 py-2 text-gray-300 text-xs text-right">copy</td>
+                        <td className="px-4 py-2 text-gray-400 text-xs text-right">copy</td>
                       </tr>
                     ))}
                   </tbody>

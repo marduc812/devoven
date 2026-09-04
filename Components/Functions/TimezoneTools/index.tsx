@@ -76,7 +76,7 @@ export const TimezoneConverter = () => {
             <tbody>
               {results.map((r, idx) => (
                 <tr key={r.timezone} className={`border-b border-gray-200 ${idx % 2 === 0 ? '' : 'bg-white/[0.02]'}`}>
-                  <td className="px-4 py-2 text-gray-300">{r.label}</td>
+                  <td className="px-4 py-2 text-gray-700">{r.label}</td>
                   <td className="px-4 py-2 text-gray-400 font-mono text-xs">{r.date}</td>
                   <td className="px-4 py-2 text-gray-900 font-mono">{r.time}</td>
                   <td className="px-4 py-2 text-gray-500 font-mono text-xs hidden sm:table-cell">{r.offset}</td>

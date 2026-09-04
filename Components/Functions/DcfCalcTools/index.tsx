@@ -133,7 +133,7 @@ export function DcfCalculator() {
                     </label>
                     {flows.length > 2 && (
                       <button
-                        className="text-[10px] font-bold uppercase text-gray-300 hover:text-red-600"
+                        className="text-[10px] font-bold uppercase text-gray-400 hover:text-red-600"
                         onClick={() => removeFlow(i)}
                         title="Remove this year"
                       >

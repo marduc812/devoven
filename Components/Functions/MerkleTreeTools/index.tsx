@@ -150,7 +150,7 @@ export const MerkleTreeVisualizer = () => {
                               );
                             })}
                           </div>
-                          <span className="text-[9px] uppercase tracking-widest text-gray-300">
+                          <span className="text-[9px] uppercase tracking-widest text-gray-700">
                             {level === levels.length - 1
                               ? 'root'
                               : level === 0

@@ -52,7 +52,7 @@ const KIND_TONE: Record<BlendKind, BadgeTone> = {
 const HEAD_TINT = 'bg-rose-100 border-rose-300 text-rose-900';
 const TAIL_TINT = 'bg-indigo-100 border-indigo-300 text-indigo-900';
 const SHARED_TINT = 'bg-amber-100 border-amber-300 text-amber-900';
-const DROPPED_TINT = 'bg-white border-dashed border-gray-200 text-gray-300 line-through';
+const DROPPED_TINT = 'bg-white border-dashed border-gray-200 text-gray-400 line-through';
 
 function scoreTone(score: number): BadgeTone {
   if (score >= 0.8) return 'pass';
@@ -387,7 +387,7 @@ export function PortmanteauGenerator() {
                       {current.result ? (
                         <BlendWord blend={current} />
                       ) : (
-                        <span className="font-mono text-gray-300 text-xl">—</span>
+                        <span className="font-mono text-gray-400 text-xl">—</span>
                       )}
                     </div>
                     <div className="flex items-center gap-3">
@@ -575,7 +575,7 @@ export function PortmanteauGenerator() {
                     #{f.rank + 1}
                   </span>
                 ) : (
-                  <span key="r" className="text-gray-300">
+                  <span key="r" className="text-gray-400">
                     —
                   </span>
                 ),

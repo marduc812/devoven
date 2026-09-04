@@ -78,7 +78,7 @@ const BitField = ({ fp }: { fp: FloatPrecision }) => {
                 key={i}
                 title={`Bit ${g.start - i}`}
                 className={`w-4 h-6 flex items-center justify-center border font-mono text-[11px] ${
-                  bit === '1' ? `${g.className} font-bold` : 'bg-white border-gray-200 text-gray-300'
+                  bit === '1' ? `${g.className} font-bold` : 'bg-white border-gray-200 text-gray-400'
                 }`}
               >
                 {bit}

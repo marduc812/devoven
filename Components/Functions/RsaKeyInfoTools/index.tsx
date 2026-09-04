@@ -109,7 +109,7 @@ export const RsaKeyInfo = () => {
           {info && (
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-3 flex-wrap">
-                <span className={`inline-flex items-center px-2 py-0.5 text-xs font-bold border ${typeColors[info.keyType] || 'bg-gray-500/20 text-gray-300 border-gray-500/40'}`}>
+                <span className={`inline-flex items-center px-2 py-0.5 text-xs font-bold border ${typeColors[info.keyType] || 'bg-gray-500/20 text-gray-700 border-gray-500/40'}`}>
                   {info.label}
                 </span>
                 <span className="text-xs text-gray-400">{info.derBytes} bytes DER</span>
@@ -137,7 +137,7 @@ export const RsaKeyInfo = () => {
               {info.structure.length > 0 && (
                 <div>
                   <div className="text-xs text-gray-500 mb-2">ASN.1 Structure</div>
-                  <pre className="bg-white border border-gray-200 p-3 text-xs text-gray-300 font-mono overflow-auto whitespace-pre">
+                  <pre className="bg-white border border-gray-200 p-3 text-xs text-gray-900 font-mono overflow-auto whitespace-pre">
                     {info.structure.join('\n')}
                   </pre>
                 </div>
@@ -148,7 +148,7 @@ export const RsaKeyInfo = () => {
                   <div className="text-xs text-gray-500 mb-2">Analysis Notes</div>
                   <ul className="flex flex-col gap-1">
                     {info.notes.map((note, i) => (
-                      <li key={i} className="text-xs text-gray-300 flex gap-2">
+                      <li key={i} className="text-xs text-gray-700 flex gap-2">
                         <span className="text-gray-700 shrink-0">•</span>
                         <span>{note}</span>
                       </li>

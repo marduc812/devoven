@@ -14,9 +14,9 @@ const labelClass = 'text-xs font-bold uppercase tracking-wider text-gray-500';
 const STATUS_STYLE: Record<TraceStatus, { box: string; letter: string; note: string }> = {
   first:     { box: 'bg-gray-900',              letter: 'text-white',     note: 'text-gray-400' },
   coded:     { box: 'bg-white border border-gray-900', letter: 'text-gray-900', note: 'text-gray-500' },
-  ignored:   { box: 'bg-white border border-gray-200', letter: 'text-gray-300', note: 'text-gray-300' },
+  ignored:   { box: 'bg-white border border-gray-200', letter: 'text-gray-400', note: 'text-gray-400' },
   dropped:   { box: 'bg-white border border-gray-200', letter: 'text-gray-400 line-through', note: 'text-gray-400' },
-  truncated: { box: 'bg-gray-50 border border-dashed border-gray-300', letter: 'text-gray-300', note: 'text-gray-300' },
+  truncated: { box: 'bg-gray-50 border border-dashed border-gray-300', letter: 'text-gray-400', note: 'text-gray-400' },
 };
 
 const DEFAULT_NAMES = 'Robert\nRupert\nRubin\nAshcraft\nAshcroft\nTymczak\nPfister\nHoneyman';

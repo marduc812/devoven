@@ -126,7 +126,7 @@ export const HmacGenerator = () => {
                   {results.map(r => (
                     <div key={r.algorithm} className="flex flex-col gap-1">
                       <span className={`text-xs font-semibold px-2 py-0.5 rounded-full self-start ${algoColors[r.algorithm]}`}>{r.algorithm}</span>
-                      <code className="text-gray-300 text-xs font-mono bg-gray-50 p-2 break-all">{r.hex}</code>
+                      <code className="text-gray-900 text-xs font-mono bg-gray-50 p-2 break-all">{r.hex}</code>
                     </div>
                   ))}
                 </div>

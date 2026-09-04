@@ -36,7 +36,7 @@ const BitStrip = ({ binary }: { binary: string }) => (
         className={`w-4 h-5 flex items-center justify-center font-mono text-[11px] border ${
           bit === '1'
             ? 'bg-emerald-100 border-emerald-300 text-emerald-800 font-bold'
-            : 'bg-white border-gray-200 text-gray-300'
+            : 'bg-white border-gray-200 text-gray-400'
         }`}
       >
         {bit}
@@ -49,7 +49,7 @@ const ByteRow = ({ row, index }: { row: BitPatternRow; index: number }) => (
   <tr className="border-t border-gray-200 hover:bg-gray-50">
     <td className="px-3 py-1.5 font-mono text-[10px] text-gray-400">{index}</td>
     <td className="px-3 py-1.5 font-mono text-xs text-gray-900 whitespace-nowrap">
-      {row.char === '.' ? <span className="text-gray-300">.</span> : row.char}
+      {row.char === '.' ? <span className="text-gray-400">.</span> : row.char}
     </td>
     <td className="px-3 py-1.5">
       <BitStrip binary={row.binary8} />

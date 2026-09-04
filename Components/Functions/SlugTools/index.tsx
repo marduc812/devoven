@@ -18,7 +18,7 @@ function SlugRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center gap-3 px-4 py-3 border-t border-gray-200 first:border-t-0">
       <span className="text-xs font-bold uppercase tracking-wider text-gray-400 w-32 flex-shrink-0">{label}</span>
-      <code className="flex-1 text-sm font-mono text-gray-900 break-all">{value || <span className="text-gray-300">—</span>}</code>
+      <code className="flex-1 text-sm font-mono text-gray-900 break-all">{value || <span className="text-gray-400">—</span>}</code>
       {value && (
         <button
           onClick={handleCopy}

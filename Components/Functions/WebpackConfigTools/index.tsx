@@ -44,7 +44,7 @@ export function WebpackConfigGenerator() {
           onChange={() => toggle(key)}
           className="accent-lime-400"
         />
-        <span className="text-xs text-gray-300">{label}</span>
+        <span className="text-xs text-gray-700">{label}</span>
       </label>
     );
   };

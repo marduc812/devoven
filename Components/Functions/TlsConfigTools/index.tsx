@@ -28,7 +28,7 @@ export function TlsConfigGenerator() {
     'px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer border ' +
     (active
       ? 'bg-sky-500/20 text-sky-300 border-sky-500/40'
-      : 'text-gray-500 hover:text-gray-300 border-gray-200 hover:border-gray-400');
+      : 'text-gray-500 hover:text-gray-900 border-gray-200 hover:border-gray-400');
 
   const content = (
     <div className="flex flex-col gap-5">
@@ -48,7 +48,7 @@ export function TlsConfigGenerator() {
                     : 'bg-gray-50 border-gray-200 hover:border-gray-400')
                 }
               >
-                <span className={profile === p.id ? 'text-sky-300 text-sm font-semibold' : 'text-gray-300 text-sm font-semibold'}>
+                <span className={profile === p.id ? 'text-sky-300 text-sm font-semibold' : 'text-gray-700 text-sm font-semibold'}>
                   {p.name}
                 </span>
                 <span className="text-gray-500 text-xs mt-0.5">{p.description}</span>
@@ -76,7 +76,7 @@ export function TlsConfigGenerator() {
         <div className="flex flex-wrap gap-1.5">
           {config.cipherSuites.map(function(c) {
             return (
-              <span key={c} className="text-xs font-mono bg-white border border-gray-200 rounded px-2 py-0.5 text-gray-300">
+              <span key={c} className="text-xs font-mono bg-white border border-gray-200 rounded px-2 py-0.5 text-gray-700">
                 {c}
               </span>
             );

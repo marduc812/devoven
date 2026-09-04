@@ -193,7 +193,7 @@ export function CronToHuman() {
           <label className="text-gray-400 text-sm">Next 5 Run Times (UTC)</label>
           <ul className="flex flex-col gap-1">
             {nextRuns.map((run, i) => (
-              <li key={i} className="text-gray-300 text-sm font-mono bg-gray-50 px-3 py-2 border border-gray-200">
+              <li key={i} className="text-gray-900 text-sm font-mono bg-gray-50 px-3 py-2 border border-gray-200">
                 {i + 1}. {run}
               </li>
             ))}

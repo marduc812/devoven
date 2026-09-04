@@ -42,7 +42,7 @@ export const GitignoreGen = () => {
                 Project Types ({selected.length} selected)
               </span>
               {selected.length > 0 && (
-                <button className={btnBase + ' border-gray-200 bg-gray-50 text-gray-500 hover:text-gray-300'} onClick={() => setSelected([])}>
+                <button className={btnBase + ' border-gray-200 bg-gray-50 text-gray-500 hover:text-gray-900'} onClick={() => setSelected([])}>
                   Clear
                 </button>
               )}
@@ -68,7 +68,7 @@ export const GitignoreGen = () => {
                 .gitignore Output {output ? `(${output.split('\n').length} lines)` : ''}
               </span>
               <button
-                className={btnBase + ' border-gray-200 bg-gray-50 text-gray-300 hover:text-gray-900 hover:border-gray-400'}
+                className={btnBase + ' border-gray-200 bg-gray-50 text-gray-600 hover:text-gray-900 hover:border-gray-400'}
                 onClick={handleCopy}
                 disabled={!output}
               >

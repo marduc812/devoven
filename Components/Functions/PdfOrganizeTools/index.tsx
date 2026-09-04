@@ -161,7 +161,7 @@ export const PdfOrganize = () => {
             <p className="text-gray-400 text-sm">
               Drop a PDF here or <span className="text-gray-700 underline">click to browse</span>
             </p>
-            {fileName && <p className="text-gray-300 text-sm mt-2 font-mono">{fileName}</p>}
+            {fileName && <p className="text-gray-700 text-sm mt-2 font-mono">{fileName}</p>}
             <input
               ref={fileInputRef}
               type="file"

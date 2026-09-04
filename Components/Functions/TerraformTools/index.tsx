@@ -97,7 +97,7 @@ export const TerraformGenerator = () => {
                     'px-3 py-1.5 text-xs border transition-colors ' +
                     (mode === m
                       ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300'
-                      : 'border-gray-200 text-gray-400 hover:border-gray-400 hover:text-gray-300')
+                      : 'border-gray-200 text-gray-400 hover:border-gray-400 hover:text-gray-900')
                   }
                 >
                   {MODE_LABELS[m]}

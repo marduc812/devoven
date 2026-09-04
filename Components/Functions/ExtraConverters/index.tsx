@@ -510,7 +510,7 @@ export const HexDump = () => {
                           );
                         })}
                         <td className="pl-4 pr-3 py-1 whitespace-pre align-middle">
-                          <span className="text-gray-300 select-none">|</span>
+                          <span className="text-gray-400 select-none">|</span>
                           {Array.from({ length: bytesPerLine }, (_, j) => {
                             const index = row.offset + j;
                             const byte = row.bytes[j];
@@ -527,7 +527,7 @@ export const HexDump = () => {
                               </span>
                             );
                           })}
-                          <span className="text-gray-300 select-none">|</span>
+                          <span className="text-gray-400 select-none">|</span>
                         </td>
                       </tr>
                     ))}

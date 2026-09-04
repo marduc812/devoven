@@ -46,7 +46,7 @@ function CellCard({ cell }: { cell: BrailleCell }) {
   if (!supported) {
     return (
       <div className="bg-white p-3 flex flex-col items-center gap-2 opacity-60">
-        <div className="h-[27px] flex items-center text-gray-300 text-xl leading-none">?</div>
+        <div className="h-[27px] flex items-center text-gray-400 text-xl leading-none">?</div>
         <p className="font-mono text-sm text-gray-900 leading-none">{cell.original}</p>
         <p className="text-[10px] text-gray-400 leading-none">unsupported</p>
       </div>

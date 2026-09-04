@@ -82,7 +82,7 @@ export const MetaTagsGenerator = () => {
               readOnly
               value={output}
               rows={20}
-              className="bg-white text-gray-300 font-mono text-xs p-3 border border-gray-200 w-full resize-none focus:outline-none"
+              className="bg-white text-gray-900 font-mono text-xs p-3 border border-gray-200 w-full resize-none focus:outline-none"
             />
           </div>
         </div>

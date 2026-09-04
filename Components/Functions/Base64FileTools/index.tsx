@@ -90,13 +90,13 @@ export const Base64File = () => {
           <div className="flex gap-2">
             <button
               onClick={() => { setMode('encode'); setError(''); }}
-              className={`px-4 py-2 text-sm font-medium transition-colors ${mode === 'encode' ? 'bg-gray-900 text-white border-gray-900' : 'border border-gray-200 text-gray-400 hover:text-gray-300'}`}
+              className={`px-4 py-2 text-sm font-medium transition-colors ${mode === 'encode' ? 'bg-gray-900 text-white border-gray-900' : 'border border-gray-200 text-gray-400 hover:text-gray-900'}`}
             >
               Encode File
             </button>
             <button
               onClick={() => { setMode('decode'); setError(''); }}
-              className={`px-4 py-2 text-sm font-medium transition-colors ${mode === 'decode' ? 'bg-gray-900 text-white border-gray-900' : 'border border-gray-200 text-gray-400 hover:text-gray-300'}`}
+              className={`px-4 py-2 text-sm font-medium transition-colors ${mode === 'decode' ? 'bg-gray-900 text-white border-gray-900' : 'border border-gray-200 text-gray-400 hover:text-gray-900'}`}
             >
               Decode Base64
             </button>
@@ -111,7 +111,7 @@ export const Base64File = () => {
                 className="border-2 border-dashed border-gray-400 p-8 text-center cursor-pointer hover:border-white/30 transition-colors"
               >
                 <p className="text-gray-400 text-sm">Drop a file here or <span className="text-gray-700 underline">click to browse</span></p>
-                {fileName && <p className="text-gray-300 text-sm mt-2 font-mono">{fileName}</p>}
+                {fileName && <p className="text-gray-700 text-sm mt-2 font-mono">{fileName}</p>}
                 <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
               </div>
 

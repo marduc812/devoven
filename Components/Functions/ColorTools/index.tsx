@@ -483,12 +483,12 @@ export const ColorPaletteExtractor = () => {
         <div className="flex flex-col gap-6">
           {/* File input */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm text-gray-300">Upload Image</label>
+            <label className="text-sm text-gray-700">Upload Image</label>
             <input
               type="file"
               accept="image/*"
               onChange={handleFileChange}
-              className="text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border file:border-gray-600 file:bg-gray-800 file:text-gray-300 hover:file:bg-gray-700 file:cursor-pointer cursor-pointer"
+              className="text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded file:border file:border-gray-600 file:bg-gray-800 file:text-gray-300 hover:file:bg-gray-700 file:cursor-pointer cursor-pointer"
             />
           </div>
 
@@ -502,7 +502,7 @@ export const ColorPaletteExtractor = () => {
           {/* Palette swatches */}
           {palette.length > 0 && (
             <div className="flex flex-col gap-3">
-              <label className="text-sm text-gray-300">Dominant Colors</label>
+              <label className="text-sm text-gray-700">Dominant Colors</label>
               <div className="flex flex-wrap gap-3">
                 {palette.map(hex => (
                   <div key={hex} className="flex flex-col items-center gap-1">

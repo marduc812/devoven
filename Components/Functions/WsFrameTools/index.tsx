@@ -89,7 +89,7 @@ export const WsFrameDecoder = () => {
               {CLOSE_CODES.map(cc => (
                 <tr key={cc.code} className="border-t border-gray-200">
                   <td className="text-sky-400 pr-3 py-1">{cc.code}</td>
-                  <td className="text-gray-300 pr-3 py-1">{cc.name}</td>
+                  <td className="text-gray-700 pr-3 py-1">{cc.name}</td>
                   <td className="text-gray-500 py-1">{cc.description}</td>
                 </tr>
               ))}

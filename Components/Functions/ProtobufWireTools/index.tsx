@@ -95,7 +95,7 @@ export function ProtobufWireDecoder() {
               {result && (
                 <div>
                   <label className="text-gray-400 text-xs uppercase tracking-wider mb-1 block">Decoded Output</label>
-                  <pre className="bg-gray-100 border border-gray-200 p-4 text-xs font-mono text-gray-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">{result}</pre>
+                  <pre className="bg-gray-100 border border-gray-200 p-4 text-xs font-mono text-gray-900 overflow-x-auto whitespace-pre-wrap leading-relaxed">{result}</pre>
                 </div>
               )}
             </div>
@@ -111,14 +111,14 @@ export function ProtobufWireDecoder() {
                       <span className="bg-gray-900 text-white border-gray-900 px-2 py-0.5 text-xs font-mono font-bold">Type {wt}</span>
                       <span className="text-gray-900 text-sm font-semibold">{info.name}</span>
                     </div>
-                    <p className="text-gray-300 text-sm mb-1">{info.description}</p>
+                    <p className="text-gray-700 text-sm mb-1">{info.description}</p>
                     <p className="text-gray-500 text-xs italic">Used for: {info.types}</p>
                   </div>
                 ))}
               </div>
               <div className="bg-white border border-gray-200 p-4">
                 <p className="text-gray-400 text-xs font-semibold mb-2 uppercase tracking-wider">Varint encoding</p>
-                <p className="text-gray-300 text-sm mb-2">Each byte contributes 7 data bits. The MSB (bit 7) is the continuation bit — if 1, more bytes follow.</p>
+                <p className="text-gray-700 text-sm mb-2">Each byte contributes 7 data bits. The MSB (bit 7) is the continuation bit — if 1, more bytes follow.</p>
                 <code className="text-gray-700 text-xs font-mono block">Example: 150 = 0x96 0x01</code>
                 <code className="text-gray-400 text-xs font-mono block">0x96 → 1 0010110 (MSB=1, payload=0010110)</code>
                 <code className="text-gray-400 text-xs font-mono block">0x01 → 0 0000001 (MSB=0, payload=0000001)</code>

@@ -29,7 +29,7 @@ export function HashLengthExtReference() {
 
           {/* Algorithm vulnerability table */}
           <div className="flex flex-col gap-2">
-            <h3 className="text-gray-300 text-sm font-semibold">Algorithm Vulnerability Status</h3>
+            <h3 className="text-gray-900 text-sm font-semibold">Algorithm Vulnerability Status</h3>
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
@@ -116,9 +116,9 @@ export function HashLengthExtReference() {
 
             <div className="bg-white p-3 flex flex-col gap-2">
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs mb-2">
-                <div><span className="text-gray-500">Block size:</span> <span className="text-gray-300 font-mono">{paddingInfo.blockSize} bytes</span></div>
-                <div><span className="text-gray-500">Padding bytes:</span> <span className="text-gray-300 font-mono">{paddingInfo.paddingBytes}</span></div>
-                <div><span className="text-gray-500">Padded total:</span> <span className="text-gray-300 font-mono">{paddingInfo.paddedLengthBytes} bytes</span></div>
+                <div><span className="text-gray-500">Block size:</span> <span className="text-gray-900 font-mono">{paddingInfo.blockSize} bytes</span></div>
+                <div><span className="text-gray-500">Padding bytes:</span> <span className="text-gray-900 font-mono">{paddingInfo.paddingBytes}</span></div>
+                <div><span className="text-gray-500">Padded total:</span> <span className="text-gray-900 font-mono">{paddingInfo.paddedLengthBytes} bytes</span></div>
               </div>
               <div>
                 <div className="text-gray-500 text-xs mb-1">Glue padding (hex):</div>

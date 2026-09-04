@@ -33,7 +33,7 @@ export function AriaLabelGenerator() {
   }, [input]);
 
   const textareaClass = 'bg-white backdrop-blur-sm text-gray-900 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none resize-none transition-colors duration-200 font-mono text-sm';
-  const btnClass = 'px-3 py-1.5 text-xs border border-gray-200 bg-gray-50 text-gray-300 hover:text-gray-900 hover:border-gray-400 transition-colors cursor-pointer';
+  const btnClass = 'px-3 py-1.5 text-xs border border-gray-200 bg-gray-50 text-gray-600 hover:text-gray-900 hover:border-gray-400 transition-colors cursor-pointer';
 
   return (
     <Panel
