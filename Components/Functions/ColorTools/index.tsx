@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import BasicConverter from '@/Components/MainView/MainPanel/BasicConverter';
 import Panel from '@/Components/MainView/MainPanel/Panel';
+import { labelClass, paneClass, btnSecondaryClass, segOn, segOff } from '@/Components/MainView/MainPanel/formControls';
 import {
   hexToHsl, hslToHex,
   rgbToHsl, hslToRgb,
@@ -303,22 +304,54 @@ export const HexToColorName = () => {
 // ─── Gradient Generator ───────────────────────────────────────────────────────
 
 const GRADIENT_DIRECTIONS = [
-  { value: 'to right', label: 'Left → Right' },
-  { value: 'to left', label: 'Right → Left' },
-  { value: 'to bottom', label: 'Top → Bottom' },
-  { value: 'to top', label: 'Bottom → Top' },
-  { value: '135deg', label: 'Diagonal ↘' },
-  { value: '45deg', label: 'Diagonal ↗' },
-  { value: 'to bottom right', label: 'Top-Left → Bottom-Right' },
-  { value: 'to top right', label: 'Bottom-Left → Top-Right' },
+  { value: 'to right', arrow: '→', label: 'Right' },
+  { value: 'to left', arrow: '←', label: 'Left' },
+  { value: 'to bottom', arrow: '↓', label: 'Down' },
+  { value: 'to top', arrow: '↑', label: 'Up' },
+  { value: 'to bottom right', arrow: '↘', label: 'Down right' },
+  { value: 'to bottom left', arrow: '↙', label: 'Down left' },
+  { value: 'to top right', arrow: '↗', label: 'Up right' },
+  { value: 'to top left', arrow: '↖', label: 'Up left' },
 ];
+
+/** One labelled swatch + hex field. The two ends of the gradient are identical controls. */
+const ColorStop = ({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) => (
+  <div className="flex flex-col">
+    <label className={labelClass}>{label}</label>
+    <div className="flex items-stretch border border-gray-300 focus-within:border-gray-900 transition-colors">
+      <input
+        type="color"
+        aria-label={`${label} picker`}
+        value={value}
+        onChange={e => onChange(e.target.value.toUpperCase())}
+        className="w-12 shrink-0 cursor-pointer border-0 bg-transparent p-1"
+      />
+      <input
+        type="text"
+        aria-label={label}
+        value={value}
+        onChange={e => onChange(e.target.value.toUpperCase())}
+        className="w-full min-w-0 border-0 border-l border-gray-300 bg-white px-3 py-2 font-mono text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
+        placeholder="#FF0000"
+      />
+    </div>
+  </div>
+);
 
 export const GradientGenerator = () => {
   const [color1, setColor1] = useState('#FF0000');
   const [color2, setColor2] = useState('#0000FF');
   const [direction, setDirection] = useState('to right');
+  const [copied, setCopied] = useState(false);
 
   const css = generateLinearGradientCss(color1, color2, direction);
+  const declaration = `background: ${css};`;
+
+  const copy = () => {
+    navigator.clipboard.writeText(declaration);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
 
   return (
     <Panel
@@ -327,82 +360,57 @@ export const GradientGenerator = () => {
       backColor="cyan"
       extraElements={
         <div className="flex flex-col gap-6">
-          {/* Color pickers */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex flex-col gap-2 flex-1">
-              <label className="text-sm text-gray-300">Start Color</label>
-              <div className="flex gap-2 items-center">
-                <input
-                  type="color"
-                  value={color1}
-                  onChange={e => setColor1(e.target.value.toUpperCase())}
-                  className="w-12 h-10 rounded cursor-pointer border border-gray-600 bg-transparent"
-                />
-                <input
-                  type="text"
-                  value={color1}
-                  onChange={e => setColor1(e.target.value.toUpperCase())}
-                  className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white font-mono text-sm focus:outline-none focus:border-indigo-500"
-                  placeholder="#FF0000"
-                />
+          {/* Controls on the left, a preview that fills the rest of the row on the right.
+              Below `lg` the two stack and the preview keeps a fixed height of its own. */}
+          <div className="grid gap-6 lg:grid-cols-[22rem_minmax(0,1fr)] lg:gap-10">
+            <div className="flex flex-col gap-5">
+              <div className="grid grid-cols-2 gap-3">
+                <ColorStop label="Start Color" value={color1} onChange={setColor1} />
+                <ColorStop label="End Color" value={color2} onChange={setColor2} />
+              </div>
+
+              <div className="flex flex-col">
+                <span className={labelClass}>Direction</span>
+                <div className="grid grid-cols-2 gap-2">
+                  {GRADIENT_DIRECTIONS.map(d => (
+                    <button
+                      key={d.value}
+                      type="button"
+                      onClick={() => setDirection(d.value)}
+                      aria-pressed={direction === d.value}
+                      className={`${direction === d.value ? segOn : segOff} flex items-center gap-2`}
+                    >
+                      <span aria-hidden className="font-mono text-sm leading-none">{d.arrow}</span>
+                      {d.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
-            <div className="flex flex-col gap-2 flex-1">
-              <label className="text-sm text-gray-300">End Color</label>
-              <div className="flex gap-2 items-center">
-                <input
-                  type="color"
-                  value={color2}
-                  onChange={e => setColor2(e.target.value.toUpperCase())}
-                  className="w-12 h-10 rounded cursor-pointer border border-gray-600 bg-transparent"
-                />
-                <input
-                  type="text"
-                  value={color2}
-                  onChange={e => setColor2(e.target.value.toUpperCase())}
-                  className="flex-1 bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white font-mono text-sm focus:outline-none focus:border-indigo-500"
-                  placeholder="#0000FF"
-                />
-              </div>
+
+            <div className="flex flex-col">
+              <span className={labelClass}>Preview</span>
+              <div
+                className="h-40 w-full border border-gray-300 lg:h-auto lg:flex-1"
+                style={{ background: css }}
+              />
             </div>
           </div>
-
-          {/* Direction select */}
-          <div className="flex flex-col gap-2">
-            <label className="text-sm text-gray-300">Direction</label>
-            <select
-              value={direction}
-              onChange={e => setDirection(e.target.value)}
-              className="bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500"
-            >
-              {GRADIENT_DIRECTIONS.map(d => (
-                <option key={d.value} value={d.value}>{d.label}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Preview */}
-          <div
-            className="w-full h-24 border border-gray-600"
-            style={{ background: css }}
-          />
 
           {/* CSS output */}
-          <div className="flex flex-col gap-2">
-            <label className="text-sm text-gray-300">CSS Output</label>
-            <div className="relative">
-              <textarea
-                readOnly
-                value={`background: ${css};`}
-                className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white font-mono text-sm resize-none h-20 focus:outline-none"
-              />
-              <button
-                onClick={() => navigator.clipboard.writeText(`background: ${css};`)}
-                className="absolute top-2 right-2 text-xs text-gray-400 hover:text-white border border-gray-600 rounded px-2 py-1 bg-gray-800 hover:bg-gray-700 transition-colors"
-              >
-                Copy
+          <div className="flex flex-col">
+            <div className="flex items-end justify-between gap-4">
+              <span className={labelClass}>CSS Output</span>
+              <button type="button" onClick={copy} className={`${btnSecondaryClass} mb-1 py-1`}>
+                {copied ? 'Copied' : 'Copy'}
               </button>
             </div>
+            <textarea
+              readOnly
+              value={declaration}
+              rows={2}
+              className={paneClass}
+            />
           </div>
         </div>
       }
