@@ -9,6 +9,8 @@ checkout.
 drop and the PDF you split never leave the tab. Two tools cannot work that way,
 and the section below says exactly what they send and where.
 
+![The DevOven home page: the hero, the popular tools and the start of the tools collection](public/images/screenshot.jpg)
+
 ## Getting started
 
 ```bash
