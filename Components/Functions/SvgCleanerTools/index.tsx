@@ -31,7 +31,7 @@ export const SvgCleanerTools = () => {
   const statsEl: React.JSX.Element = stats ? (
     <div className="border border-gray-200 bg-gray-50 px-4 py-3">
       <p className="text-cyan-300 text-xs font-semibold uppercase tracking-wider mb-2">Stats</p>
-      <pre className="text-gray-300 font-mono text-xs whitespace-pre">{stats}</pre>
+      <pre className="text-gray-900 font-mono text-xs whitespace-pre">{stats}</pre>
     </div>
   ) : <></>;
 

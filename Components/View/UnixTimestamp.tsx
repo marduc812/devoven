@@ -74,7 +74,7 @@ const UnixTimestampView = () => {
             className={`px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200 ${
                 tsMode === m
                     ? 'bg-indigo-500/30 text-indigo-300 border border-indigo-500/40'
-                    : 'text-gray-500 hover:text-gray-300 border border-transparent'
+                    : 'text-gray-500 hover:text-gray-900 border border-transparent'
             }`}
         >
             {label}
@@ -86,7 +86,7 @@ const UnixTimestampView = () => {
             {/* Timestamp → Human */}
             <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between flex-wrap gap-2">
-                    <h2 className="text-sm font-medium text-gray-300">Timestamp → Human</h2>
+                    <h2 className="text-sm font-medium text-gray-700">Timestamp → Human</h2>
                     <div className="flex items-center gap-1">
                         {modeBtn('auto', 'Auto')}
                         {modeBtn('s', 'Seconds')}
@@ -121,7 +121,7 @@ const UnixTimestampView = () => {
             {/* Human → Timestamp */}
             <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between">
-                    <h2 className="text-sm font-medium text-gray-300">Human → Timestamp</h2>
+                    <h2 className="text-sm font-medium text-gray-700">Human → Timestamp</h2>
                     <button
                         onClick={useNow}
                         className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-white border border-white/10 hover:border-white/20 rounded-lg px-2.5 py-1 transition-all duration-200"

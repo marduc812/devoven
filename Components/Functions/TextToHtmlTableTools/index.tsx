@@ -55,7 +55,7 @@ export function TextToHtmlTable() {
             <option value="pipe">Pipe (|)</option>
             <option value="semicolon">Semicolon (;)</option>
           </select>
-          <label className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
             <input
               type="checkbox"
               checked={hasHeader}

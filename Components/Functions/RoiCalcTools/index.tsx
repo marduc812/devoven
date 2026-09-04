@@ -164,7 +164,7 @@ export function RoiCalculator() {
                 </div>
                 <div className="bg-white p-4">
                   <p className={`${labelClass} mb-1`}>Annualized</p>
-                  <p className={`text-2xl font-black ${data.annualized === null ? 'text-gray-300' : data.annualized >= 0 ? 'text-gray-900' : 'text-red-600'}`}>
+                  <p className={`text-2xl font-black ${data.annualized === null ? 'text-gray-400' : data.annualized >= 0 ? 'text-gray-900' : 'text-red-600'}`}>
                     {data.annualized === null ? '—' : pct(data.annualized)}
                   </p>
                   <p className="text-xs text-gray-400 mt-0.5">

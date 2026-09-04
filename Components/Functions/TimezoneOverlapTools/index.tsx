@@ -174,7 +174,7 @@ export function TimezoneOverlapFinder() {
                                     ? 'bg-emerald-200 border-emerald-400 text-emerald-900 font-bold'
                                     : cell.isWorkingHour
                                       ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-                                      : 'bg-white border-gray-200 text-gray-300'
+                                      : 'bg-white border-gray-200 text-gray-400'
                                 }`}
                               >
                                 {String(Math.floor(cell.localHour)).padStart(2, '0')}

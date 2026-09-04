@@ -161,7 +161,7 @@ export function MovingAverage() {
                           <td className="px-3 py-1.5 text-gray-400 text-xs font-mono">{i + 1}</td>
                           <td className="px-3 py-1.5 text-gray-900 font-mono text-xs">{d}</td>
                           <td className="px-3 py-1.5 font-mono text-xs text-emerald-700">
-                            {v !== null ? fmt(v) : <span className="text-gray-300">—</span>}
+                            {v !== null ? fmt(v) : <span className="text-gray-400">—</span>}
                           </td>
                           <td className="px-3 py-1.5 text-xs">
                             {v === null

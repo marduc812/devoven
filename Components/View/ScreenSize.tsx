@@ -53,10 +53,10 @@ const ScreenSizeView = () => {
         <div className='centered-content'>
             <div className='flex flex-col gap-4'>
                 <div className='flex flex-col p-1'>
-                    <h2 className='font-semibold text-lg text-white mb-3'>Screen Resolution</h2>
+                    <h2 className='font-semibold text-lg text-gray-900 mb-3'>Screen Resolution</h2>
                     <div className='flex flex-col items-center gap-1 mb-4'>
-                        <p className='text-2xl text-gray-300'>Width: <span className='text-3xl font-bold text-white'>{width}</span>px</p>
-                        <p className='text-2xl text-gray-300'>Height: <span className='text-3xl font-bold text-white'>{height}</span>px</p>
+                        <p className='text-2xl text-gray-700'>Width: <span className='text-3xl font-bold text-gray-900'>{width}</span>px</p>
+                        <p className='text-2xl text-gray-700'>Height: <span className='text-3xl font-bold text-gray-900'>{height}</span>px</p>
                     </div>
                     <div className='flex flex-row items-center justify-center'>
                         <canvas

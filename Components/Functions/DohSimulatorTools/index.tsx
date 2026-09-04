@@ -42,7 +42,7 @@ export function DohSimulator() {
     'px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ' +
     (activeTab === tab
       ? 'bg-sky-500/20 text-sky-300 border border-sky-500/40'
-      : 'text-gray-500 hover:text-gray-300 border border-transparent');
+      : 'text-gray-500 hover:text-gray-900 border border-transparent');
 
   const content = (
     <div className="flex flex-col gap-5">

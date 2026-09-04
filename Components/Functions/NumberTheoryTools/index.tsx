@@ -134,7 +134,7 @@ export function NumberTheoryCalc() {
                       <span className="text-gray-400">{result.n} =</span>
                       {result.primeFactors.map((f, i) => (
                         <React.Fragment key={f.prime}>
-                          {i > 0 && <span className="text-gray-300 text-xl">×</span>}
+                          {i > 0 && <span className="text-gray-400 text-xl">×</span>}
                           <span>
                             {f.prime}
                             {f.exponent > 1 && <span className="text-xl">{sup(f.exponent)}</span>}

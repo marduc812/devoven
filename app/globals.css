@@ -44,6 +44,9 @@ body {
 .dark .text-gray-500     { color: #a1a1aa; }
 .dark .text-gray-400     { color: #71717a; }
 .dark .hover\:text-gray-900:hover { color: #fafafa; }
+/* Same lift for the group-hover pairing, which Tailwind emits as a different
+   selector than the plain hover one above. */
+.dark .group:hover .group-hover\:text-gray-900 { color: #fafafa; }
 
 /* Borders */
 .dark .border-gray-100   { border-color: rgba(255,255,255,0.05); }

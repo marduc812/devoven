@@ -69,7 +69,7 @@ const BitStrip = ({ binary, hex }: { binary: string; hex: string }) => (
                   className={`w-4 h-5 flex items-center justify-center border font-mono text-[10px] leading-none ${
                     bit === '1'
                       ? 'bg-teal-200 border-teal-400 text-teal-900'
-                      : 'bg-gray-50 border-gray-200 text-gray-300'
+                      : 'bg-gray-50 border-gray-200 text-gray-400'
                   }`}
                 >
                   {bit}
@@ -318,12 +318,12 @@ export const MurmurHashCalculator = () => {
                       step.bytes.length > 0 ? (
                         <ByteCell key="b" bytes={step.bytes} />
                       ) : (
-                        <span key="b" className="text-gray-300">
+                        <span key="b" className="text-gray-400">
                           —
                         </span>
                       ),
                       step.k1Mixed === null ? (
-                        <span key="k" className="text-gray-300">
+                        <span key="k" className="text-gray-400">
                           —
                         </span>
                       ) : (

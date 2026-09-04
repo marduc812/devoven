@@ -167,7 +167,7 @@ export function PangramChecker() {
                     className={`aspect-square flex flex-col items-center justify-center border font-mono ${
                       used
                         ? heatClass(count, maxFreq)
-                        : 'bg-white border-dashed border-gray-300 text-gray-300'
+                        : 'bg-white border-dashed border-gray-300 text-gray-400'
                     }`}
                   >
                     <span className="uppercase text-sm sm:text-base font-bold leading-none">

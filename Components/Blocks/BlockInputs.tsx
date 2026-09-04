@@ -65,7 +65,7 @@ export default function BlockInputs({ fields, values, linked, upstream, onChange
                 className={`flex items-center px-1.5 border-l transition-colors ${
                   isLinked
                     ? 'border-gray-400 text-gray-900 hover:text-red-600'
-                    : 'border-gray-200 text-gray-300 hover:text-gray-900'
+                    : 'border-gray-200 text-gray-400 hover:text-gray-900'
                 }`}
               >
                 {isLinked ? <IoLinkOutline className="text-sm" /> : <IoUnlinkOutline className="text-sm" />}

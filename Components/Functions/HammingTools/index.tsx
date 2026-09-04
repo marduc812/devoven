@@ -185,7 +185,7 @@ export function HammingDistance() {
                             <span
                               key={p.index}
                               className={`w-6 text-center font-mono text-[11px] ${
-                                p.same ? 'text-gray-300' : 'text-rose-600 font-bold'
+                                p.same ? 'text-gray-400' : 'text-rose-600 font-bold'
                               }`}
                             >
                               {p.same ? '·' : '↕'}

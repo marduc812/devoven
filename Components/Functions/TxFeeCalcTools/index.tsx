@@ -84,7 +84,7 @@ export const TxFeeCalculator = () => {
           <div className="border border-gray-200 bg-gray-50 px-4 py-3">
             <p className="text-gray-400 text-xs">{txType.description}</p>
             {txType.gasOrVbytes > 0 && (
-              <p className="text-gray-300 text-xs mt-1 font-mono">
+              <p className="text-gray-700 text-xs mt-1 font-mono">
                 Size: {txType.gasOrVbytes.toLocaleString()} {txType.chain === 'ETH' ? 'gas' : 'vbytes'}
               </p>
             )}
@@ -110,7 +110,7 @@ export const TxFeeCalculator = () => {
                     <tbody>
                       {result.rows.map(row => (
                         <tr key={row.speed} className="border-b border-gray-200">
-                          <td className="py-2 pr-4 text-gray-300">{row.speed}</td>
+                          <td className="py-2 pr-4 text-gray-700">{row.speed}</td>
                           <td className="py-2 pr-4 text-gray-400 font-mono text-xs">{row.rate}</td>
                           <td className="py-2 text-emerald-300 font-mono text-xs">{row.fee}</td>
                         </tr>
@@ -138,7 +138,7 @@ export const TxFeeCalculator = () => {
                 <tbody>
                   {TX_TYPES.filter(t => t.id !== 'custom-eth' && t.id !== 'custom-btc').map(t => (
                     <tr key={t.id} className="border-b border-gray-200">
-                      <td className="py-1 pr-4 text-gray-300">{t.name}</td>
+                      <td className="py-1 pr-4 text-gray-700">{t.name}</td>
                       <td className="py-1 pr-4 text-gray-400">{t.chain}</td>
                       <td className="py-1 text-gray-400 font-mono">
                         {t.gasOrVbytes.toLocaleString()} {t.chain === 'ETH' ? 'gas' : 'vbytes'}

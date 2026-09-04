@@ -290,7 +290,7 @@ export function WhitespaceRemover() {
     setOutput(result);
   }, [input, doTrimLines, doCollapseSpaces, doRemoveBlankLines]);
 
-  const checkClass = 'flex items-center gap-2 text-sm text-gray-300 cursor-pointer select-none';
+  const checkClass = 'flex items-center gap-2 text-sm text-gray-700 cursor-pointer select-none';
   const inputClass = 'w-4 h-4 rounded accent-rose-500 cursor-pointer';
 
   return (

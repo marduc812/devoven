@@ -13,7 +13,7 @@ function PatternCard({ pattern, primary }: { pattern: PatternMatch; primary: boo
     <div className={`p-3 border ${primary ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-gray-50 border-gray-200'}`}>
       <div className="flex items-center gap-2 mb-1">
         {primary && <span className="text-xs font-semibold text-emerald-300 uppercase tracking-wider">Primary Match</span>}
-        <span className={`text-sm font-medium ${primary ? 'text-emerald-200' : 'text-gray-300'}`}>{pattern.name}</span>
+        <span className={`text-sm font-medium ${primary ? 'text-emerald-200' : 'text-gray-700'}`}>{pattern.name}</span>
         <span className={`text-xs px-1.5 py-0.5 rounded ${pattern.confidence === 'exact' ? 'bg-green-50 text-green-700' : 'bg-yellow-500/20 text-yellow-400'}`}>
           {pattern.confidence}
         </span>
@@ -91,7 +91,7 @@ export function SequenceRecognizer() {
               {/* Input echo */}
               <div className="p-2 bg-gray-50 border border-gray-200">
                 <span className="text-xs text-gray-500 uppercase tracking-wider">Parsed: </span>
-                <span className="text-xs font-mono text-gray-300">{analysis.terms.join(', ')}</span>
+                <span className="text-xs font-mono text-gray-700">{analysis.terms.join(', ')}</span>
                 <span className="text-xs text-gray-600 ml-2">({analysis.terms.length} terms)</span>
               </div>
 

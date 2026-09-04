@@ -140,7 +140,7 @@ export function GeometryCalculator() {
                   {def.fields.map((field) => (
                     <div key={field.key}>
                       <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">
-                        {field.label} <span className="font-mono text-gray-300">({field.key})</span>
+                        {field.label} <span className="font-mono text-gray-400">({field.key})</span>
                       </label>
                       <input
                         className={inputClass}

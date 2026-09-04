@@ -14,7 +14,7 @@ const categoryColors: Record<string, string> = {
   Sm: 'text-purple-300', Sc: 'text-purple-300', So: 'text-yellow-300',
   Zs: 'text-gray-500',
   Cc: 'text-red-400', Cf: 'text-red-300',
-  Po: 'text-gray-300', Ps: 'text-gray-300', Pe: 'text-gray-300',
+  Po: 'text-gray-700', Ps: 'text-gray-700', Pe: 'text-gray-700',
   Lo: 'text-teal-300',
 };
 

@@ -112,7 +112,7 @@ const KMap = ({ map }: { map: KarnaughMap }) => (
                   className={`w-12 h-12 border flex flex-col items-center justify-center font-mono ${
                     cell.value
                       ? 'bg-emerald-100 border-emerald-300 text-emerald-800'
-                      : 'bg-white border-gray-200 text-gray-300'
+                      : 'bg-white border-gray-200 text-gray-400'
                   }`}
                 >
                   <span className="text-base font-bold leading-none">{cell.value ? '1' : '0'}</span>

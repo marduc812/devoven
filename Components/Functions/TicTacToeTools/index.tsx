@@ -194,7 +194,7 @@ export function TicTacToeAnalyzer() {
                       )}
 
                       {/* Position number, so the text form stays readable */}
-                      <span className="absolute bottom-1 left-1.5 font-mono text-[10px] text-gray-300">
+                      <span className="absolute bottom-1 left-1.5 font-mono text-[10px] text-gray-400">
                         {i + 1}
                       </span>
 

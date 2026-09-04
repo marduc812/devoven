@@ -188,13 +188,13 @@ export function TextLevenshteinConverter() {
                       const style = OP_STYLE[op.type];
                       return (
                         <div key={i} className="flex flex-col items-stretch" title={style.label}>
-                          <span className={`w-7 h-7 flex items-center justify-center font-mono text-sm border border-gray-200 ${op.a === null ? 'bg-gray-50 text-gray-300' : style.cell}`}>
+                          <span className={`w-7 h-7 flex items-center justify-center font-mono text-sm border border-gray-200 ${op.a === null ? 'bg-gray-50 text-gray-400' : style.cell}`}>
                             {visible(op.a)}
                           </span>
                           <span className={`w-7 h-4 flex items-center justify-center font-mono text-[10px] font-bold ${style.chip}`}>
                             {style.glyph}
                           </span>
-                          <span className={`w-7 h-7 flex items-center justify-center font-mono text-sm border border-gray-200 ${op.b === null ? 'bg-gray-50 text-gray-300' : style.cell}`}>
+                          <span className={`w-7 h-7 flex items-center justify-center font-mono text-sm border border-gray-200 ${op.b === null ? 'bg-gray-50 text-gray-400' : style.cell}`}>
                             {visible(op.b)}
                           </span>
                         </div>
@@ -232,7 +232,7 @@ export function TextLevenshteinConverter() {
                       <thead>
                         <tr>
                           <th className="w-7 h-7 bg-gray-50" />
-                          <th className="w-7 h-7 bg-gray-50 text-gray-300 font-normal">ε</th>
+                          <th className="w-7 h-7 bg-gray-50 text-gray-400 font-normal">ε</th>
                           {b.split('').map((ch, j) => (
                             <th key={j} className="w-7 h-7 bg-gray-50 text-gray-900 font-bold">
                               {visible(ch)}
@@ -244,7 +244,7 @@ export function TextLevenshteinConverter() {
                         {data.matrix.map((row, i) => (
                           <tr key={i}>
                             <th className="w-7 h-7 bg-gray-50 text-gray-900 font-bold">
-                              {i === 0 ? <span className="text-gray-300 font-normal">ε</span> : visible(a[i - 1])}
+                              {i === 0 ? <span className="text-gray-400 font-normal">ε</span> : visible(a[i - 1])}
                             </th>
                             {row.map((cell, j) => {
                               const onPath = data.pathCells.has(`${i},${j}`);

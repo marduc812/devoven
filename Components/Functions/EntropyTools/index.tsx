@@ -159,7 +159,7 @@ export function EntropyCalculator() {
                       className={`px-4 py-2.5 flex-1 min-w-[110px] ${c.present ? 'bg-gray-900' : 'bg-white'}`}
                     >
                       <p className={`text-xs font-bold ${c.present ? 'text-white' : 'text-gray-400'}`}>{c.name}</p>
-                      <p className={`text-[10px] font-mono mt-0.5 ${c.present ? 'text-gray-400' : 'text-gray-300'}`}>
+                      <p className="text-[10px] font-mono mt-0.5 text-gray-400">
                         {c.present ? `+${c.size} to pool` : 'absent'}
                       </p>
                     </div>

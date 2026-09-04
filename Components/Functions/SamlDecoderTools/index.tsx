@@ -81,7 +81,7 @@ export function SamlDecoder() {
                       <label className="text-gray-400 text-xs uppercase tracking-wider mb-1 block">
                         {result.isXml ? 'Decoded XML' : 'Raw Output'}
                       </label>
-                      <pre className="bg-gray-100 border border-gray-200 p-4 text-xs font-mono text-gray-300 overflow-x-auto whitespace-pre-wrap leading-relaxed max-h-96">{result.xmlPreview}</pre>
+                      <pre className="bg-gray-100 border border-gray-200 p-4 text-xs font-mono text-gray-900 overflow-x-auto whitespace-pre-wrap leading-relaxed max-h-96">{result.xmlPreview}</pre>
                     </div>
                   )}
                 </div>
@@ -95,7 +95,7 @@ export function SamlDecoder() {
               {SAML_BINDINGS.map(b => (
                 <div key={b.name} className="border border-gray-200 bg-gray-50 p-4">
                   <p className="text-gray-900 text-sm font-semibold mb-1">{b.name}</p>
-                  <p className="text-gray-300 text-sm mb-2">{b.description}</p>
+                  <p className="text-gray-700 text-sm mb-2">{b.description}</p>
                   <div className="flex flex-col gap-1">
                     <code className="text-gray-700 text-xs font-mono break-all">{b.encoding}</code>
                     <code className="text-gray-500 text-xs font-mono break-all">{b.example}</code>

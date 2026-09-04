@@ -90,7 +90,7 @@ ${generatedCss}
                   {copied === 'responsive' ? 'Copied!' : 'Copy'}
                 </button>
               </div>
-              <pre className="bg-white border border-gray-200 p-4 text-gray-300 text-xs font-mono overflow-x-auto whitespace-pre">
+              <pre className="bg-white border border-gray-200 p-4 text-gray-900 text-xs font-mono overflow-x-auto whitespace-pre">
                 {responsiveCss}
               </pre>
             </div>
@@ -148,7 +148,7 @@ ${pattern.css}
                         {copied === 'pattern-areas' ? 'Copied!' : 'Copy'}
                       </button>
                     </div>
-                    <pre className="bg-white border border-gray-200 p-3 text-gray-300 text-xs font-mono overflow-x-auto whitespace-pre">
+                    <pre className="bg-white border border-gray-200 p-3 text-gray-900 text-xs font-mono overflow-x-auto whitespace-pre">
                       {pattern.areas}
                     </pre>
                   </div>

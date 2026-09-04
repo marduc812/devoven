@@ -111,7 +111,7 @@ function InsertAffordance({ index, hovered, onHover, onAdd, disabled }: { index:
       onClick={() => { if (!disabled) onAdd(index); }}
       title={disabled ? 'The pipeline ends at the terminal block above' : undefined}
     >
-      <div className={`flex items-center gap-1 text-xs font-medium uppercase tracking-wide transition-opacity ${disabled ? 'text-gray-300' : 'text-gray-500'} ${hovered ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`flex items-center gap-1 text-xs font-medium uppercase tracking-wide transition-opacity ${disabled ? 'text-gray-400' : 'text-gray-500'} ${hovered ? 'opacity-100' : 'opacity-0'}`}>
         {!disabled && <IoAddOutline className="text-sm" />}
         <span>{disabled ? 'Pipeline ends here' : 'Add here'}</span>
       </div>

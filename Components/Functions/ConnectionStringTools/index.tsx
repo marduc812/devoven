@@ -126,7 +126,7 @@ export function ConnectionStringBuilder() {
               onChange={e => setSsl(e.target.checked)}
               className="w-4 h-4 rounded accent-emerald-500"
             />
-            <label htmlFor="ssl-toggle" className="text-gray-300 text-sm cursor-pointer">
+            <label htmlFor="ssl-toggle" className="text-gray-700 text-sm cursor-pointer">
               Enable SSL / TLS
             </label>
           </div>
@@ -139,7 +139,7 @@ export function ConnectionStringBuilder() {
             {formats.map(f => (
               <div key={f.label} className="border border-gray-200 p-4 bg-gray-50">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-gray-300 text-sm font-medium">{f.label}</span>
+                  <span className="text-gray-700 text-sm font-medium">{f.label}</span>
                   <button
                     onClick={() => copyToClipboard(f.value, f.label)}
                     className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors px-2 py-0.5 rounded border border-emerald-500/30 hover:border-emerald-400/50"

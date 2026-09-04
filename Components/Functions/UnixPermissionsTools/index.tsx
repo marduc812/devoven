@@ -89,7 +89,7 @@ export const UnixPermissions = () => {
                 </div>
                 <div className="flex gap-4">
                   <span className="text-gray-400 w-24">Summary</span>
-                  <span className="text-gray-300 text-xs">{result.description}</span>
+                  <span className="text-gray-700 text-xs">{result.description}</span>
                 </div>
               </div>
             </div>

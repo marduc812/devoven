@@ -81,7 +81,7 @@ const RecentTools = () => {
                                         {tool.category} · {tool.count} {tool.count === 1 ? 'use' : 'uses'}
                                     </p>
                                 </div>
-                                <IoArrowForward size={14} className="text-gray-300 group-hover:text-gray-900 flex-shrink-0 transition-colors" />
+                                <IoArrowForward size={14} className="text-gray-400 group-hover:text-gray-900 flex-shrink-0 transition-colors" />
                             </div>
                         </Link>
                     ))}

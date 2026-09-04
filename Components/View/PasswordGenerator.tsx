@@ -95,7 +95,7 @@ const PasswordGeneratorView = (props: PasswordGeneratorTypes) => {
             <div className="flex flex-col gap-3">
                 {toggles.map(({ label, value, set }) => (
                     <div key={label} className="flex items-center justify-between">
-                        <span className="text-sm text-gray-300">{label}</span>
+                        <span className="text-sm text-gray-700">{label}</span>
                         <Switch checked={value} onChange={set} />
                     </div>
                 ))}

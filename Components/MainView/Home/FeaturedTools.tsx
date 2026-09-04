@@ -33,7 +33,7 @@ const FeaturedTools = () => {
                                     <p className="font-semibold text-gray-900 text-sm leading-tight">{tool.name}</p>
                                     <p className="text-[10px] text-gray-400 uppercase tracking-wider mt-0.5">{tool.category}</p>
                                 </div>
-                                <IoArrowForward size={14} className="text-gray-300 group-hover:text-gray-900 flex-shrink-0 transition-colors" />
+                                <IoArrowForward size={14} className="text-gray-400 group-hover:text-gray-900 flex-shrink-0 transition-colors" />
                             </div>
                         </Link>
                     ))}

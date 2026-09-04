@@ -65,7 +65,7 @@ export const BoxShadowGenerator = () => {
     <div className="flex flex-col gap-1">
       <div className="flex justify-between">
         <label className="text-gray-400 text-xs">{label}</label>
-        <span className="text-gray-300 text-xs font-mono">{value}px</span>
+        <span className="text-gray-900 text-xs font-mono">{value}px</span>
       </div>
       <input
         type="range"
@@ -206,7 +206,7 @@ export const BorderRadiusGenerator = () => {
     <div className="flex flex-col gap-1">
       <div className="flex justify-between">
         <label className="text-gray-400 text-xs">{label}</label>
-        <span className="text-gray-300 text-xs font-mono">{radius[field]}{radius.unit}</span>
+        <span className="text-gray-900 text-xs font-mono">{radius[field]}{radius.unit}</span>
       </div>
       <input
         type="range"
