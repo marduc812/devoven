@@ -54,6 +54,7 @@
     "web3-utils": "^4.0.6"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.20",
     "@types/bcryptjs": "^2.4.6",
     "@types/crypto-js": "4.2.2",
     "@types/jest": "^30.0.0",

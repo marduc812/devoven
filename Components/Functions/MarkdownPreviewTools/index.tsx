@@ -87,7 +87,7 @@ export const MarkdownPreview = () => {
             <div className="flex flex-col gap-2 h-full">
               <span className="text-gray-400 text-xs">Preview</span>
               <div
-                className="bg-white text-gray-900 p-4 border border-gray-200 overflow-auto prose prose-invert prose-sm max-w-none"
+                className="bg-white text-gray-900 p-4 border border-gray-200 overflow-auto prose prose-sm max-w-none"
                 style={{ minHeight: '480px' }}
                 dangerouslySetInnerHTML={{ __html: html || '<p class="text-gray-600 text-sm">Preview will appear here...</p>' }}
               />
