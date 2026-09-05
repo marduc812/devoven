@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { interpretBrainfuck } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -48,12 +49,14 @@ export function BrainfuckTools() {
       extraElements={
         <div className="flex flex-col gap-2 w-full">
           <label className={labelClass}>Input (stdin)</label>
-          <textarea
-            rows={2}
-            value={stdinValue}
-            onChange={(e) => setStdinValue(e.target.value)}
-            className={textareaClass}
-          />
+          <FileTextArea>
+            <textarea
+              rows={2}
+              value={stdinValue}
+              onChange={(e) => setStdinValue(e.target.value)}
+              className={textareaClass}
+            />
+          </FileTextArea>
         </div>
       }
     />

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel'
 import { calcSpecificity } from './logic'
 import { useShareLink } from '@/Components/Functions/ShareLink'
@@ -31,13 +32,15 @@ export const CssSpecificityCalc = () => {
         <div className="flex flex-col gap-4">
           <div>
             <label className="text-xs text-gray-400 mb-1 block">CSS Selectors (one per line)</label>
-            <textarea
-              className="bg-white text-gray-900 placeholder:text-gray-400 px-3 py-2 w-full border border-gray-300 focus:outline-none focus:border-gray-900 resize-y font-mono text-sm"
-              rows={5}
-              placeholder={"#header .nav a\n.btn:hover\ndiv > p + span"}
-              value={input}
-              onChange={function(e) { setInput(e.target.value) }}
-            />
+            <FileTextArea>
+              <textarea
+                className="bg-white text-gray-900 placeholder:text-gray-400 px-3 py-2 w-full border border-gray-300 focus:outline-none focus:border-gray-900 resize-y font-mono text-sm"
+                rows={5}
+                placeholder={"#header .nav a\n.btn:hover\ndiv > p + span"}
+                value={input}
+                onChange={function(e) { setInput(e.target.value) }}
+              />
+            </FileTextArea>
           </div>
 
           {result.selectors.length > 0 && (

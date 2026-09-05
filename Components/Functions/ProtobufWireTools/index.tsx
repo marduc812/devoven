@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { decodeProtobuf, formatProtobufResult, WIRE_TYPES } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -59,13 +60,15 @@ export function ProtobufWireDecoder() {
             <div className="flex flex-col gap-4">
               <div>
                 <label className="text-gray-400 text-xs uppercase tracking-wider mb-1 block">Hex Bytes</label>
-                <textarea
-                  rows={3}
-                  className={inputClass}
-                  placeholder="e.g. 0a 05 68 65 6c 6c 6f"
-                  value={hexInput}
-                  onChange={e => setHexInput(e.target.value)}
-                />
+                <FileTextArea>
+                  <textarea
+                    rows={3}
+                    className={inputClass}
+                    placeholder="e.g. 0a 05 68 65 6c 6c 6f"
+                    value={hexInput}
+                    onChange={e => setHexInput(e.target.value)}
+                  />
+                </FileTextArea>
               </div>
 
               <div className="flex gap-2 flex-wrap">

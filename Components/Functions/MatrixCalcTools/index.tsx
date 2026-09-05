@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { processMatrixOp, MatrixOp } from './logic';
 
@@ -43,13 +44,15 @@ export function MatrixCalc() {
       </div>
       <div className="flex flex-col gap-1 w-full max-w-md">
         <label className="text-xs text-gray-400">Matrix B (space-separated, one row per line)</label>
-        <textarea
-          value={matrixB}
-          onChange={e => setMatrixB(e.target.value)}
-          rows={4}
-          className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-200 focus:outline-none resize-none font-mono text-sm"
-          placeholder="5 6&#10;7 8"
-        />
+        <FileTextArea>
+          <textarea
+            value={matrixB}
+            onChange={e => setMatrixB(e.target.value)}
+            rows={4}
+            className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-200 focus:outline-none resize-none font-mono text-sm"
+            placeholder="5 6&#10;7 8"
+          />
+        </FileTextArea>
       </div>
     </div>
   );

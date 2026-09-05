@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { FileDropZone, LoadFileButton } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { inspectText, type InspectionResult, type CharInfo } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -82,15 +83,18 @@ export const UnicodeInspector = () => {
               >
                 Load Sample
               </button>
+              <LoadFileButton onText={setInput} />
             </div>
-            <textarea
-              className="bg-white text-gray-900 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none font-mono text-sm resize-none"
-              rows={3}
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              placeholder="Type or paste any text, including emoji 😀, accented chars, CJK, etc..."
-              spellCheck={false}
-            />
+            <FileDropZone onText={setInput}>
+              <textarea
+                className="bg-white text-gray-900 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none font-mono text-sm resize-none"
+                rows={3}
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                placeholder="Type or paste any text, including emoji 😀, accented chars, CJK, etc..."
+                spellCheck={false}
+              />
+            </FileDropZone>
           </div>
 
           {result && result.chars.length > 0 && (

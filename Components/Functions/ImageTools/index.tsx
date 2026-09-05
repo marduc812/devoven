@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import {
   clampQuality,
@@ -618,13 +619,15 @@ export function Base64ToImage() {
         <div className="flex flex-col gap-4">
           <label className="flex flex-col gap-1">
             <span className="text-xs font-bold uppercase tracking-wider text-gray-500">Paste Base64 data URI</span>
-            <textarea
-              value={input}
-              onChange={e => { setInput(e.target.value); setError(''); }}
-              placeholder="data:image/png;base64,iVBORw0KGgo..."
-              rows={5}
-              className="w-full bg-white text-gray-900 text-xs font-mono p-2 border border-gray-300 focus:border-gray-900 focus:outline-none resize-none"
-            />
+            <FileTextArea>
+              <textarea
+                value={input}
+                onChange={e => { setInput(e.target.value); setError(''); }}
+                placeholder="data:image/png;base64,iVBORw0KGgo..."
+                rows={5}
+                className="w-full bg-white text-gray-900 text-xs font-mono p-2 border border-gray-300 focus:border-gray-900 focus:outline-none resize-none"
+              />
+            </FileTextArea>
           </label>
           {error && <p className="text-red-600 text-sm">{error}</p>}
           {input && !isValid && (

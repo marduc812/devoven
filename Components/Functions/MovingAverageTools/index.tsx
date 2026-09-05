@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { parseNumbers, computeSMA, computeEMA, computeWMA, MAType } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -88,13 +89,15 @@ export function MovingAverage() {
           <div className="grid grid-cols-2 gap-3">
             <div className="col-span-2">
               <label className={labelClass}>Numbers (one per line)</label>
-              <textarea
-                className={inputClass}
-                rows={6}
-                placeholder={'10\n12\n14\n11\n13\n15\n12'}
-                value={input}
-                onChange={e => setInput(e.target.value)}
-              />
+              <FileTextArea>
+                <textarea
+                  className={inputClass}
+                  rows={6}
+                  placeholder={'10\n12\n14\n11\n13\n15\n12'}
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                />
+              </FileTextArea>
             </div>
             <div>
               <label className={labelClass}>MA Type</label>

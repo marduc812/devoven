@@ -12,7 +12,7 @@ import { useShareLinkQuery } from '@/Components/Functions/ShareLink'
  * it through `useShareLink`; see Components/Functions/ShareLink.tsx.
  */
 const ShareLinkButton = () => {
-    const query = useShareLinkQuery()
+    const { query, inputDropped } = useShareLinkQuery()
 
     const copy = () => {
         if (window.location.hostname !== 'localhost') {
@@ -26,7 +26,11 @@ const ShareLinkButton = () => {
         const url = document.location.origin
             .concat(document.location.pathname, query ? `?${query}` : '')
         navigator.clipboard.writeText(url)
-        toast.success(query ? 'Copied link with your settings' : 'Copied link to clipboard')
+        if (inputDropped) {
+            toast.success('Copied link — your input is too long to travel in a URL')
+        } else {
+            toast.success(query ? 'Copied link with your settings' : 'Copied link to clipboard')
+        }
     }
 
     return (

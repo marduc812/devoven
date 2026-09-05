@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import {
   buildSetCookieHeader,
@@ -198,13 +199,15 @@ export const SetCookieBuilder = () => {
             <>
               <div className="flex flex-col gap-2">
                 <label className="text-gray-400 text-xs">Paste Set-Cookie Header</label>
-                <textarea
-                  value={rawCookie}
-                  onChange={e => setRawCookie(e.target.value)}
-                  rows={3}
-                  placeholder="Set-Cookie: session=abc123; Path=/; HttpOnly; Secure; SameSite=Lax"
-                  className="bg-white text-gray-900 p-3 border border-gray-200 focus:border-gray-400 focus:outline-none font-mono text-sm resize-none"
-                />
+                <FileTextArea>
+                  <textarea
+                    value={rawCookie}
+                    onChange={e => setRawCookie(e.target.value)}
+                    rows={3}
+                    placeholder="Set-Cookie: session=abc123; Path=/; HttpOnly; Secure; SameSite=Lax"
+                    className="bg-white text-gray-900 p-3 border border-gray-200 focus:border-gray-400 focus:outline-none font-mono text-sm resize-none"
+                  />
+                </FileTextArea>
               </div>
 
               {parsed && (

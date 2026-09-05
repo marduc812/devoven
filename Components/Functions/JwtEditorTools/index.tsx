@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { FileDropZone, FileTextArea, LoadFileButton } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import {
   decodeJwtParts,
@@ -351,6 +352,7 @@ export function JwtEditor() {
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-2">
             <label className={`${labelClass} text-gray-500`}>Encoded</label>
+            <LoadFileButton onText={onTokenChange} title="Load a token from a file" className="ml-auto" />
             <button
               onClick={copyToken}
               disabled={!token}
@@ -384,24 +386,26 @@ export function JwtEditor() {
                 <span className="text-gray-900">{token}</span>
               )}
             </div>
-            <textarea
-              rows={10}
-              // `block` matters: as an inline element the textarea would sit on a text
-              // baseline, leaving the wrapper a few pixels taller than the box and the
-              // overlay spilling its last line below the bottom border.
-              className="jwt-encoded-input relative block p-3 w-full border border-gray-300 focus:border-gray-900 focus:outline-none font-mono text-sm leading-5 resize-y break-all [scrollbar-gutter:stable] placeholder:text-gray-400"
-              value={token}
-              onChange={e => onTokenChange(e.target.value)}
-              onScroll={e => {
-                const o = overlayRef.current;
-                if (o) {
-                  o.scrollTop = e.currentTarget.scrollTop;
-                  o.scrollLeft = e.currentTarget.scrollLeft;
-                }
-              }}
-              placeholder="Paste a JWT token here, or edit the decoded parts on the right…"
-              spellCheck={false}
-            />
+            <FileDropZone onText={onTokenChange}>
+              <textarea
+                rows={10}
+                // `block` matters: as an inline element the textarea would sit on a text
+                // baseline, leaving the wrapper a few pixels taller than the box and the
+                // overlay spilling its last line below the bottom border.
+                className="jwt-encoded-input relative block p-3 w-full border border-gray-300 focus:border-gray-900 focus:outline-none font-mono text-sm leading-5 resize-y break-all [scrollbar-gutter:stable] placeholder:text-gray-400"
+                value={token}
+                onChange={e => onTokenChange(e.target.value)}
+                onScroll={e => {
+                  const o = overlayRef.current;
+                  if (o) {
+                    o.scrollTop = e.currentTarget.scrollTop;
+                    o.scrollLeft = e.currentTarget.scrollLeft;
+                  }
+                }}
+                placeholder="Paste a JWT token here, or edit the decoded parts on the right…"
+                spellCheck={false}
+              />
+            </FileDropZone>
           </div>
           {decodeError && (
             <p className="text-red-600 text-xs font-mono">{decodeError}</p>
@@ -412,26 +416,30 @@ export function JwtEditor() {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <label className={`${labelClass} text-red-500`}>Header</label>
-            <textarea
-              rows={4}
-              className={growableClass}
-              value={header}
-              onChange={e => onHeaderChange(e.target.value)}
-              onBlur={() => formatJsonField(header, setHeader)}
-              spellCheck={false}
-            />
+            <FileTextArea>
+              <textarea
+                rows={4}
+                className={growableClass}
+                value={header}
+                onChange={e => onHeaderChange(e.target.value)}
+                onBlur={() => formatJsonField(header, setHeader)}
+                spellCheck={false}
+              />
+            </FileTextArea>
           </div>
 
           <div className="flex flex-col gap-2">
             <label className={`${labelClass} text-fuchsia-600`}>Payload</label>
-            <textarea
-              rows={6}
-              className={growableClass}
-              value={payload}
-              onChange={e => onPayloadChange(e.target.value)}
-              onBlur={() => formatJsonField(payload, setPayload)}
-              spellCheck={false}
-            />
+            <FileTextArea>
+              <textarea
+                rows={6}
+                className={growableClass}
+                value={payload}
+                onChange={e => onPayloadChange(e.target.value)}
+                onBlur={() => formatJsonField(payload, setPayload)}
+                spellCheck={false}
+              />
+            </FileTextArea>
           </div>
 
           <div className="flex flex-col gap-2">
@@ -462,22 +470,24 @@ export function JwtEditor() {
             {/* HMAC: single secret */}
             {family === 'HMAC' && (
               <>
-                <textarea
-                  // Auto-grow: start one line tall and expand to fit any newlines the
-                  // user types/pastes, re-measured after every value change.
-                  ref={el => {
-                    if (el) {
-                      el.style.height = 'auto';
-                      el.style.height = `${el.scrollHeight}px`;
-                    }
-                  }}
-                  rows={1}
-                  className={`${inputClass} overflow-hidden`}
-                  value={secret}
-                  onChange={e => onSecretChange(e.target.value)}
-                  placeholder={'Secret key (HMAC) — plain text, or an oct JWK {"kty":"oct","k":"…"}'}
-                  spellCheck={false}
-                />
+                <FileTextArea>
+                  <textarea
+                    // Auto-grow: start one line tall and expand to fit any newlines the
+                    // user types/pastes, re-measured after every value change.
+                    ref={el => {
+                      if (el) {
+                        el.style.height = 'auto';
+                        el.style.height = `${el.scrollHeight}px`;
+                      }
+                    }}
+                    rows={1}
+                    className={`${inputClass} overflow-hidden`}
+                    value={secret}
+                    onChange={e => onSecretChange(e.target.value)}
+                    placeholder={'Secret key (HMAC) — plain text, or an oct JWK {"kty":"oct","k":"…"}'}
+                    spellCheck={false}
+                  />
+                </FileTextArea>
                 <p className="text-gray-400 text-xs">
                   Paste an <code className="font-mono">oct</code> JWK to use a raw/binary key — its
                   base64url <code className="font-mono">k</code> value is decoded to the exact secret
@@ -511,25 +521,29 @@ export function JwtEditor() {
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className={`${labelClass} text-gray-500`}>Private Key (signing)</label>
-                  <textarea
-                    rows={5}
-                    className={inputClass}
-                    value={privateKey}
-                    onChange={e => onPrivateKeyChange(e.target.value)}
-                    placeholder={'-----BEGIN PRIVATE KEY-----  ...  or  {"kty": ...} (JWK)'}
-                    spellCheck={false}
-                  />
+                  <FileTextArea>
+                    <textarea
+                      rows={5}
+                      className={inputClass}
+                      value={privateKey}
+                      onChange={e => onPrivateKeyChange(e.target.value)}
+                      placeholder={'-----BEGIN PRIVATE KEY-----  ...  or  {"kty": ...} (JWK)'}
+                      spellCheck={false}
+                    />
+                  </FileTextArea>
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className={`${labelClass} text-gray-500`}>Public Key (verifying)</label>
-                  <textarea
-                    rows={4}
-                    className={inputClass}
-                    value={publicKey}
-                    onChange={e => onPublicKeyChange(e.target.value)}
-                    placeholder={'-----BEGIN PUBLIC KEY-----  ...  or  {"kty": ...} (JWK)'}
-                    spellCheck={false}
-                  />
+                  <FileTextArea>
+                    <textarea
+                      rows={4}
+                      className={inputClass}
+                      value={publicKey}
+                      onChange={e => onPublicKeyChange(e.target.value)}
+                      placeholder={'-----BEGIN PUBLIC KEY-----  ...  or  {"kty": ...} (JWK)'}
+                      spellCheck={false}
+                    />
+                  </FileTextArea>
                 </div>
                 {algorithm === 'EdDSA' && (
                   <p className="text-gray-400 text-xs">

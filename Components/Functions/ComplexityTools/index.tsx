@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { estimateComplexity, ComplexityResult, ComplexityRating } from './logic';
 
@@ -29,13 +30,15 @@ export const ComplexityEstimator = () => {
         <div className="flex flex-col gap-5">
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Code Snippet (any language)</label>
-            <textarea
-              className="bg-white text-gray-900 border border-gray-300 focus:border-gray-900 focus:outline-none px-3 py-2 text-sm font-mono w-full resize-y"
-              rows={8}
-              placeholder="Paste any code snippet here..."
-              value={code}
-              onChange={e => setCode(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className="bg-white text-gray-900 border border-gray-300 focus:border-gray-900 focus:outline-none px-3 py-2 text-sm font-mono w-full resize-y"
+                rows={8}
+                placeholder="Paste any code snippet here..."
+                value={code}
+                onChange={e => setCode(e.target.value)}
+              />
+            </FileTextArea>
           </div>
 
           {result && style && (

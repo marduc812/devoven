@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { analyzeAriaIssues, formatAnalysisOutput, getPatternSuggestions } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -66,13 +67,15 @@ export function AriaLabelGenerator() {
           {/* Input */}
           <div className="flex flex-col gap-2">
             <span className="text-xs text-gray-500 uppercase tracking-wider">HTML Input</span>
-            <textarea
-              className={textareaClass}
-              placeholder={'<button></button>\n<img src="logo.png">\n<input type="text">'}
-              rows={8}
-              value={input}
-              onChange={function(e) { setInput(e.target.value); setActivePattern(null); }}
-            />
+            <FileTextArea>
+              <textarea
+                className={textareaClass}
+                placeholder={'<button></button>\n<img src="logo.png">\n<input type="text">'}
+                rows={8}
+                value={input}
+                onChange={function(e) { setInput(e.target.value); setActivePattern(null); }}
+              />
+            </FileTextArea>
           </div>
 
           {/* Output */}

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { textToCharBinaries, autoConvert } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -34,13 +35,15 @@ export const BinaryVisual = () => {
             <p className="text-gray-400 text-xs mb-1">
               {direction === 'encode' ? 'Text → Binary' : 'Binary → Text'}
             </p>
-            <textarea
-              className={inputClass}
-              placeholder="Type text or paste binary (e.g. 01001000 01101001)"
-              value={input}
-              rows={3}
-              onChange={e => setInput(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className={inputClass}
+                placeholder="Type text or paste binary (e.g. 01001000 01101001)"
+                value={input}
+                rows={3}
+                onChange={e => setInput(e.target.value)}
+              />
+            </FileTextArea>
           </div>
 
           {/* Visual bit grid for text input */}

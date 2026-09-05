@@ -11,6 +11,9 @@ export type BasicCoversionType = {
     setFromValue: Dispatch<SetStateAction<string>>;
     fromTitle: string;
     toTitle: string;
+    // Set by tools whose input pane only mirrors values gathered elsewhere on
+    // the page: it then takes neither typing nor a dropped file.
+    inputReadOnly?: boolean;
     pageTitle?: string;
     backColor: MainViewColorVariants;
 }
@@ -38,6 +41,8 @@ export type AdvancedCoversionType = {
     // Rendered under the output textarea, for tools with a second, non-textual
     // view of the result (a diagram, a grid) that must not pollute the output.
     belowOutput?: React.ReactNode;
+    // As above: an input pane that only mirrors values gathered elsewhere.
+    inputReadOnly?: boolean;
     pageTitle?: string;
     backColor: MainViewColorVariants;
 }
@@ -115,6 +120,9 @@ export type TextAnalyticsType = {
     title: string;
     output: boolean;
     color: MainViewColorVariants;
+    // Input rows only: given a handler, the row offers to fill the textarea
+    // from a text file, next to the copy and save buttons that empty it.
+    onLoadFile?: (text: string) => void;
 }
 
 export type SelectElementsPasswordPropsType = {

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import {
   CopyButton,
@@ -101,15 +102,17 @@ export const HttpSecurityCheck = () => {
             <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500" htmlFor="headers-input">
               Response headers
             </label>
-            <textarea
-              id="headers-input"
-              className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-300 focus:border-gray-900 focus:outline-none resize-y transition-colors duration-150 font-mono text-xs"
-              rows={10}
-              spellCheck={false}
-              placeholder={SAMPLE_WEAK}
-              value={raw}
-              onChange={e => setRaw(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                id="headers-input"
+                className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-300 focus:border-gray-900 focus:outline-none resize-y transition-colors duration-150 font-mono text-xs"
+                rows={10}
+                spellCheck={false}
+                placeholder={SAMPLE_WEAK}
+                value={raw}
+                onChange={e => setRaw(e.target.value)}
+              />
+            </FileTextArea>
             <PresetRow presets={PRESETS} onPick={setRaw} label="Sample" />
           </div>
 

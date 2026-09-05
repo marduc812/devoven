@@ -54,6 +54,7 @@ export function PrettierConfigGenerator() {
       fromValue={fromValue}
       toValue={toValue}
       setFromValue={() => {}}
+      inputReadOnly
       backColor="lime"
       extraElements={
         <div className="flex flex-col gap-1 w-full">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
+import { TextInputPane } from '@/Components/View/FileInput';
 import { mergeJsonStrings } from './logic';
 
 const labelClass = 'block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1';
@@ -24,28 +25,20 @@ export function JsonMergeTools() {
   const content = (
     <div className="flex flex-col gap-5">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className={labelClass}>JSON Object 1</label>
-          <textarea
-            className={textareaClass}
-            value={json1}
-            onChange={(e) => setJson1(e.target.value)}
-            placeholder='{"name": "John", "age": 30}'
-            rows={8}
-            spellCheck={false}
-          />
-        </div>
-        <div>
-          <label className={labelClass}>JSON Object 2</label>
-          <textarea
-            className={textareaClass}
-            value={json2}
-            onChange={(e) => setJson2(e.target.value)}
-            placeholder='{"age": 31, "city": "NYC"}'
-            rows={8}
-            spellCheck={false}
-          />
-        </div>
+        <TextInputPane
+          label="JSON Object 1"
+          value={json1}
+          onChange={setJson1}
+          placeholder='{"name": "John", "age": 30}'
+          accept=".json,application/json,.txt,text/plain"
+        />
+        <TextInputPane
+          label="JSON Object 2"
+          value={json2}
+          onChange={setJson2}
+          placeholder='{"age": 31, "city": "NYC"}'
+          accept=".json,application/json,.txt,text/plain"
+        />
       </div>
 
       <div>

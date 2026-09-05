@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { parsePemCertificate, CertificateInfo } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -53,14 +54,16 @@ export const PemViewer = () => {
         <div className="flex flex-col gap-4">
           <div>
             <label className="text-xs text-gray-400 mb-1 block">PEM Certificate</label>
-            <textarea
-              className="bg-white text-gray-900 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none font-mono text-xs resize-none"
-              rows={8}
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              placeholder="Paste your -----BEGIN CERTIFICATE----- here..."
-              spellCheck={false}
-            />
+            <FileTextArea>
+              <textarea
+                className="bg-white text-gray-900 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none font-mono text-xs resize-none"
+                rows={8}
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                placeholder="Paste your -----BEGIN CERTIFICATE----- here..."
+                spellCheck={false}
+              />
+            </FileTextArea>
           </div>
 
           {error && (

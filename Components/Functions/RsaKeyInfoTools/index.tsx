@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { FileDropZone, LoadFileButton } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { parseRsaKeyInfo, formatRsaKeyInfo, type RsaKeyInfo as RsaKeyInfoData } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -89,15 +90,18 @@ export const RsaKeyInfo = () => {
               >
                 Load Sample
               </button>
+              <LoadFileButton onText={setInput} />
             </div>
-            <textarea
-              className="bg-white text-gray-900 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none font-mono text-xs resize-none"
-              rows={8}
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              placeholder="Paste -----BEGIN RSA PUBLIC KEY-----, -----BEGIN CERTIFICATE-----, or similar..."
-              spellCheck={false}
-            />
+            <FileDropZone onText={setInput}>
+              <textarea
+                className="bg-white text-gray-900 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none font-mono text-xs resize-none"
+                rows={8}
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                placeholder="Paste -----BEGIN RSA PUBLIC KEY-----, -----BEGIN CERTIFICATE-----, or similar..."
+                spellCheck={false}
+              />
+            </FileDropZone>
           </div>
 
           {error && (

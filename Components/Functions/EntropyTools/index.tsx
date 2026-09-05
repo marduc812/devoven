@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { FileDropZone, LoadFileButton } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { analyzeEntropy } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -74,13 +75,16 @@ export function EntropyCalculator() {
                   </button>
                 ))}
               </div>
+              <LoadFileButton onText={setInput} />
             </div>
-            <textarea
-              className={`${inputClass} h-24 resize-y`}
-              placeholder="e.g. correct horse battery staple"
-              value={input}
-              onChange={e => setInput(e.target.value)}
-            />
+            <FileDropZone onText={setInput}>
+              <textarea
+                className={`${inputClass} h-24 resize-y`}
+                placeholder="e.g. correct horse battery staple"
+                value={input}
+                onChange={e => setInput(e.target.value)}
+              />
+            </FileDropZone>
           </div>
 
           {result?.error && (

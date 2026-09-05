@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import {
   parseEmailHeaders,
@@ -69,12 +70,14 @@ export const EmailHeaderAnalyzer = () => {
       backColor="sky"
       extraElements={
         <div className="flex flex-col gap-4">
-          <textarea
-            className={inputClass}
-            placeholder="Paste raw email headers here..."
-            value={input}
-            onChange={e => setInput(e.target.value)}
-          />
+          <FileTextArea>
+            <textarea
+              className={inputClass}
+              placeholder="Paste raw email headers here..."
+              value={input}
+              onChange={e => setInput(e.target.value)}
+            />
+          </FileTextArea>
           <button
             className="px-4 py-2 border border-gray-900 bg-gray-900 text-white text-xs font-bold uppercase tracking-wider hover:bg-black transition-colors cursor-pointer self-start"
             onClick={() => setInput(SAMPLE_HEADERS)}

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { useTimeboxedWorker, DEFAULT_TIMEOUT_MS } from '@/Components/Functions/useTimeboxedWorker';
 import { spawnRegexWorker } from '@/lib/regex/spawn';
@@ -114,13 +115,15 @@ export const RegexTesterTool = () => {
           {/* Test string */}
           <div>
             <label className="text-xs font-bold uppercase tracking-wider text-gray-500 block mb-2">Test String</label>
-            <textarea
-              className={textareaClass}
-              rows={5}
-              placeholder="Enter text to test the regex against..."
-              value={testString}
-              onChange={e => setTestString(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className={textareaClass}
+                rows={5}
+                placeholder="Enter text to test the regex against..."
+                value={testString}
+                onChange={e => setTestString(e.target.value)}
+              />
+            </FileTextArea>
           </div>
 
           {/* Error */}

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
+import { FileDropZone, LoadFileButton } from '@/Components/View/FileInput';
 import { charDiff, wordDiff, diffStats, renderDiffToText } from './logic';
 
 export const CharDiff = () => {
@@ -56,24 +57,34 @@ export const CharDiff = () => {
   const extraElements = (
     <div className="flex flex-wrap gap-4 items-start">
       <div className="flex flex-col gap-1.5 flex-1 min-w-48">
-        <label className="text-xs text-gray-400 uppercase tracking-wider">Original Text</label>
-        <textarea
-          className="bg-white text-gray-900 px-3 py-2 border border-gray-200 focus:border-gray-400 focus:outline-none text-sm resize-none font-mono"
-          rows={4}
-          value={original}
-          onChange={e => setOriginal(e.target.value)}
-          placeholder="Paste original text here…"
-        />
+        <div className="flex items-center justify-between gap-2">
+          <label className="text-xs text-gray-400 uppercase tracking-wider">Original Text</label>
+          <LoadFileButton onText={setOriginal} title="Load the original text from a file" />
+        </div>
+        <FileDropZone onText={setOriginal}>
+          <textarea
+            className="block w-full bg-white text-gray-900 px-3 py-2 border border-gray-200 focus:border-gray-400 focus:outline-none text-sm resize-none font-mono"
+            rows={4}
+            value={original}
+            onChange={e => setOriginal(e.target.value)}
+            placeholder="Paste original text here, or drop a file…"
+          />
+        </FileDropZone>
       </div>
       <div className="flex flex-col gap-1.5 flex-1 min-w-48">
-        <label className="text-xs text-gray-400 uppercase tracking-wider">Revised Text</label>
-        <textarea
-          className="bg-white text-gray-900 px-3 py-2 border border-gray-200 focus:border-gray-400 focus:outline-none text-sm resize-none font-mono"
-          rows={4}
-          value={revised}
-          onChange={e => setRevised(e.target.value)}
-          placeholder="Paste revised text here…"
-        />
+        <div className="flex items-center justify-between gap-2">
+          <label className="text-xs text-gray-400 uppercase tracking-wider">Revised Text</label>
+          <LoadFileButton onText={setRevised} title="Load the revised text from a file" />
+        </div>
+        <FileDropZone onText={setRevised}>
+          <textarea
+            className="block w-full bg-white text-gray-900 px-3 py-2 border border-gray-200 focus:border-gray-400 focus:outline-none text-sm resize-none font-mono"
+            rows={4}
+            value={revised}
+            onChange={e => setRevised(e.target.value)}
+            placeholder="Paste revised text here, or drop a file…"
+          />
+        </FileDropZone>
       </div>
       <div className="flex flex-col gap-1.5">
         <label className="text-xs text-gray-400 uppercase tracking-wider">Diff Mode</label>
@@ -96,6 +107,7 @@ export const CharDiff = () => {
       fromValue={fromValue}
       toValue={toValue}
       setFromValue={() => {}}
+      inputReadOnly
       fromTitle="Comparison"
       toTitle="Diff Output"
       backColor="rose"

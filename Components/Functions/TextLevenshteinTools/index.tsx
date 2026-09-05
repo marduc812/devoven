@@ -2,6 +2,8 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
+import { FileDropZone, LoadFileButton } from '@/Components/View/FileInput';
+import { trimTrailingNewline } from '@/lib/textFile';
 import {
   buildMatrix,
   countEditOps,
@@ -96,6 +98,9 @@ export function TextLevenshteinConverter() {
   const inputClass =
     'bg-white text-gray-900 placeholder:text-gray-400 px-3 py-2 w-full border border-gray-300 focus:border-gray-900 focus:outline-none font-mono text-sm';
 
+  const loadA = (text: string) => setA(trimTrailingNewline(text));
+  const loadB = (text: string) => setB(trimTrailingNewline(text));
+
   return (
     <Panel
       title="Levenshtein Distance"
@@ -106,12 +111,22 @@ export function TextLevenshteinConverter() {
           {/* Inputs */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className={`${labelClass} block mb-1`}>String A</label>
-              <input className={inputClass} placeholder="kitten" value={a} onChange={e => setA(e.target.value)} />
+              <div className="flex items-center justify-between gap-2 h-6 mb-1">
+                <label className={labelClass}>String A</label>
+                <LoadFileButton onText={loadA} title="Load String A from a file" />
+              </div>
+              <FileDropZone onText={loadA}>
+                <input className={inputClass} placeholder="kitten" value={a} onChange={e => setA(e.target.value)} />
+              </FileDropZone>
             </div>
             <div>
-              <label className={`${labelClass} block mb-1`}>String B</label>
-              <input className={inputClass} placeholder="sitting" value={b} onChange={e => setB(e.target.value)} />
+              <div className="flex items-center justify-between gap-2 h-6 mb-1">
+                <label className={labelClass}>String B</label>
+                <LoadFileButton onText={loadB} title="Load String B from a file" />
+              </div>
+              <FileDropZone onText={loadB}>
+                <input className={inputClass} placeholder="sitting" value={b} onChange={e => setB(e.target.value)} />
+              </FileDropZone>
             </div>
           </div>
 

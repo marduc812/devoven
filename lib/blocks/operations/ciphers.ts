@@ -17,11 +17,11 @@ import { Operation } from '../types';
 // Ciphers take the text and the key as two named fields, so a block shows
 // both boxes and either one can be fed by the previous block.
 const keyedFields = [
-  { id: 'text', label: 'Text' },
+  { id: 'text', label: 'Text', long: true },
   { id: 'key', label: 'Key' },
 ];
 const keywordFields = [
-  { id: 'text', label: 'Text' },
+  { id: 'text', label: 'Text', long: true },
   { id: 'keyword', label: 'Keyword' },
 ];
 

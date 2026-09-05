@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { isDataUri, stripDataUriPrefix, guessFilename, getBase64Stats, base64ToMimeType } from './logic';
 
@@ -139,13 +140,15 @@ export const Base64File = () => {
             <>
               <div>
                 <label className="text-xs text-gray-400 mb-1 block">Base64 string or Data URI</label>
-                <textarea
-                  className={inputClass}
-                  rows={6}
-                  placeholder="Paste base64 or data:image/png;base64,... here"
-                  value={decodeInput}
-                  onChange={e => setDecodeInput(e.target.value)}
-                />
+                <FileTextArea>
+                  <textarea
+                    className={inputClass}
+                    rows={6}
+                    placeholder="Paste base64 or data:image/png;base64,... here"
+                    value={decodeInput}
+                    onChange={e => setDecodeInput(e.target.value)}
+                  />
+                </FileTextArea>
               </div>
               <button
                 onClick={handleDecode}

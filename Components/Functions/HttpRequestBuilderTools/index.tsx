@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { buildRawRequest, HttpMethod } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -92,26 +93,30 @@ export const HttpRequestBuilder = () => {
           {/* Headers */}
           <div className="flex flex-col gap-2">
             <label className="text-xs font-bold uppercase tracking-widest text-gray-500">Headers <span className="font-normal normal-case tracking-normal text-gray-400">(one per line, Name: Value)</span></label>
-            <textarea
-              className={inputClass}
-              rows={4}
-              placeholder={"Content-Type: application/json\nAuthorization: Bearer token"}
-              value={headersRaw}
-              onChange={e => setHeadersRaw(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className={inputClass}
+                rows={4}
+                placeholder={"Content-Type: application/json\nAuthorization: Bearer token"}
+                value={headersRaw}
+                onChange={e => setHeadersRaw(e.target.value)}
+              />
+            </FileTextArea>
           </div>
 
           {/* Body */}
           {method !== 'GET' && method !== 'HEAD' && (
             <div className="flex flex-col gap-2">
               <label className="text-xs font-bold uppercase tracking-widest text-gray-500">Body</label>
-              <textarea
-                className={inputClass}
-                rows={4}
-                placeholder='{"key": "value"}'
-                value={body}
-                onChange={e => setBody(e.target.value)}
-              />
+              <FileTextArea>
+                <textarea
+                  className={inputClass}
+                  rows={4}
+                  placeholder='{"key": "value"}'
+                  value={body}
+                  onChange={e => setBody(e.target.value)}
+                />
+              </FileTextArea>
             </div>
           )}
 

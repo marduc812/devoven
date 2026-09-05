@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { analyzeText, classifyChar, type CharCategory } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -52,13 +53,15 @@ export const CharFrequencyTools = () => {
           {/* Input */}
           <div>
             <label className={`${labelClass} block mb-1`}>Input Text</label>
-            <textarea
-              className="bg-white text-gray-900 placeholder:text-gray-400 px-3 py-2 w-full h-40 border border-gray-300 focus:border-gray-900 focus:outline-none font-mono text-sm resize-y"
-              placeholder="Paste text here…"
-              value={text}
-              onChange={e => setText(e.target.value)}
-              aria-label="Input text"
-            />
+            <FileTextArea>
+              <textarea
+                className="bg-white text-gray-900 placeholder:text-gray-400 px-3 py-2 w-full h-40 border border-gray-300 focus:border-gray-900 focus:outline-none font-mono text-sm resize-y"
+                placeholder="Paste text here…"
+                value={text}
+                onChange={e => setText(e.target.value)}
+                aria-label="Input text"
+              />
+            </FileTextArea>
           </div>
 
           {/* Options */}

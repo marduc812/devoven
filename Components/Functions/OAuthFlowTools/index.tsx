@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import {
   buildOAuthResult,
@@ -159,13 +160,15 @@ export const OAuthFlowBuilder = () => {
         <div className="flex flex-col gap-4">
           <div>
             <label className={labelClass}>Access Token (JWT)</label>
-            <textarea
-              rows={4}
-              className={inputClass}
-              placeholder="Paste a JWT access token here..."
-              value={jwtInput}
-              onChange={e => setJwtInput(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                rows={4}
+                className={inputClass}
+                placeholder="Paste a JWT access token here..."
+                value={jwtInput}
+                onChange={e => setJwtInput(e.target.value)}
+              />
+            </FileTextArea>
           </div>
           {jwtOutput && (
             <pre className="bg-gray-50 text-gray-900 border border-gray-200 p-3 text-xs font-mono whitespace-pre-wrap">

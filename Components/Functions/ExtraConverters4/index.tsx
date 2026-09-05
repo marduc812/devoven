@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { diffJson, formatDiffResults } from './logic';
 
@@ -38,24 +39,28 @@ export const JsonDiff = () => {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <label className="text-indigo-300 text-xs font-semibold uppercase tracking-wider">JSON A</label>
-            <textarea
-              className={textareaClass}
-              placeholder={'{\n  "key": "value"\n}'}
-              rows={6}
-              value={jsonA}
-              onChange={e => setJsonA(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className={textareaClass}
+                placeholder={'{\n  "key": "value"\n}'}
+                rows={6}
+                value={jsonA}
+                onChange={e => setJsonA(e.target.value)}
+              />
+            </FileTextArea>
           </div>
 
           <div className="flex flex-col gap-2">
             <label className="text-indigo-300 text-xs font-semibold uppercase tracking-wider">JSON B</label>
-            <textarea
-              className={textareaClass}
-              placeholder={'{\n  "key": "changed"\n}'}
-              rows={6}
-              value={jsonB}
-              onChange={e => setJsonB(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className={textareaClass}
+                placeholder={'{\n  "key": "changed"\n}'}
+                rows={6}
+                value={jsonB}
+                onChange={e => setJsonB(e.target.value)}
+              />
+            </FileTextArea>
           </div>
 
           {diffOutput && (

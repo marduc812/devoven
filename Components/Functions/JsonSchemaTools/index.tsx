@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { validateSchema, formatValidationResult } from './logic';
 
@@ -28,23 +29,27 @@ export function JsonSchemaValidator() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="flex flex-col gap-1">
               <p className={labelClass}>Schema (JSON Schema)</p>
-              <textarea
-                className={textareaClass}
-                rows={10}
-                value={schema}
-                onChange={(e) => setSchema(e.target.value)}
-                placeholder="Enter JSON Schema..."
-              />
+              <FileTextArea>
+                <textarea
+                  className={textareaClass}
+                  rows={10}
+                  value={schema}
+                  onChange={(e) => setSchema(e.target.value)}
+                  placeholder="Enter JSON Schema..."
+                />
+              </FileTextArea>
             </div>
             <div className="flex flex-col gap-1">
               <p className={labelClass}>Data (JSON)</p>
-              <textarea
-                className={textareaClass}
-                rows={10}
-                value={data}
-                onChange={(e) => setData(e.target.value)}
-                placeholder="Enter JSON data to validate..."
-              />
+              <FileTextArea>
+                <textarea
+                  className={textareaClass}
+                  rows={10}
+                  value={data}
+                  onChange={(e) => setData(e.target.value)}
+                  placeholder="Enter JSON data to validate..."
+                />
+              </FileTextArea>
             </div>
           </div>
           <button

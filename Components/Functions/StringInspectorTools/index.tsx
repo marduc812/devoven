@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import {
   CopyButton,
@@ -103,15 +104,17 @@ export const StringInspector = () => {
             >
               Text
             </label>
-            <textarea
-              id="string-input"
-              className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-300 focus:border-gray-900 focus:outline-none resize-y transition-colors duration-150 font-mono text-sm"
-              rows={4}
-              spellCheck={false}
-              placeholder="Paste anything — the odder the better"
-              value={text}
-              onChange={e => setText(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                id="string-input"
+                className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-300 focus:border-gray-900 focus:outline-none resize-y transition-colors duration-150 font-mono text-sm"
+                rows={4}
+                spellCheck={false}
+                placeholder="Paste anything — the odder the better"
+                value={text}
+                onChange={e => setText(e.target.value)}
+              />
+            </FileTextArea>
             <PresetRow presets={PRESETS} onPick={setText} />
           </div>
 

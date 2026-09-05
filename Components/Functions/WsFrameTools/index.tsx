@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { decodeWsFrame, formatFrameResult, OPCODES, CLOSE_CODES } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -37,13 +38,15 @@ export const WsFrameDecoder = () => {
     <div className="flex flex-col gap-4">
       <div>
         <label className="text-gray-400 text-xs uppercase tracking-wider mb-1 block">Hex Bytes</label>
-        <textarea
-          rows={3}
-          className={inputClass}
-          placeholder="e.g. 81 05 48 65 6c 6c 6f"
-          value={hexInput}
-          onChange={e => setHexInput(e.target.value)}
-        />
+        <FileTextArea>
+          <textarea
+            rows={3}
+            className={inputClass}
+            placeholder="e.g. 81 05 48 65 6c 6c 6f"
+            value={hexInput}
+            onChange={e => setHexInput(e.target.value)}
+          />
+        </FileTextArea>
       </div>
       <button
         onClick={decode}

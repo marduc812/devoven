@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import {
   ErrorNote,
@@ -185,12 +186,14 @@ export function DataTypeAnalyzer() {
             <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
               CSV data <span className="font-normal text-gray-400 normal-case">first row is the header</span>
             </label>
-            <textarea
-              className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full h-44 border border-gray-300 focus:border-gray-900 focus:outline-none transition-colors duration-150 font-mono text-sm resize-y"
-              placeholder={'id,name,email\n1,Ada,ada@example.com'}
-              value={input}
-              onChange={e => setInput(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full h-44 border border-gray-300 focus:border-gray-900 focus:outline-none transition-colors duration-150 font-mono text-sm resize-y"
+                placeholder={'id,name,email\n1,Ada,ada@example.com'}
+                value={input}
+                onChange={e => setInput(e.target.value)}
+              />
+            </FileTextArea>
             <PresetRow presets={PRESETS} onPick={setInput} />
           </div>
 

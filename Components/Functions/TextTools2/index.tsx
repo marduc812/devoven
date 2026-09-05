@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import {
@@ -221,13 +222,15 @@ export function ColumnExtractor() {
         <div className="flex flex-col gap-4">
           <div>
             <p className={`${labelClass} mb-1`}>Input Text</p>
-            <textarea
-              className={textareaClass}
-              placeholder="Paste your delimited text here..."
-              value={input}
-              rows={6}
-              onChange={(e) => setInput(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className={textareaClass}
+                placeholder="Paste your delimited text here..."
+                value={input}
+                rows={6}
+                onChange={(e) => setInput(e.target.value)}
+              />
+            </FileTextArea>
           </div>
           <div className="flex flex-row flex-wrap gap-3 items-center">
             <div className="flex items-center gap-2">

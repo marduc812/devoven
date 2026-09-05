@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useRef } from 'react'
 import { BasicCoversionType, colorName } from '@/types'
 import TextAreaAnalytics from './TextAreaAnalytics'
 import { SwapButton } from '@/Components/View/Buttons'
@@ -9,6 +9,7 @@ import ShareView from './ShareView'
 import FeedbackModal from '@/Components/Feedback/FeedbackModal'
 import ShareLinkButton from './ShareLinkButton'
 import { useShareLink } from '@/Components/Functions/ShareLink'
+import { FileDropZone } from '@/Components/View/FileInput'
 
 const categoryAccent: Record<string, string> = {
     yellow: 'bg-amber-400',
@@ -27,6 +28,14 @@ const BasicConverter = (props: BasicCoversionType) => {
     // Every text tool gets a working share link for free: the input textarea is
     // the `from` param, and the tool adds its own options on top with useShareLink.
     useShareLink({ from: props.fromValue }, 'base')
+
+    // A file dropped on the input, or chosen from the row above it, is the same
+    // as typing its contents. The textarea is uncontrolled, so it needs telling.
+    const inputRef = useRef<HTMLTextAreaElement>(null)
+    const loadFromFile = (text: string) => {
+        if (inputRef.current) inputRef.current.value = text
+        props.setFromValue(text)
+    }
 
     return (
         <div>
@@ -59,14 +68,26 @@ const BasicConverter = (props: BasicCoversionType) => {
 
             {/* Tool content */}
             <div className="px-8 md:px-12 py-8">
-                <TextAreaAnalytics title={props.fromTitle} userInput={props.fromValue} color={props.backColor} output={false} />
-                <textarea
-                    className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-300 focus:border-gray-900 focus:outline-none resize-y transition-colors duration-150 font-mono text-sm"
-                    placeholder="Type your input here"
-                    defaultValue={props.fromValue}
-                    rows={5}
-                    onChange={(e) => props.setFromValue(e.target.value)}
-                />
+                <TextAreaAnalytics title={props.fromTitle} userInput={props.fromValue} color={props.backColor} output={false} onLoadFile={props.inputReadOnly ? undefined : loadFromFile} />
+                {props.inputReadOnly ? (
+                    <textarea
+                        className="block bg-white text-gray-900 p-3 w-full border border-gray-300 cursor-default resize-y font-mono text-sm"
+                        value={props.fromValue}
+                        rows={5}
+                        readOnly
+                    />
+                ) : (
+                    <FileDropZone onText={loadFromFile}>
+                        <textarea
+                            ref={inputRef}
+                            className="block bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-300 focus:border-gray-900 focus:outline-none resize-y transition-colors duration-150 font-mono text-sm"
+                            placeholder="Type your input here, or drop a text file on it"
+                            defaultValue={props.fromValue}
+                            rows={5}
+                            onChange={(e) => props.setFromValue(e.target.value)}
+                        />
+                    </FileDropZone>
+                )}
 
                 <div className="w-full flex flex-row justify-start items-center py-4 gap-3">
                     {props.swapLink

@@ -1,10 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { extractMarkdownStats } from './logic';
 
-const PLACEHOLDER = `# Hello, Markdown!
+// Loaded as real content, not as a placeholder: the point of the tool is the
+// rendered half, and an empty pane on arrival shows nobody what it does. The
+// Clear button empties both.
+const SAMPLE = `# Hello, Markdown!
 
 Write your markdown here and see the **live preview** on the right.
 
@@ -23,7 +27,7 @@ console.log('Hello, world!');
 `;
 
 export const MarkdownPreview = () => {
-  const [md, setMd] = useState('');
+  const [md, setMd] = useState(SAMPLE);
   const [html, setHtml] = useState('');
   const [showStats, setShowStats] = useState(false);
 
@@ -76,13 +80,15 @@ export const MarkdownPreview = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{ minHeight: '500px' }}>
             <div className="flex flex-col gap-2 h-full">
               <span className="text-gray-400 text-xs">Markdown Input</span>
-              <textarea
-                className={textareaClass}
-                style={{ minHeight: '480px' }}
-                placeholder={PLACEHOLDER}
-                value={md}
-                onChange={e => setMd(e.target.value)}
-              />
+              <FileTextArea accept=".md,.markdown,.txt,text/markdown,text/plain" className="h-full">
+                <textarea
+                  className={textareaClass}
+                  style={{ minHeight: '480px' }}
+                  placeholder="Write your markdown here…"
+                  value={md}
+                  onChange={e => setMd(e.target.value)}
+                />
+              </FileTextArea>
             </div>
             <div className="flex flex-col gap-2 h-full">
               <span className="text-gray-400 text-xs">Preview</span>

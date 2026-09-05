@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { inspectJwk, describeKeyUse, describeAlgorithm, type JwkInspectResult, type JwkKeyInfo } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -96,13 +97,15 @@ export const JwkInspector = () => {
         <div className="flex flex-col gap-4">
           <div>
             <label className="text-yellow-300 text-xs font-semibold uppercase tracking-wider block mb-2">JWK or JWKS (JSON)</label>
-            <textarea
-              className={textareaClass}
-              rows={8}
-              placeholder={'Paste a JWK or JWKS JSON object here...\n\nExample:\n{"kty":"EC","crv":"P-256","x":"...","y":"...","alg":"ES256","use":"sig"}'}
-              value={input}
-              onChange={e => setInput(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className={textareaClass}
+                rows={8}
+                placeholder={'Paste a JWK or JWKS JSON object here...\n\nExample:\n{"kty":"EC","crv":"P-256","x":"...","y":"...","alg":"ES256","use":"sig"}'}
+                value={input}
+                onChange={e => setInput(e.target.value)}
+              />
+            </FileTextArea>
           </div>
 
           {result && result.error && (

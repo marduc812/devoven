@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import { useTimeboxedWorker, DEFAULT_TIMEOUT_MS } from '@/Components/Functions/useTimeboxedWorker';
 import { spawnRegexWorker } from '@/lib/regex/spawn';
 import type { RegexReplaceJob } from '@/lib/regex/types';
@@ -107,13 +108,15 @@ export function WordCounter() {
       backColor="rose"
       extraElements={
         <div className="flex flex-col gap-4">
-          <textarea
-            className="bg-white backdrop-blur-sm text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none resize-none transition-colors duration-200 font-mono text-sm"
-            placeholder="Paste or type your text here..."
-            value={input}
-            rows={6}
-            onChange={(e) => setInput(e.target.value)}
-          />
+          <FileTextArea>
+            <textarea
+              className="bg-white backdrop-blur-sm text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none resize-none transition-colors duration-200 font-mono text-sm"
+              placeholder="Paste or type your text here..."
+              value={input}
+              rows={6}
+              onChange={(e) => setInput(e.target.value)}
+            />
+          </FileTextArea>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
             <div className={statClass}>
               <span className={numClass}>{words}</span>
@@ -388,13 +391,15 @@ export function RegexFindReplace() {
         <div className="flex flex-col gap-4">
           <div>
             <p className={labelClass}>Input Text</p>
-            <textarea
-              className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none resize-none font-mono text-sm transition-colors duration-200"
-              placeholder="Your text here..."
-              value={text}
-              rows={5}
-              onChange={(e) => setText(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none resize-none font-mono text-sm transition-colors duration-200"
+                placeholder="Your text here..."
+                value={text}
+                rows={5}
+                onChange={(e) => setText(e.target.value)}
+              />
+            </FileTextArea>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="sm:col-span-2">

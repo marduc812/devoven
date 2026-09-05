@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import {
   CopyButton,
@@ -158,15 +159,17 @@ export function DbIndexAdvisor() {
             >
               SQL SELECT query
             </label>
-            <textarea
-              id="index-sql-input"
-              className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-300 focus:border-gray-900 focus:outline-none resize-y transition-colors duration-150 font-mono text-xs"
-              rows={9}
-              spellCheck={false}
-              placeholder={EXAMPLE}
-              value={sql}
-              onChange={e => setSql(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                id="index-sql-input"
+                className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-300 focus:border-gray-900 focus:outline-none resize-y transition-colors duration-150 font-mono text-xs"
+                rows={9}
+                spellCheck={false}
+                placeholder={EXAMPLE}
+                value={sql}
+                onChange={e => setSql(e.target.value)}
+              />
+            </FileTextArea>
             <PresetRow presets={PRESETS} onPick={setSql} />
           </div>
 

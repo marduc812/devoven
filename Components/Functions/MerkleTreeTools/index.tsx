@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import {
   CopyButton,
@@ -83,12 +84,14 @@ export const MerkleTreeVisualizer = () => {
             <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
               Items <span className="font-normal text-gray-400 normal-case">one per line, max 64</span>
             </label>
-            <textarea
-              className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full h-36 border border-gray-300 focus:border-gray-900 focus:outline-none transition-colors duration-150 font-mono text-sm resize-y"
-              placeholder={'tx-alpha\ntx-bravo\ntx-charlie'}
-              value={input}
-              onChange={e => setInput(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full h-36 border border-gray-300 focus:border-gray-900 focus:outline-none transition-colors duration-150 font-mono text-sm resize-y"
+                placeholder={'tx-alpha\ntx-bravo\ntx-charlie'}
+                value={input}
+                onChange={e => setInput(e.target.value)}
+              />
+            </FileTextArea>
             <PresetRow presets={PRESETS} onPick={setInput} />
           </div>
 

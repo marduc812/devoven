@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { parseSshPublicKey } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -62,12 +63,14 @@ export const SshKeyInfo = () => {
           {/* Input */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">SSH Public Key</label>
-            <textarea
-              className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-300 focus:border-gray-900 focus:outline-none font-mono text-xs resize-y min-h-[80px]"
-              placeholder="ssh-ed25519 AAAA... user@host"
-              value={input}
-              onChange={e => setInput(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-300 focus:border-gray-900 focus:outline-none font-mono text-xs resize-y min-h-[80px]"
+                placeholder="ssh-ed25519 AAAA... user@host"
+                value={input}
+                onChange={e => setInput(e.target.value)}
+              />
+            </FileTextArea>
           </div>
 
           <button

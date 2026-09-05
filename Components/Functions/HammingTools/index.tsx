@@ -77,6 +77,7 @@ export function HammingDistance() {
                 value={a}
                 onChange={setA}
                 placeholder="karolin"
+                file
               />
               <Field
                 label="String B"
@@ -84,6 +85,7 @@ export function HammingDistance() {
                 value={b}
                 onChange={setB}
                 placeholder="kathrin"
+                file
               />
             </div>
             <PresetRow presets={PRESETS} onPick={pick} />

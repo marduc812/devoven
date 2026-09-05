@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import BasicConverter from '@/Components/MainView/MainPanel/BasicConverter';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import Panel from '@/Components/MainView/MainPanel/Panel';
@@ -398,14 +399,16 @@ export const HexDump = () => {
           {/* Input */}
           <div>
             <label className={`${hexDumpLabelClass} block mb-1`}>Text Input</label>
-            <textarea
-              value={fromValue}
-              onChange={(e) => setFromValue(e.target.value)}
-              rows={5}
-              spellCheck={false}
-              placeholder="Hello, World!"
-              className="bg-white text-gray-900 placeholder:text-gray-400 px-3 py-2 w-full border border-gray-300 focus:border-gray-900 focus:outline-none font-mono text-sm resize-y"
-            />
+            <FileTextArea>
+              <textarea
+                value={fromValue}
+                onChange={(e) => setFromValue(e.target.value)}
+                rows={5}
+                spellCheck={false}
+                placeholder="Hello, World!"
+                className="bg-white text-gray-900 placeholder:text-gray-400 px-3 py-2 w-full border border-gray-300 focus:border-gray-900 focus:outline-none font-mono text-sm resize-y"
+              />
+            </FileTextArea>
           </div>
 
           {/* Options */}
