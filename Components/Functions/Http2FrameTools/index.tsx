@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import {
   decodeHttp2Frames,
@@ -68,12 +69,14 @@ export const Http2FrameDecoder = () => {
 
           {tab === 'decode' && (
             <>
-              <textarea
-                className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-300 focus:border-gray-900 focus:outline-none font-mono text-xs resize-y min-h-[140px]"
-                placeholder="Paste HTTP/2 frame hex bytes (spaces/newlines are ok, comments with // are skipped)..."
-                value={input}
-                onChange={e => setInput(e.target.value)}
-              />
+              <FileTextArea>
+                <textarea
+                  className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-300 focus:border-gray-900 focus:outline-none font-mono text-xs resize-y min-h-[140px]"
+                  placeholder="Paste HTTP/2 frame hex bytes (spaces/newlines are ok, comments with // are skipped)..."
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                />
+              </FileTextArea>
               <button
                 className="px-4 py-2 border border-gray-300 bg-white text-gray-700 text-xs font-bold uppercase tracking-wider hover:bg-gray-50 hover:border-gray-900 transition-colors cursor-pointer self-start"
                 onClick={() => setInput(SAMPLE_HEX)}

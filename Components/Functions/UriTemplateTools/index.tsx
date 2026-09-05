@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { expandUriTemplate, parseVariableLines, extractTemplateVars } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -76,13 +77,15 @@ export const UriTemplateExpander = () => {
             <label className="text-xs font-bold uppercase tracking-wider text-gray-500 block mb-2">
               Variable Values <span className="text-gray-500 font-normal normal-case">(one per line: name=value, list: name=[a,b,c])</span>
             </label>
-            <textarea
-              className={textareaClass}
-              rows={5}
-              placeholder={EXAMPLE_VARS}
-              value={varLines}
-              onChange={e => setVarLines(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className={textareaClass}
+                rows={5}
+                placeholder={EXAMPLE_VARS}
+                value={varLines}
+                onChange={e => setVarLines(e.target.value)}
+              />
+            </FileTextArea>
           </div>
 
           {expanded && (

@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import { FileDropZone, LoadFileButton } from '@/Components/View/FileInput';
+import { trimTrailingNewline } from '@/lib/textFile';
 
 /**
  * Shared building blocks for tools whose output is a *report* rather than text
@@ -181,6 +183,7 @@ export const Field = ({
   onChange,
   placeholder,
   type = 'text',
+  file = false,
 }: {
   label: string;
   hint?: string;
@@ -188,11 +191,16 @@ export const Field = ({
   onChange: (v: string) => void;
   placeholder?: string;
   type?: string;
-}) => (
-  <div className="flex flex-col gap-1 flex-1 min-w-0">
-    <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
-      {label} {hint && <span className="font-normal text-gray-400 normal-case">{hint}</span>}
-    </label>
+  /**
+   * The field holds text a user might keep in a file (one side of a
+   * comparison, a token, a certificate) rather than a number or a date: it
+   * then takes a dropped file too. The trailing newline a text editor leaves
+   * behind is dropped, since this is a one-line value.
+   */
+  file?: boolean;
+}) => {
+  const loadFromFile = (text: string) => onChange(trimTrailingNewline(text));
+  const box = (
     <input
       type={type}
       className={inputClass}
@@ -200,8 +208,20 @@ export const Field = ({
       value={value}
       onChange={e => onChange(e.target.value)}
     />
-  </div>
-);
+  );
+
+  return (
+    <div className="flex flex-col gap-1 flex-1 min-w-0">
+      <div className="flex items-center justify-between gap-2 h-6">
+        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
+          {label} {hint && <span className="font-normal text-gray-400 normal-case">{hint}</span>}
+        </label>
+        {file && <LoadFileButton onText={loadFromFile} title={`Load ${label} from a file`} />}
+      </div>
+      {file ? <FileDropZone onText={loadFromFile}>{box}</FileDropZone> : box}
+    </div>
+  );
+};
 
 /** The "Try …" row of example inputs every tool offers. */
 export const PresetRow = <T,>({

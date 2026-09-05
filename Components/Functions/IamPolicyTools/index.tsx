@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { analyzeIamPolicy, generateMinimalPolicy, EXAMPLE_POLICIES } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -53,13 +54,15 @@ export function IamPolicyAnalyzer() {
           {/* Input */}
           <div className="flex flex-col gap-2">
             <label className={labelClass}>IAM Policy JSON</label>
-            <textarea
-              className={textareaClass}
-              rows={10}
-              value={policyJson}
-              onChange={function(e) { setPolicyJson(e.target.value); }}
-              placeholder={'{\n  "Version": "2012-10-17",\n  "Statement": [\n    {\n      "Effect": "Allow",\n      "Action": "s3:GetObject",\n      "Resource": "arn:aws:s3:::my-bucket/*"\n    }\n  ]\n}'}
-            />
+            <FileTextArea>
+              <textarea
+                className={textareaClass}
+                rows={10}
+                value={policyJson}
+                onChange={function(e) { setPolicyJson(e.target.value); }}
+                placeholder={'{\n  "Version": "2012-10-17",\n  "Statement": [\n    {\n      "Effect": "Allow",\n      "Action": "s3:GetObject",\n      "Resource": "arn:aws:s3:::my-bucket/*"\n    }\n  ]\n}'}
+              />
+            </FileTextArea>
             <div className="flex flex-wrap gap-2">
               {EXAMPLE_POLICIES.map(function(ex) {
                 return (

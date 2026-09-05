@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel'
 import BasicConverter from '@/Components/MainView/MainPanel/BasicConverter'
 import {
@@ -291,13 +292,15 @@ export const StatisticsCalculator = () => {
         <div className="flex flex-col gap-4">
           <div>
             <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1 block">Numbers (one per line or comma-separated)</label>
-            <textarea
-              className="bg-white text-gray-900 placeholder:text-gray-400 px-3 py-2 w-full border border-gray-300 focus:outline-none focus:border-gray-900 resize-y font-mono text-sm"
-              rows={6}
-              placeholder={"1, 2, 3, 4, 5\nor\n1\n2\n3"}
-              value={input}
-              onChange={e => setInput(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className="bg-white text-gray-900 placeholder:text-gray-400 px-3 py-2 w-full border border-gray-300 focus:outline-none focus:border-gray-900 resize-y font-mono text-sm"
+                rows={6}
+                placeholder={"1, 2, 3, 4, 5\nor\n1\n2\n3"}
+                value={input}
+                onChange={e => setInput(e.target.value)}
+              />
+            </FileTextArea>
           </div>
 
           {error && <p className="text-red-600 text-sm font-mono">{error}</p>}
@@ -401,13 +404,15 @@ export const TextStatistics = () => {
         <div className="flex flex-col gap-4">
           <div>
             <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1 block">Input Text</label>
-            <textarea
-              className="bg-white text-gray-900 placeholder:text-gray-400 px-3 py-2 w-full border border-gray-300 focus:outline-none focus:border-gray-900 resize-y font-mono text-sm"
-              rows={6}
-              placeholder="Paste or type text here..."
-              value={text}
-              onChange={e => setText(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className="bg-white text-gray-900 placeholder:text-gray-400 px-3 py-2 w-full border border-gray-300 focus:outline-none focus:border-gray-900 resize-y font-mono text-sm"
+                rows={6}
+                placeholder="Paste or type text here..."
+                value={text}
+                onChange={e => setText(e.target.value)}
+              />
+            </FileTextArea>
           </div>
 
           {text.trim() && (

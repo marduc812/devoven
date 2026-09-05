@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { processInput } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -63,13 +64,15 @@ export const RandomDataGenerator = () => {
         <div className="flex flex-col gap-4">
           <div>
             <label className="text-gray-700 text-xs font-semibold uppercase tracking-wider block mb-2">Commands (one per line)</label>
-            <textarea
-              className={textareaClass}
-              rows={5}
-              placeholder={'10 emails\n5 names\n6 UUIDs\n8 integers 1-100'}
-              value={fromValue}
-              onChange={e => setFromValue(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className={textareaClass}
+                rows={5}
+                placeholder={'10 emails\n5 names\n6 UUIDs\n8 integers 1-100'}
+                value={fromValue}
+                onChange={e => setFromValue(e.target.value)}
+              />
+            </FileTextArea>
           </div>
           <div className="flex flex-row gap-2 flex-wrap">
             <button className={btnClass} onClick={generate}>Generate</button>

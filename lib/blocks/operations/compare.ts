@@ -18,8 +18,8 @@ import { Operation } from '../types';
 // either side.
 
 const pairFields = [
-  { id: 'a', label: 'Text A' },
-  { id: 'b', label: 'Text B' },
+  { id: 'a', label: 'Text A', long: true },
+  { id: 'b', label: 'Text B', long: true },
 ];
 
 function required(params: Record<string, string>, id: string, label: string): string {

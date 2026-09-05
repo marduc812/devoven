@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import {
   CopyButton,
@@ -82,12 +83,14 @@ export const TextTokenizer = () => {
             <label className="text-[10px] font-bold uppercase tracking-widest text-gray-500">
               Input text
             </label>
-            <textarea
-              className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full h-40 border border-gray-300 focus:border-gray-900 focus:outline-none transition-colors duration-150 font-mono text-sm resize-y"
-              placeholder="Paste text to tokenize"
-              value={input}
-              onChange={e => setInput(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full h-40 border border-gray-300 focus:border-gray-900 focus:outline-none transition-colors duration-150 font-mono text-sm resize-y"
+                placeholder="Paste text to tokenize"
+                value={input}
+                onChange={e => setInput(e.target.value)}
+              />
+            </FileTextArea>
             <PresetRow presets={PRESETS} onPick={setInput} label="Load" />
           </div>
 

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { InputField } from '@/lib/blocks/types';
+import { FileDropZone, LoadFileButton } from '@/Components/View/FileInput';
 
 type PipelineInputProps = {
   value: string;
@@ -18,26 +19,59 @@ type PipelineInputProps = {
 
 export default function PipelineInput({ value, onChange, fields, fieldValues, onFieldChange }: PipelineInputProps) {
   if (fields && fields.length > 0) {
+    // Fields holding a body of text get a box worth pasting into, and the file
+    // control; single values (a channel, a key, a date) stay one line.
+    const longFields = fields.filter((f) => f.long);
+    const shortFields = fields.filter((f) => !f.long);
+
     return (
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-gray-900 uppercase tracking-widest">Input</span>
           <span className="text-xs text-gray-400 font-mono">{fields.length} fields</span>
         </div>
-        <div className="grid gap-3 p-3 border border-gray-300 bg-white" style={{ gridTemplateColumns: `repeat(auto-fit, minmax(${fields.length > 3 ? 120 : 160}px, 1fr))` }}>
-          {fields.map((field) => (
-            <label key={field.id} className="flex flex-col gap-1">
-              <span className="text-gray-500 text-[10px] font-bold uppercase tracking-wider">{field.label}</span>
-              <input
-                type="text"
-                className="w-full px-2 py-1.5 border border-gray-300 focus:border-gray-900 focus:outline-none font-mono text-sm bg-white text-gray-900 placeholder:text-gray-400 transition-colors duration-150"
-                value={fieldValues?.[field.id] ?? ''}
-                placeholder={field.placeholder ?? field.label}
-                spellCheck={false}
-                onChange={(e) => onFieldChange?.(field.id, e.target.value)}
-              />
-            </label>
-          ))}
+        <div className="flex flex-col gap-3 p-3 border border-gray-300 bg-white">
+          {longFields.length > 0 && (
+            <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(auto-fit, minmax(220px, 1fr))` }}>
+              {longFields.map((field) => (
+                <div key={field.id} className="flex flex-col gap-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-gray-500 text-[10px] font-bold uppercase tracking-wider">{field.label}</span>
+                    <LoadFileButton
+                      onText={(text) => onFieldChange?.(field.id, text)}
+                      title={`Load ${field.label} from a file`}
+                    />
+                  </div>
+                  <FileDropZone onText={(text) => onFieldChange?.(field.id, text)}>
+                    <textarea
+                      className="block w-full h-24 px-2 py-1.5 border border-gray-300 focus:border-gray-900 focus:outline-none font-mono text-sm bg-white text-gray-900 placeholder:text-gray-400 resize-y transition-colors duration-150"
+                      value={fieldValues?.[field.id] ?? ''}
+                      placeholder={field.placeholder ?? `${field.label} — type, paste or drop a file`}
+                      spellCheck={false}
+                      onChange={(e) => onFieldChange?.(field.id, e.target.value)}
+                    />
+                  </FileDropZone>
+                </div>
+              ))}
+            </div>
+          )}
+          {shortFields.length > 0 && (
+            <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(auto-fit, minmax(${shortFields.length > 3 ? 120 : 160}px, 1fr))` }}>
+              {shortFields.map((field) => (
+                <label key={field.id} className="flex flex-col gap-1">
+                  <span className="text-gray-500 text-[10px] font-bold uppercase tracking-wider">{field.label}</span>
+                  <input
+                    type="text"
+                    className="w-full px-2 py-1.5 border border-gray-300 focus:border-gray-900 focus:outline-none font-mono text-sm bg-white text-gray-900 placeholder:text-gray-400 transition-colors duration-150"
+                    value={fieldValues?.[field.id] ?? ''}
+                    placeholder={field.placeholder ?? field.label}
+                    spellCheck={false}
+                    onChange={(e) => onFieldChange?.(field.id, e.target.value)}
+                  />
+                </label>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     );
@@ -49,19 +83,24 @@ export default function PipelineInput({ value, onChange, fields, fieldValues, on
 
   return (
     <div className="flex flex-col gap-1.5">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <span className="text-xs font-bold text-gray-900 uppercase tracking-widest">Input</span>
-        <span className="text-xs text-gray-400 font-mono">
-          {chars} chars · {words} words · {lines} lines
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-gray-400 font-mono">
+            {chars} chars · {words} words · {lines} lines
+          </span>
+          <LoadFileButton onText={onChange} title="Load the input from a file" />
+        </div>
       </div>
-      <textarea
-        className="w-full h-32 p-3 border border-gray-300 focus:border-gray-900 focus:outline-none font-mono text-sm resize-y bg-white text-gray-900 placeholder:text-gray-400 transition-colors duration-150"
-        placeholder="Enter your input here..."
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        spellCheck={false}
-      />
+      <FileDropZone onText={onChange}>
+        <textarea
+          className="block w-full h-32 p-3 border border-gray-300 focus:border-gray-900 focus:outline-none font-mono text-sm resize-y bg-white text-gray-900 placeholder:text-gray-400 transition-colors duration-150"
+          placeholder="Enter your input here, or drop a text file on it..."
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          spellCheck={false}
+        />
+      </FileDropZone>
     </div>
   );
 }

@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
+import { TextInputPane } from '@/Components/View/FileInput';
 import { DiffLine, WordSpan, diffTwoTexts, inlineWordDiff } from './logic';
 
 const labelClass = 'block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1';
-const textareaClass = 'w-full bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm font-mono focus:outline-none focus:border-gray-900 dark:focus:border-gray-400 placeholder-gray-400 dark:placeholder-gray-600 resize-y min-h-[120px]';
 
 type RenderLine = {
   type: 'unchanged' | 'removed' | 'added';
@@ -94,28 +94,18 @@ export const TextDiff = () => {
   const content = (
     <div className="flex flex-col gap-5">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className={labelClass}>Text 1</label>
-          <textarea
-            className={textareaClass}
-            value={text1}
-            onChange={(e) => setText1(e.target.value)}
-            placeholder="Paste first text here..."
-            rows={8}
-            spellCheck={false}
-          />
-        </div>
-        <div>
-          <label className={labelClass}>Text 2</label>
-          <textarea
-            className={textareaClass}
-            value={text2}
-            onChange={(e) => setText2(e.target.value)}
-            placeholder="Paste second text here..."
-            rows={8}
-            spellCheck={false}
-          />
-        </div>
+        <TextInputPane
+          label="Text 1"
+          value={text1}
+          onChange={setText1}
+          placeholder="Paste the first text here, or drop a file..."
+        />
+        <TextInputPane
+          label="Text 2"
+          value={text2}
+          onChange={setText2}
+          placeholder="Paste the second text here, or drop a file..."
+        />
       </div>
 
       {renderLines.length > 0 && (

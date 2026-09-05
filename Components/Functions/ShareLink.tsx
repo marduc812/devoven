@@ -107,8 +107,18 @@ export const useShareLink = (params: ShareParams, slot: Slot = 'tool') => {
     }, [store, slot, path, serialized])
 }
 
+/**
+ * Longest query string a link is allowed to carry. A tool's input can now come
+ * from a file, and a server refuses a query string past ~16KB, so an input
+ * larger than this is left out of the link rather than making an unusable URL.
+ */
+export const MAX_SHARE_QUERY = 8_000
+
+/** What the copy button gets: the query string, and whether the input fitted. */
+export type ShareLinkQuery = { query: string; inputDropped: boolean }
+
 /** The query string for the current page, without the leading `?`. */
-export const useShareLinkQuery = (): string => {
+export const useShareLinkQuery = (): ShareLinkQuery => {
     const store = useContext(ShareLinkContext)
     const path = usePathname()
     const snapshot = useSyncExternalStore(
@@ -125,6 +135,15 @@ export const useShareLinkQuery = (): string => {
             if (!entry || entry.path !== path) continue
             Object.assign(merged, entry.params)
         }
-        return new URLSearchParams(merged).toString()
+        const full = new URLSearchParams(merged).toString()
+        if (full.length <= MAX_SHARE_QUERY) return { query: full, inputDropped: false }
+
+        // The options are worth keeping even when the text is not.
+        const { from: _dropped, ...rest } = merged
+        const withoutInput = new URLSearchParams(rest).toString()
+        return {
+            query: withoutInput.length <= MAX_SHARE_QUERY ? withoutInput : '',
+            inputDropped: true,
+        }
     }, [snapshot, path])
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { analyzeChain, type ChainAnalysis } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -54,12 +55,14 @@ export const CertChainAnalyzer = () => {
       backColor="yellow"
       extraElements={
         <div className="flex flex-col gap-4">
-          <textarea
-            className={inputClass}
-            placeholder="Paste one or more PEM certificates here..."
-            value={input}
-            onChange={e => setInput(e.target.value)}
-          />
+          <FileTextArea>
+            <textarea
+              className={inputClass}
+              placeholder="Paste one or more PEM certificates here..."
+              value={input}
+              onChange={e => setInput(e.target.value)}
+            />
+          </FileTextArea>
           <button
             className="px-4 py-2 border border-gray-300 bg-white text-gray-700 text-xs font-bold uppercase tracking-wider hover:bg-gray-50 hover:border-gray-900 transition-colors duration-100 cursor-pointer self-start"
             onClick={() => setInput(SAMPLE)}

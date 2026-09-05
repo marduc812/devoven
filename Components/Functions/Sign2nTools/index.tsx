@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import type { RecoveredKey } from './logic';
 import type { WorkerMessage } from './worker';
@@ -160,25 +161,29 @@ export function Sign2nTool() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="flex flex-col gap-2">
           <label className={labelClass}>JWT #1</label>
-          <textarea
-            rows={7}
-            className={inputClass}
-            value={jwt1}
-            onChange={e => setJwt1(e.target.value)}
-            placeholder="eyJhbGciOiJSUzI1NiII…  (an RS256/384/512 token)"
-            spellCheck={false}
-          />
+          <FileTextArea>
+            <textarea
+              rows={7}
+              className={inputClass}
+              value={jwt1}
+              onChange={e => setJwt1(e.target.value)}
+              placeholder="eyJhbGciOiJSUzI1NiII…  (an RS256/384/512 token)"
+              spellCheck={false}
+            />
+          </FileTextArea>
         </div>
         <div className="flex flex-col gap-2">
           <label className={labelClass}>JWT #2 (same key, different payload)</label>
-          <textarea
-            rows={7}
-            className={inputClass}
-            value={jwt2}
-            onChange={e => setJwt2(e.target.value)}
-            placeholder="eyJhbGciOiJSUzI1NiII…  (another token from the same signer)"
-            spellCheck={false}
-          />
+          <FileTextArea>
+            <textarea
+              rows={7}
+              className={inputClass}
+              value={jwt2}
+              onChange={e => setJwt2(e.target.value)}
+              placeholder="eyJhbGciOiJSUzI1NiII…  (another token from the same signer)"
+              spellCheck={false}
+            />
+          </FileTextArea>
         </div>
       </div>
 

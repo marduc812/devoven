@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { shannonEntropy } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -62,13 +63,15 @@ export function TextEntropyCalculator() {
         <div className="flex flex-col gap-5">
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Input Text</label>
-            <textarea
-              className="bg-white text-gray-900 border border-gray-300 focus:border-gray-900 focus:outline-none px-3 py-2 text-sm w-full resize-y"
-              rows={6}
-              placeholder="Paste any text to analyze entropy..."
-              value={input}
-              onChange={e => setInput(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className="bg-white text-gray-900 border border-gray-300 focus:border-gray-900 focus:outline-none px-3 py-2 text-sm w-full resize-y"
+                rows={6}
+                placeholder="Paste any text to analyze entropy..."
+                value={input}
+                onChange={e => setInput(e.target.value)}
+              />
+            </FileTextArea>
           </div>
 
           {stats && assessment && (

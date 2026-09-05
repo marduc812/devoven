@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Link from 'next/link';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { hintClass, labelClass } from '@/Components/MainView/MainPanel/formControls';
@@ -249,14 +250,16 @@ export const HashIdentifier = () => {
             <label className={labelClass} htmlFor="hash-input">
               Hashes
             </label>
-            <textarea
-              id="hash-input"
-              className={inputPaneClass}
-              placeholder={PLACEHOLDER}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              spellCheck={false}
-            />
+            <FileTextArea>
+              <textarea
+                id="hash-input"
+                className={inputPaneClass}
+                placeholder={PLACEHOLDER}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                spellCheck={false}
+              />
+            </FileTextArea>
             <p className={hintClass}>One hash per line.</p>
           </div>
 

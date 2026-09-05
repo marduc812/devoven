@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { evaluateJsonPath, formatJsonPathResults } from './logic';
 
@@ -40,13 +41,15 @@ export const JsonPathTester = () => {
             <label className="text-cyan-300 text-xs font-semibold uppercase tracking-wider">
               JSON Document
             </label>
-            <textarea
-              className={textareaClass}
-              placeholder={'{\n  "store": {\n    "book": [{ "title": "Example", "price": 9.99 }]\n  }\n}'}
-              rows={8}
-              value={jsonInput}
-              onChange={e => setJsonInput(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className={textareaClass}
+                placeholder={'{\n  "store": {\n    "book": [{ "title": "Example", "price": 9.99 }]\n  }\n}'}
+                rows={8}
+                value={jsonInput}
+                onChange={e => setJsonInput(e.target.value)}
+              />
+            </FileTextArea>
           </div>
 
           <div className="flex flex-col gap-2">

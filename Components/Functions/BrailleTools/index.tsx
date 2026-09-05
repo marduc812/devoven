@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { textToBraille, dotsOf, type BrailleCell } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -104,12 +105,14 @@ export function BrailleConverter() {
         <div className="flex flex-col gap-5">
           <div>
             <label className={`${labelClass} block mb-1`}>Text</label>
-            <textarea
-              className={`${inputClass} h-24 resize-y`}
-              placeholder="e.g. Hello World 2024"
-              value={input}
-              onChange={e => setInput(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className={`${inputClass} h-24 resize-y`}
+                placeholder="e.g. Hello World 2024"
+                value={input}
+                onChange={e => setInput(e.target.value)}
+              />
+            </FileTextArea>
           </div>
 
           {cells.length > 0 && (

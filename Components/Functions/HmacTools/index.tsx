@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { generateAllHmacs, HmacAlgorithm, HmacResult } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -53,13 +54,15 @@ export const HmacGenerator = () => {
         <div className="flex flex-col gap-4 w-full">
           <div className="flex flex-col gap-2">
             <label className="text-gray-400 text-xs uppercase tracking-wider">Message</label>
-            <textarea
-              className={inputClass}
-              rows={3}
-              placeholder="Enter message to authenticate..."
-              value={message}
-              onChange={e => setMessage(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className={inputClass}
+                rows={3}
+                placeholder="Enter message to authenticate..."
+                value={message}
+                onChange={e => setMessage(e.target.value)}
+              />
+            </FileTextArea>
           </div>
 
           <div className="flex flex-col gap-2">

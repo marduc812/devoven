@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { parseWeatherInput, computeWeather, formatTemp } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -78,13 +79,15 @@ export const WeatherCalculator = () => {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <label className="text-xs font-bold uppercase tracking-wider text-gray-500">Input</label>
-            <textarea
-              className={textareaClass}
-              placeholder={PLACEHOLDER}
-              rows={5}
-              value={input}
-              onChange={e => setInput(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className={textareaClass}
+                placeholder={PLACEHOLDER}
+                rows={5}
+                value={input}
+                onChange={e => setInput(e.target.value)}
+              />
+            </FileTextArea>
           </div>
 
           <div className="text-gray-500 text-xs font-mono space-y-0.5">

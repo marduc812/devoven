@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { FileDropZone, LoadFileButton } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import {
   Meter,
@@ -90,20 +91,26 @@ export function PangramChecker() {
           <div className="flex flex-col gap-3">
             <SectionTitle
               note={
-                hasInput
-                  ? `${result.charCount} char${result.charCount === 1 ? '' : 's'} · ${result.wordCount} word${result.wordCount === 1 ? '' : 's'}`
-                  : undefined
+                // The counts and the file control share this row, so the
+                // control keeps the place it has on every other tool.
+                <span className="flex items-center gap-2">
+                  {hasInput &&
+                    `${result.charCount} char${result.charCount === 1 ? '' : 's'} · ${result.wordCount} word${result.wordCount === 1 ? '' : 's'}`}
+                  <LoadFileButton onText={setInput} title="Load the text from a file" />
+                </span>
               }
             >
               Input text
             </SectionTitle>
-            <textarea
-              className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full h-28 border border-gray-300 focus:border-gray-900 focus:outline-none transition-colors duration-150 font-mono text-sm resize-y"
-              spellCheck={false}
-              placeholder="The quick brown fox jumps over the lazy dog"
-              value={input}
-              onChange={e => setInput(e.target.value)}
-            />
+            <FileDropZone onText={setInput}>
+              <textarea
+                className="block bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full h-28 border border-gray-300 focus:border-gray-900 focus:outline-none transition-colors duration-150 font-mono text-sm resize-y"
+                spellCheck={false}
+                placeholder="The quick brown fox jumps over the lazy dog"
+                value={input}
+                onChange={e => setInput(e.target.value)}
+              />
+            </FileDropZone>
             <PresetRow presets={PRESETS} onPick={setInput} />
           </div>
 

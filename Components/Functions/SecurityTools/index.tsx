@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel'
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter'
 import {
@@ -68,13 +69,15 @@ export function AesEncrypt() {
             Your data never leaves your browser.
           </div>
           <label className="text-xs text-gray-400 uppercase tracking-wider">Plaintext</label>
-          <textarea
-            className="bg-white backdrop-blur-sm text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none resize-none transition-colors duration-200 font-mono text-sm"
-            placeholder="Enter text to encrypt…"
-            rows={4}
-            value={plaintext}
-            onChange={(e) => setPlaintext(e.target.value)}
-          />
+          <FileTextArea>
+            <textarea
+              className="bg-white backdrop-blur-sm text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none resize-none transition-colors duration-200 font-mono text-sm"
+              placeholder="Enter text to encrypt…"
+              rows={4}
+              value={plaintext}
+              onChange={(e) => setPlaintext(e.target.value)}
+            />
+          </FileTextArea>
           <label className="text-xs text-gray-400 uppercase tracking-wider">Password</label>
           <input
             type="text"
@@ -158,13 +161,15 @@ export function AesDecrypt() {
             Your data never leaves your browser.
           </div>
           <label className="text-xs text-gray-400 uppercase tracking-wider">Encrypted Text</label>
-          <textarea
-            className="bg-white backdrop-blur-sm text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none resize-none transition-colors duration-200 font-mono text-sm"
-            placeholder="Paste encrypted base64url text…"
-            rows={4}
-            value={cipherInput}
-            onChange={(e) => setCipherInput(e.target.value)}
-          />
+          <FileTextArea>
+            <textarea
+              className="bg-white backdrop-blur-sm text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-200 focus:border-gray-400 focus:outline-none resize-none transition-colors duration-200 font-mono text-sm"
+              placeholder="Paste encrypted base64url text…"
+              rows={4}
+              value={cipherInput}
+              onChange={(e) => setCipherInput(e.target.value)}
+            />
+          </FileTextArea>
           <label className="text-xs text-gray-400 uppercase tracking-wider">Password</label>
           <input
             type="text"

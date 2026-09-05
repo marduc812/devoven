@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { calculateVlsm } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -48,13 +49,15 @@ export function VlsmCalculator() {
         </div>
         <div className="flex flex-col gap-2">
           <label className={labelClass}>Required Hosts (one per line)</label>
-          <textarea
-            className={textareaClass}
-            rows={5}
-            value={hostsInput}
-            onChange={function(e) { setHostsInput(e.target.value); }}
-            placeholder={'50\n30\n10\n2\nor:\nOffice: 50\nLab: 10'}
-          />
+          <FileTextArea>
+            <textarea
+              className={textareaClass}
+              rows={5}
+              value={hostsInput}
+              onChange={function(e) { setHostsInput(e.target.value); }}
+              placeholder={'50\n30\n10\n2\nor:\nOffice: 50\nLab: 10'}
+            />
+          </FileTextArea>
           <span className="text-gray-500 text-xs">Enter number of usable hosts per subnet. Labels are optional (e.g. &quot;Office: 50&quot;).</span>
         </div>
       </div>

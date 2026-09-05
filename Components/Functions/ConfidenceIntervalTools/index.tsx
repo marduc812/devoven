@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { computeCI, computeCIFromData, parseNumbers, CIResult } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -69,13 +70,15 @@ export function ConfidenceInterval() {
           <div className="grid grid-cols-1 gap-3">
             <div>
               <label className={labelClass}>Data Input</label>
-              <textarea
-                className={inputClass}
-                rows={5}
-                placeholder={'Summary stats (one per line):\n42.5\n8.3\n25\n\nOr raw data:\n10, 12, 14, 11, 13'}
-                value={input}
-                onChange={e => setInput(e.target.value)}
-              />
+              <FileTextArea>
+                <textarea
+                  className={inputClass}
+                  rows={5}
+                  placeholder={'Summary stats (one per line):\n42.5\n8.3\n25\n\nOr raw data:\n10, 12, 14, 11, 13'}
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                />
+              </FileTextArea>
             </div>
             <div>
               <label className={labelClass}>Confidence Level</label>

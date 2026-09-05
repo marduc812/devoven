@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import {
   CopyButton,
@@ -257,16 +258,18 @@ export const FletcherChecksum = () => {
               </span>
             </div>
 
-            <textarea
-              className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full h-28 border border-gray-300 focus:border-gray-900 focus:outline-none transition-colors duration-150 font-mono text-sm resize-y"
-              spellCheck={false}
-              placeholder={mode === 'hex' ? '48 65 6c 6c 6f' : 'abcde'}
-              value={input}
-              onChange={e => {
-                setInput(e.target.value);
-                setShowAllSteps(false);
-              }}
-            />
+            <FileTextArea>
+              <textarea
+                className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full h-28 border border-gray-300 focus:border-gray-900 focus:outline-none transition-colors duration-150 font-mono text-sm resize-y"
+                spellCheck={false}
+                placeholder={mode === 'hex' ? '48 65 6c 6c 6f' : 'abcde'}
+                value={input}
+                onChange={e => {
+                  setInput(e.target.value);
+                  setShowAllSteps(false);
+                }}
+              />
+            </FileTextArea>
 
             <PresetRow presets={PRESETS} onPick={pick} />
             {parsed.error && <ErrorNote>{parsed.error}</ErrorNote>}

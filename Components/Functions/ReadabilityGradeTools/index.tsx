@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { computeReadabilityScores, interpretFleschEase, interpretGrade, ReadabilityScores } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -47,13 +48,15 @@ export function ReadabilityGrade() {
         <div className="flex flex-col gap-5">
           <div>
             <label className={labelClass}>Input Text</label>
-            <textarea
-              className="bg-white text-gray-900 border border-gray-300 focus:border-gray-900 focus:outline-none px-3 py-2 text-sm w-full resize-y"
-              rows={6}
-              placeholder="Paste any text to analyze readability..."
-              value={input}
-              onChange={e => setInput(e.target.value)}
-            />
+            <FileTextArea>
+              <textarea
+                className="bg-white text-gray-900 border border-gray-300 focus:border-gray-900 focus:outline-none px-3 py-2 text-sm w-full resize-y"
+                rows={6}
+                placeholder="Paste any text to analyze readability..."
+                value={input}
+                onChange={e => setInput(e.target.value)}
+              />
+            </FileTextArea>
           </div>
 
           {scores && (

@@ -13,6 +13,10 @@ export type InputField = {
   id: string;
   label: string;
   placeholder?: string;
+  // A field holding a body of text rather than a single value (a colour
+  // channel, a key, a latitude). The UI gives it room and lets the user load
+  // it from a file; `false` fields stay one-line boxes.
+  long?: boolean;
 };
 
 export type OperationCategory =

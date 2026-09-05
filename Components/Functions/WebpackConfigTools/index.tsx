@@ -58,6 +58,7 @@ export function WebpackConfigGenerator() {
       fromValue={fromValue}
       toValue={toValue}
       setFromValue={() => {}}
+      inputReadOnly
       backColor="lime"
       extraElements={
         <div className="flex flex-col gap-4 w-full">

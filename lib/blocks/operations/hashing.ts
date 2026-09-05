@@ -14,7 +14,7 @@ import { Operation } from '../types';
 // An HMAC takes the message and the secret as two named fields, so either one
 // can be fed by the previous block (derive a key upstream, say).
 const hmacFields = [
-  { id: 'message', label: 'Message' },
+  { id: 'message', label: 'Message', long: true },
   { id: 'key', label: 'Secret Key' },
 ];
 

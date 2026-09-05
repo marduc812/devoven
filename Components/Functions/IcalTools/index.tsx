@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useRef } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import {
   IcalEvent,
@@ -247,13 +248,15 @@ export function IcalGenerator() {
           {/* Import */}
           <div className="border-t border-gray-200 pt-6 flex flex-col gap-3">
             <p className={labelClass}>Load an existing event</p>
-            <textarea
-              className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-300 focus:border-gray-900 focus:outline-none resize-y font-mono text-xs"
-              rows={4}
-              placeholder="Paste the contents of an .ics file here to fill the form above…"
-              value={importText}
-              onChange={e => { setImportText(e.target.value); setImportError(''); }}
-            />
+            <FileTextArea>
+              <textarea
+                className="bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-300 focus:border-gray-900 focus:outline-none resize-y font-mono text-xs"
+                rows={4}
+                placeholder="Paste the contents of an .ics file here to fill the form above…"
+                value={importText}
+                onChange={e => { setImportText(e.target.value); setImportError(''); }}
+              />
+            </FileTextArea>
             {importError && <p className="text-red-500 text-sm">{importError}</p>}
             <div>
               <button className={btnSecondaryClass} onClick={importIcs} disabled={!importText.trim()}>

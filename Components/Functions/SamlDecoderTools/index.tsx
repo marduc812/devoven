@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { decodeSamlRequest, SAML_BINDINGS } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -40,13 +41,15 @@ export function SamlDecoder() {
             <div className="flex flex-col gap-4">
               <div>
                 <label className="text-gray-400 text-xs uppercase tracking-wider mb-1 block">SAMLRequest / SAMLResponse value (base64 or raw XML)</label>
-                <textarea
-                  rows={4}
-                  className={inputClass}
-                  placeholder="Paste a SAMLRequest query parameter value, SAMLResponse POST field, or raw XML..."
-                  value={input}
-                  onChange={e => setInput(e.target.value)}
-                />
+                <FileTextArea>
+                  <textarea
+                    rows={4}
+                    className={inputClass}
+                    placeholder="Paste a SAMLRequest query parameter value, SAMLResponse POST field, or raw XML..."
+                    value={input}
+                    onChange={e => setInput(e.target.value)}
+                  />
+                </FileTextArea>
               </div>
 
               {result && (

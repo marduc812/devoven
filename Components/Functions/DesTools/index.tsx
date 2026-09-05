@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { FileTextArea } from '@/Components/View/FileInput';
 import CryptoJS from 'crypto-js'
 import Panel from '@/Components/MainView/MainPanel/Panel'
 
@@ -33,13 +34,15 @@ export function DesEncrypt() {
       extraElements={
         <div className="flex flex-col gap-3">
           <label className={labelClass}>Plaintext</label>
-          <textarea
-            className={`${fieldClass} resize-none`}
-            placeholder="Enter text to encrypt…"
-            rows={4}
-            value={plaintext}
-            onChange={(e) => setPlaintext(e.target.value)}
-          />
+          <FileTextArea>
+            <textarea
+              className={`${fieldClass} resize-none`}
+              placeholder="Enter text to encrypt…"
+              rows={4}
+              value={plaintext}
+              onChange={(e) => setPlaintext(e.target.value)}
+            />
+          </FileTextArea>
           <label className={labelClass}>Password</label>
           <input
             type="text"
@@ -96,13 +99,15 @@ export function DesDecrypt() {
       extraElements={
         <div className="flex flex-col gap-3">
           <label className={labelClass}>Encrypted Text</label>
-          <textarea
-            className={`${fieldClass} resize-none`}
-            placeholder="Paste encrypted text…"
-            rows={4}
-            value={cipherInput}
-            onChange={(e) => setCipherInput(e.target.value)}
-          />
+          <FileTextArea>
+            <textarea
+              className={`${fieldClass} resize-none`}
+              placeholder="Paste encrypted text…"
+              rows={4}
+              value={cipherInput}
+              onChange={(e) => setCipherInput(e.target.value)}
+            />
+          </FileTextArea>
           <label className={labelClass}>Password</label>
           <input
             type="text"

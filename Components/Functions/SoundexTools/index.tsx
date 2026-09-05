@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
+import { FileDropZone, LoadFileButton } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { soundexEntries, SOUNDEX_GROUPS, type TraceStatus } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
@@ -68,13 +69,16 @@ export function SoundexConverter() {
               >
                 Load examples
               </button>
+              <LoadFileButton onText={text => { setInput(text); setSelected(0); }} />
             </div>
-            <textarea
-              className={`${inputClass} h-28 resize-y`}
-              placeholder="Robert&#10;Rupert"
-              value={input}
-              onChange={e => { setInput(e.target.value); setSelected(0); }}
-            />
+            <FileDropZone onText={text => { setInput(text); setSelected(0); }}>
+              <textarea
+                className={`${inputClass} h-28 resize-y`}
+                placeholder="Robert&#10;Rupert"
+                value={input}
+                onChange={e => { setInput(e.target.value); setSelected(0); }}
+              />
+            </FileDropZone>
           </div>
 
           {active && !active.error && (
