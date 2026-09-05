@@ -5,6 +5,8 @@ import toast from 'react-hot-toast';
 import { IoClipboardOutline, IoDownloadOutline, IoShareOutline } from 'react-icons/io5';
 import { Operation } from '@/lib/blocks/types';
 import TerminalArtifact from './TerminalArtifact';
+import { formatTextStats } from '@/Components/Functions/Utils';
+import { boxLabelClass, boxStatsClass } from '@/Components/MainView/MainPanel/formControls';
 
 type PipelineOutputProps = {
   value: string;
@@ -45,11 +47,15 @@ export default function PipelineOutput({ value, onShare, terminalOp, terminalPar
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-gray-900 uppercase tracking-widest">Final Output</span>
+          <span className={boxLabelClass}>Final Output</span>
           {terminalOp?.terminal && (
             <span className="text-[10px] font-bold uppercase tracking-wider px-1 py-px border border-gray-400 text-gray-500">
               End
             </span>
+          )}
+          {/* The same count the input carries, so both ends read alike. */}
+          {!artifact && (
+            <span className={boxStatsClass}>{formatTextStats(value)}</span>
           )}
         </div>
         <div className="flex gap-1.5">

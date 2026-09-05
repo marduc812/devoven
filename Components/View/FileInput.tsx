@@ -4,6 +4,8 @@ import React, { useCallback, useRef, useState } from 'react';
 import { IoDocumentTextOutline } from 'react-icons/io5';
 import toast from 'react-hot-toast';
 import { contentError, sizeError } from '@/lib/textFile';
+import { formatTextStats } from '@/Components/Functions/Utils';
+import { boxButtonClass, boxLabelClass, boxStatsClass } from '@/Components/MainView/MainPanel/formControls';
 
 /**
  * Loading a text file into an input surface. Anywhere a tool asks for a body of
@@ -80,7 +82,7 @@ export function LoadFileButton({
         type="button"
         onClick={() => inputRef.current?.click()}
         title={title}
-        className={`flex items-center gap-1.5 flex-shrink-0 px-2 py-1 border border-gray-300 bg-white text-[10px] font-bold uppercase tracking-wider text-gray-600 hover:border-gray-900 hover:text-gray-900 transition-colors duration-150 ${className}`}
+        className={`${boxButtonClass} ${className}`}
       >
         <IoDocumentTextOutline className="text-sm" />
         {label}
@@ -162,7 +164,7 @@ export function FileDropZone({ onText, children, hint = 'Drop a text file to loa
   );
 }
 
-const paneLabelClass = 'block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400';
+const paneLabelClass = `block ${boxLabelClass}`;
 const paneTextAreaClass =
   'block w-full bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm font-mono focus:outline-none focus:border-gray-900 dark:focus:border-gray-400 placeholder-gray-400 dark:placeholder-gray-600 resize-y min-h-[120px]';
 
@@ -196,9 +198,13 @@ export function TextInputPane({
 }: TextInputPaneProps) {
   return (
     <div className={className}>
-      <div className="flex items-center justify-between gap-2 mb-1">
-        <label className={paneLabelClass}>{label}</label>
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between gap-3 mb-1">
+        {/* The count reads as part of the label, not as another control. */}
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 min-w-0">
+          <label className={paneLabelClass}>{label}</label>
+          <span className={boxStatsClass}>{formatTextStats(value)}</span>
+        </div>
+        <div className="flex items-center gap-2 flex-shrink-0">
           {actions}
           <LoadFileButton onText={onChange} accept={accept} title={`Fill ${label} from a text file`} />
         </div>
