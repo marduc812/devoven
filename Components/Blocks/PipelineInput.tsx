@@ -3,6 +3,8 @@
 import React from 'react';
 import { InputField } from '@/lib/blocks/types';
 import { FileDropZone, LoadFileButton } from '@/Components/View/FileInput';
+import { formatTextStats } from '@/Components/Functions/Utils';
+import { boxLabelClass, boxStatsClass } from '@/Components/MainView/MainPanel/formControls';
 
 type PipelineInputProps = {
   value: string;
@@ -27,8 +29,8 @@ export default function PipelineInput({ value, onChange, fields, fieldValues, on
     return (
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-bold text-gray-900 uppercase tracking-widest">Input</span>
-          <span className="text-xs text-gray-400 font-mono">{fields.length} fields</span>
+          <span className={boxLabelClass}>Input</span>
+          <span className={boxStatsClass}>{fields.length} fields</span>
         </div>
         <div className="flex flex-col gap-3 p-3 border border-gray-300 bg-white">
           {longFields.length > 0 && (
@@ -77,18 +79,12 @@ export default function PipelineInput({ value, onChange, fields, fieldValues, on
     );
   }
 
-  const lines = value ? value.split('\n').length : 0;
-  const words = value ? value.trim().split(/\s+/).filter(Boolean).length : 0;
-  const chars = value.length;
-
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center justify-between gap-3">
-        <span className="text-xs font-bold text-gray-900 uppercase tracking-widest">Input</span>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-400 font-mono">
-            {chars} chars · {words} words · {lines} lines
-          </span>
+        <span className={boxLabelClass}>Input</span>
+        <div className="flex items-center gap-3">
+          <span className={boxStatsClass}>{formatTextStats(value)}</span>
           <LoadFileButton onText={onChange} title="Load the input from a file" />
         </div>
       </div>

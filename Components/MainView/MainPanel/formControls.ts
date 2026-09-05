@@ -44,3 +44,22 @@ export const sectionClass =
 
 export const hintClass = 'text-xs text-gray-500 mt-1';
 export const errorClass = 'text-sm text-red-700';
+
+/**
+ * The label above a text box, and the live count that trails it. Two different
+ * jobs, so two different treatments: the label is a heading — bold, upper case,
+ * full contrast — while the count is a reading taken off the box, a step
+ * smaller, lighter, and in the monospace its digits belong to. Anything that
+ * puts a label over a body of text uses this pair, so no two boxes on the site
+ * disagree about which of the two the eye should land on first.
+ */
+export const boxLabelClass = 'text-xs font-bold uppercase tracking-widest text-gray-900';
+export const boxStatsClass =
+  'text-[10px] leading-none font-mono tabular-nums text-gray-500 whitespace-nowrap';
+
+/**
+ * The small bordered buttons that sit on a box's label row — Select file,
+ * Clear. They share one class so a row never mixes two button shapes.
+ */
+export const boxButtonClass =
+  'flex items-center gap-1.5 flex-shrink-0 px-2 py-1 border border-gray-300 bg-white text-[10px] font-bold uppercase tracking-wider text-gray-600 hover:border-gray-900 hover:text-gray-900 transition-colors duration-150';

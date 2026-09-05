@@ -212,3 +212,21 @@ export const hexToBinary = (input: string): string => {
     if (!/^[0-9a-fA-F]+$/.test(hex)) throw new Error('Invalid hex input');
     return BigInt('0x' + hex).toString(2);
 }
+
+/**
+ * The chars / words / lines line shown above every text box. Counting is the
+ * same everywhere it appears, so tools never disagree about what a word is:
+ * a word is a run of non-whitespace, and an empty box has nothing in it.
+ */
+export const textStats = (input: string) => ({
+    chars: input.length,
+    words: input.trim() === '' ? 0 : input.trim().split(/\s+/).length,
+    lines: input === '' ? 0 : input.split(/\r\n|\r|\n/).length,
+});
+
+/** That same line as text: `12 chars · 2 words · 1 line`. */
+export const formatTextStats = (input: string) => {
+    const { chars, words, lines } = textStats(input);
+    const plural = (n: number, unit: string) => `${n.toLocaleString()} ${unit}${n === 1 ? '' : 's'}`;
+    return `${plural(chars, 'char')} · ${plural(words, 'word')} · ${plural(lines, 'line')}`;
+};

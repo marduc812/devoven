@@ -6,6 +6,8 @@ import {
   calculateRelLuminance,
   resultContrastRatio,
   colorValidator,
+  textStats,
+  formatTextStats,
 } from '../Components/Functions/Utils';
 
 describe('textToBinary', () => {
@@ -105,5 +107,33 @@ describe('colorValidator', () => {
   });
   it('rejects non-hex strings', () => {
     expect(colorValidator('not-a-color')).toBe(false);
+  });
+});
+
+
+describe('textStats', () => {
+  it('counts nothing in an empty box', () => {
+    expect(textStats('')).toEqual({ chars: 0, words: 0, lines: 0 });
+  });
+  it('counts words split by any whitespace, not just spaces', () => {
+    expect(textStats('one two\nthree\tfour')).toEqual({ chars: 18, words: 4, lines: 2 });
+  });
+  it('ignores leading and trailing whitespace', () => {
+    expect(textStats('  hello  ').words).toBe(1);
+  });
+  it('counts CRLF as one line break', () => {
+    expect(textStats('a\r\nb').lines).toBe(2);
+  });
+});
+
+describe('formatTextStats', () => {
+  it('reads as a sentence with singular units', () => {
+    expect(formatTextStats('a')).toBe('1 char · 1 word · 1 line');
+  });
+  it('pluralises and groups thousands', () => {
+    expect(formatTextStats('x'.repeat(1000))).toBe('1,000 chars · 1 word · 1 line');
+  });
+  it('shows zeroes for an empty box', () => {
+    expect(formatTextStats('')).toBe('0 chars · 0 words · 0 lines');
   });
 });
