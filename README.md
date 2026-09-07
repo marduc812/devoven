@@ -1,11 +1,11 @@
 # DevOven
 
-A collection of 578 developer tools that run in your browser. Encode, hash,
+A collection of 580 developer tools that run in your browser. Encode, hash,
 convert, format, generate, inspect. No accounts, no uploads, no database. Live
 at [devoven.com](https://www.devoven.com), and it runs the same from a local
 checkout.
 
-576 of the 578 compute entirely client-side. The text you paste, the image you
+578 of the 580 compute entirely client-side. The text you paste, the image you
 drop and the PDF you split never leave the tab. Two tools cannot work that way,
 and the section below says exactly what they send and where.
 
@@ -116,13 +116,13 @@ They are grouped into nine categories, each with its own colour theme:
 
 | Category | Route | Tools |
 | --- | --- | --- |
-| Encoding | `/encoding` | 52 |
-| Hashing | `/hashing` | 31 |
-| Converting | `/converting` | 143 |
-| Tools | `/tools` | 214 |
+| Encoding | `/encoding` | 55 |
+| Hashing | `/hashing` | 43 |
+| Converting | `/converting` | 142 |
+| Tools | `/tools` | 218 |
 | Text | `/text` | 52 |
-| Network | `/network` | 26 |
-| Image | `/image` | 16 |
+| Network | `/network` | 27 |
+| Image | `/image` | 20 |
 | PDF | `/pdf` | 13 |
 | Audio | `/audio` | 10 |
 
