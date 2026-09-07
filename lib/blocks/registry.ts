@@ -18,6 +18,7 @@ import { compressionOperations } from './operations/compression';
 import { binaryOperations } from './operations/binary';
 import { archiveOperations } from './operations/archive';
 import { compareOperations } from './operations/compare';
+import { setOperations } from './operations/sets';
 import { logicOperations } from './operations/logic';
 import { flowOperations } from './operations/flow';
 
@@ -41,6 +42,7 @@ export const OPERATIONS: Operation[] = [
   ...binaryOperations,
   ...archiveOperations,
   ...compareOperations,
+  ...setOperations,
   ...logicOperations,
   ...flowOperations,
 ];

@@ -398,6 +398,7 @@ export const menu: MenuGroupType[] = [
                     {"name": "Terraform Variable Generator", "link": "/tools/terraform-vars", "type": "dev", "tag": ""},
                     {"name": "CI/CD Pipeline Generator", "link": "/tools/cicd-gen", "type": "dev", "tag": ""},
                     {"name": "Array Operations", "link": "/tools/array-ops", "type": "dev", "tag": ""},
+                    {"name": "Set Operations", "link": "/tools/set-operations", "type": "dev", "tag": ""},
                     {"name": "Compound Interest", "link": "/tools/compound-interest", "type": "text", "tag": ""},
                     {"name": "ROI Calculator", "link": "/tools/roi-calc", "type": "text", "tag": ""},
                     {"name": "Loan Amortization", "link": "/tools/loan-amortization", "type": "text", "tag": ""},
