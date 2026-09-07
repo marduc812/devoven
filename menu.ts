@@ -478,7 +478,9 @@ export const menu: MenuGroupType[] = [
                     {"name": "Time Duration Calculator", "link": "/tools/duration-calculator", "type": "date", "tag": ""},
                     {"name": "Detect File Type", "link": "/tools/file-type", "type": "binary", "tag": ""},
                     {"name": "Strings", "link": "/tools/strings", "type": "binary", "tag": ""},
-                    {"name": "Scan for Embedded Files", "link": "/tools/embedded-files", "type": "binary", "tag": ""}
+                    {"name": "Scan for Embedded Files", "link": "/tools/embedded-files", "type": "binary", "tag": ""},
+                    {"name": "Create ZIP", "link": "/tools/zip", "type": "compression", "tag": ""},
+                    {"name": "Extract ZIP", "link": "/tools/unzip", "type": "compression", "tag": ""}
                 ],
                "color": "lime",
                 "titleColor": "limeTitle",

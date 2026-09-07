@@ -1,4 +1,11 @@
-import { compressText, decompressText, BinaryEncoding } from '@/Components/Functions/CompressionTools/logic';
+import {
+  compressText,
+  decompressBytes,
+  decodeBytes,
+  encodeBytes,
+  BinaryEncoding,
+  CompressionFormat,
+} from '@/Components/Functions/CompressionTools/logic';
 import { Operation } from '../types';
 
 const encodingParam = {
@@ -24,8 +31,34 @@ const levelParam = {
   default: '6',
 };
 
+// What a decompressed stream should look like coming out. Text is the common
+// case, but a .tar.gz decompresses to a tar, and reading those bytes as UTF-8
+// would destroy them before the archive blocks could parse it.
+const resultParam = {
+  id: 'as',
+  label: 'Output as',
+  kind: 'select' as const,
+  options: [
+    { value: 'text', label: 'Text (UTF-8)' },
+    { value: 'base64', label: 'Base64' },
+    { value: 'hex', label: 'Hex' },
+  ],
+  default: 'text',
+};
+
 const encodingOf = (params: Record<string, string>): BinaryEncoding =>
   params.encoding === 'hex' ? 'hex' : 'base64';
+
+function decompress(
+  input: string,
+  format: CompressionFormat,
+  params: Record<string, string>,
+): string {
+  if (!input.trim()) return '';
+  const bytes = decompressBytes(decodeBytes(input, encodingOf(params)), format);
+  if (params.as === 'base64' || params.as === 'hex') return encodeBytes(bytes, params.as);
+  return new TextDecoder().decode(bytes);
+}
 
 export const compressionOperations: Operation[] = [
   {
@@ -39,8 +72,8 @@ export const compressionOperations: Operation[] = [
     id: 'gzip-decompress',
     name: 'Gzip Decompress',
     category: 'encoding',
-    params: [encodingParam],
-    fn: (input, params) => decompressText(input, 'gzip', encodingOf(params)),
+    params: [encodingParam, resultParam],
+    fn: (input, params) => decompress(input, 'gzip', params),
   },
   {
     id: 'zlib-deflate',
@@ -53,8 +86,8 @@ export const compressionOperations: Operation[] = [
     id: 'zlib-inflate',
     name: 'Zlib Inflate',
     category: 'encoding',
-    params: [encodingParam],
-    fn: (input, params) => decompressText(input, 'zlib', encodingOf(params)),
+    params: [encodingParam, resultParam],
+    fn: (input, params) => decompress(input, 'zlib', params),
   },
   {
     id: 'raw-deflate',
@@ -67,7 +100,7 @@ export const compressionOperations: Operation[] = [
     id: 'raw-inflate',
     name: 'Raw Inflate',
     category: 'encoding',
-    params: [encodingParam],
-    fn: (input, params) => decompressText(input, 'raw', encodingOf(params)),
+    params: [encodingParam, resultParam],
+    fn: (input, params) => decompress(input, 'raw', params),
   },
 ];
