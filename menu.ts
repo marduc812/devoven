@@ -59,6 +59,7 @@ export const menu: MenuGroupType[] = [
             {"name": "Gzip Compress & Decompress", "link": "/encoding/gzip", "type": "compression", "tag": ""},
             {"name": "Zlib Deflate & Inflate", "link": "/encoding/zlib", "type": "compression", "tag": ""},
             {"name": "Raw Deflate & Inflate", "link": "/encoding/raw-deflate", "type": "compression", "tag": ""},
+            {"name": "LZString Compress & Decompress", "link": "/encoding/lz-string", "type": "compression", "tag": ""},
         ],
        "color": "yellow",
         "titleColor": "yellowTitle",
