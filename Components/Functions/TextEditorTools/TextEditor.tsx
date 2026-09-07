@@ -404,7 +404,7 @@ const TextEditor = () => {
     applyEdit(
       match.start,
       match.end,
-      expandReplacement(matched, debouncedQuery, find.replacement, find.options)
+      expandReplacement(active.value, match, debouncedQuery, find.replacement, find.options)
     );
   }, [activeMatches, safeIndex, active.value, debouncedValue, debouncedQuery, find.replacement, find.options, applyEdit]);
 

@@ -167,10 +167,37 @@ describe('findMatches', () => {
     ]);
   });
 
+  it('finds a whole-word query that starts or ends with punctuation', () => {
+    expect(findMatches('call foo() now', 'foo()', { wholeWord: true })).toEqual([{ start: 5, end: 10 }]);
+    expect(findMatches('a +x b', '+x', { wholeWord: true })).toEqual([{ start: 2, end: 4 }]);
+  });
+
+  it('counts letters outside ASCII as part of the word', () => {
+    expect(findMatches('cafés', 'café', { wholeWord: true })).toEqual([]);
+    expect(findMatches('café au lait', 'café', { wholeWord: true })).toEqual([{ start: 0, end: 4 }]);
+  });
+
+  it('applies the word test to regex matches too', () => {
+    expect(findMatches('cat cats', 'ca.', { regex: true, wholeWord: true })).toEqual([
+      { start: 0, end: 3 },
+    ]);
+  });
+
   it('terminates on zero-width regex matches', () => {
     const matches = findMatches('bab', 'a*', { regex: true });
     expect(matches.length).toBeLessThan(10);
     expect(matches).toContainEqual({ start: 1, end: 2 });
+  });
+
+  it('steps over a surrogate pair after a zero-width match', () => {
+    // Three code points, so `x*` matches four times, not the six a one-unit step
+    // would report.
+    expect(findMatches('a\u{1F600}b', 'x*', { regex: true })).toEqual([
+      { start: 0, end: 0 },
+      { start: 1, end: 1 },
+      { start: 3, end: 3 },
+      { start: 4, end: 4 },
+    ]);
   });
 
   it('returns no matches for an empty query', () => {
@@ -212,19 +239,71 @@ describe('replaceAll', () => {
   it('replaces respecting wholeWord', () => {
     expect(replaceAll('cat cats', 'cat', 'dog', { wholeWord: true }).text).toBe('dog cats');
   });
+
+  it('expands a named group in regex mode', () => {
+    expect(
+      replaceAll('joe@corp', '(?<user>\\w+)@(?<host>\\w+)', '$<host>/$<user>', { regex: true }).text
+    ).toBe('corp/joe');
+  });
+
+  it('leaves $<name> alone when the pattern has no named groups', () => {
+    expect(replaceAll('x', 'x', '$<a>', { regex: true }).text).toBe('$<a>');
+  });
+
+  it('reads $12 as group 1 followed by a 2 when there is no twelfth group', () => {
+    expect(replaceAll('ab', '(a)(b)', '$12', { regex: true }).text).toBe('a2');
+  });
+
+  it('expands the text before and after the match', () => {
+    expect(replaceAll('abc', 'b', '[$`|$\']', { regex: true }).text).toBe('a[a|c]c');
+  });
+
+  it('agrees with the engine on zero-width matches', () => {
+    for (const [text, pattern] of [['bab', 'a*'], ['aaa', 'a*'], ['', 'x*'], ['abc', 'x*']] as const) {
+      expect(replaceAll(text, pattern, 'R', { regex: true }).text).toBe(
+        text.replace(new RegExp(pattern, 'gm'), 'R')
+      );
+    }
+  });
 });
 
 describe('expandReplacement', () => {
   it('returns the replacement verbatim in literal mode', () => {
-    expect(expandReplacement('cat', 'cat', '$1 dog')).toBe('$1 dog');
+    expect(expandReplacement('cat', { start: 0, end: 3 }, 'cat', '$1 dog')).toBe('$1 dog');
   });
 
   it('expands capture groups against the matched text in regex mode', () => {
-    expect(expandReplacement('joe@corp', '(\\w+)@(\\w+)', '$2:$1', { regex: true })).toBe('corp:joe');
+    expect(
+      expandReplacement('joe@corp', { start: 0, end: 8 }, '(\\w+)@(\\w+)', '$2:$1', { regex: true })
+    ).toBe('corp:joe');
   });
 
   it('expands $& to the whole match in regex mode', () => {
-    expect(expandReplacement('bc', 'b.', '[$&]', { regex: true })).toBe('[bc]');
+    expect(expandReplacement('bc', { start: 0, end: 2 }, 'b.', '[$&]', { regex: true })).toBe('[bc]');
+  });
+
+  it('expands a match found behind a lookbehind', () => {
+    const text = 'width: 12px';
+    const [match] = findMatches(text, '(?<=\\d)px', { regex: true });
+    expect(expandReplacement(text, match, '(?<=\\d)px', 'rem', { regex: true })).toBe('rem');
+  });
+
+  it('expands a match found in front of a lookahead', () => {
+    const text = 'ab';
+    const [match] = findMatches(text, 'a(?=b)', { regex: true });
+    expect(expandReplacement(text, match, 'a(?=b)', 'X', { regex: true })).toBe('X');
+  });
+
+  it('leaves the match alone when the offsets no longer describe the text', () => {
+    expect(expandReplacement('the dog sat', { start: 4, end: 7 }, 'cat', 'X', { regex: true })).toBe('dog');
+  });
+
+  it('expands a named group', () => {
+    const text = 'joe@corp';
+    const [match] = findMatches(text, '(?<user>\\w+)@(?<host>\\w+)', { regex: true });
+    expect(
+      expandReplacement(text, match, '(?<user>\\w+)@(?<host>\\w+)', '$<host>/$<user>', { regex: true })
+    ).toBe('corp/joe');
   });
 });
 
@@ -279,7 +358,9 @@ describe('replace with escape sequences', () => {
   });
 
   it('expandReplacement resolves escapes in regex mode', () => {
-    expect(expandReplacement('a b', '(\\w) (\\w)', '$1\\n$2', { regex: true })).toBe('a\nb');
+    expect(
+      expandReplacement('a b', { start: 0, end: 3 }, '(\\w) (\\w)', '$1\\n$2', { regex: true })
+    ).toBe('a\nb');
   });
 
   it('a $ decoded from an escape survives as a single dollar sign', () => {
