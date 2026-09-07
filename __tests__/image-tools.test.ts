@@ -187,12 +187,6 @@ describe('getRotationDegrees', () => {
   it('180 returns 180', () => {
     expect(getRotationDegrees('180')).toBe(180);
   });
-  it('flipH returns 0 (flip is handled by canvas scale)', () => {
-    expect(getRotationDegrees('flipH')).toBe(0);
-  });
-  it('flipV returns 0 (flip is handled by canvas scale)', () => {
-    expect(getRotationDegrees('flipV')).toBe(0);
-  });
 });
 
 // ─── buildIcoHeader ───────────────────────────────────────────────────────────

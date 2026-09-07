@@ -927,16 +927,14 @@ export function ImageCropper() {
   );
 }
 
-// ─── 13. Image Rotator / Flipper ──────────────────────────────────────────────
+// ─── 13. Image Rotator ────────────────────────────────────────────────────────
 
-type RotateDirection = 'cw90' | 'ccw90' | '180' | 'flipH' | 'flipV';
+type RotateDirection = 'cw90' | 'ccw90' | '180';
 
 const ROTATE_OPTIONS: { label: string; value: RotateDirection }[] = [
   { label: 'Rotate 90° CW', value: 'cw90' },
   { label: 'Rotate 90° CCW', value: 'ccw90' },
   { label: 'Rotate 180°', value: '180' },
-  { label: 'Flip Horizontal', value: 'flipH' },
-  { label: 'Flip Vertical', value: 'flipV' },
 ];
 
 export function ImageRotator() {
@@ -965,7 +963,6 @@ export function ImageRotator() {
     const ctx = canvas.getContext('2d')!;
     const { naturalWidth: W, naturalHeight: H } = img;
     const deg = getRotationDegrees(direction);
-    const isFlip = direction === 'flipH' || direction === 'flipV';
     const swapDims = deg === 90 || deg === -90;
 
     canvas.width = swapDims ? H : W;
@@ -973,15 +970,7 @@ export function ImageRotator() {
 
     ctx.save();
     ctx.translate(canvas.width / 2, canvas.height / 2);
-
-    if (!isFlip) {
-      ctx.rotate((deg * Math.PI) / 180);
-    } else if (direction === 'flipH') {
-      ctx.scale(-1, 1);
-    } else {
-      ctx.scale(1, -1);
-    }
-
+    ctx.rotate((deg * Math.PI) / 180);
     ctx.drawImage(img, -W / 2, -H / 2, W, H);
     ctx.restore();
 
@@ -991,8 +980,8 @@ export function ImageRotator() {
 
   return (
     <Panel
-      title="Image Rotator & Flipper"
-      description="Rotate an image 90°, 180°, or flip it horizontally or vertically. Output is PNG."
+      title="Image Rotator"
+      description="Turn an image a quarter turn either way, or a half turn. Output is PNG. To mirror one instead, use [1 Flip Image 2]."
       backColor="fuchsia"
       extraElements={
         <div className="flex flex-col gap-4">

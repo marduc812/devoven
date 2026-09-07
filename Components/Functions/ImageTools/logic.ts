@@ -110,18 +110,17 @@ export function getCropParams(
 // ─── Rotation helpers ─────────────────────────────────────────────────────────
 
 /**
- * Maps a rotation/flip direction to degrees of clockwise rotation.
- * Flip directions return 0 (flipping is handled by canvas scale, not rotation).
+ * Maps a rotation direction to degrees of clockwise rotation.
+ * Mirroring is not a rotation and lives in its own tool — see
+ * `Components/Functions/ImageEditTools` and `/image/flip-image`.
  */
 export function getRotationDegrees(
-  direction: 'cw90' | 'ccw90' | '180' | 'flipH' | 'flipV',
+  direction: 'cw90' | 'ccw90' | '180',
 ): number {
   switch (direction) {
     case 'cw90': return 90;
     case 'ccw90': return -90;
     case '180': return 180;
-    case 'flipH': return 0;
-    case 'flipV': return 0;
   }
 }
 
