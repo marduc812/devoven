@@ -3,6 +3,11 @@ import { computeAll as computeFletcherAll } from '@/Components/Functions/Fletche
 import { murmurHash3_32 } from '@/Components/Functions/MurmurHashTools/logic';
 import { computeFnvAll } from '@/Components/Functions/FnvHashTools/logic';
 import { formatIdentifyReport } from '@/Components/Functions/HashIdentifierTools/logic';
+import {
+  DigestCase,
+  formatAllHashes,
+  generateAllHashes,
+} from '@/Components/Functions/AllHashesTools/logic';
 import { Operation } from '../types';
 
 const caseParam = {
@@ -111,5 +116,25 @@ export const hashingExtraOperations: Operation[] = [
     params: [],
     terminal: true,
     fn: (input) => formatIdentifyReport(input),
+  },
+  {
+    id: 'all-hashes',
+    name: 'Generate All Hashes',
+    category: 'hashing',
+    params: [
+      {
+        id: 'case',
+        label: 'Output',
+        kind: 'select',
+        options: [
+          { value: 'lower', label: 'lowercase hex' },
+          { value: 'upper', label: 'UPPERCASE HEX' },
+        ],
+        default: 'lower',
+      },
+    ],
+    terminal: true,
+    fn: (input, p) =>
+      formatAllHashes(generateAllHashes(input, { case: (p.case as DigestCase) ?? 'lower' })),
   },
 ];

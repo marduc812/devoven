@@ -105,6 +105,7 @@ export const menu: MenuGroupType[] = [
             {"name": "FNV Hash", "link": "/hashing/fnv", "type": "hashing", "tag": ""},
             {"name": "NTLM Hash", "link": "/hashing/ntlm", "type": "hashing", "tag": ""},
             {"name": "Hash Identifier", "link": "/hashing/hash-identifier", "type": "hashing", "tag": "popular"},
+            {"name": "Generate All Hashes", "link": "/hashing/all-hashes", "type": "hashing", "tag": "popular"},
             {"name": "PBKDF2", "link": "/hashing/pbkdf2", "type": "kdf", "tag": ""},
             {"name": "HKDF", "link": "/hashing/hkdf", "type": "kdf", "tag": ""},
             {"name": "scrypt", "link": "/hashing/scrypt", "type": "kdf", "tag": ""},
