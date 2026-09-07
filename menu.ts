@@ -506,6 +506,7 @@ export const menu: MenuGroupType[] = [
             {"name": "Image Rotator", "link": "/image/image-rotator", "type": "image", "tag": ""},
             {"name": "PNG to ICO", "link": "/image/png-to-ico", "type": "image", "tag": ""},
             {"name": "EXIF Viewer", "link": "/image/exif-viewer", "type": "image", "tag": ""},
+            {"name": "Remove EXIF", "link": "/image/remove-exif", "type": "image", "tag": "popular"},
         ],
         "color": "fuchsia",
         "titleColor": "fuchsiaTitle",
