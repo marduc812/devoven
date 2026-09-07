@@ -73,7 +73,11 @@ describe('escapeRegex', () => {
     expect(escapeRegex('(test)')).toBe('\\(test\\)');
   });
   it('escapes brackets', () => {
-    expect(escapeRegex('[a-z]')).toBe('\\[a\\-z\\]');
+    expect(escapeRegex('[a-z]')).toBe('\\[a-z\\]');
+  });
+
+  it('leaves the hyphen alone so the result survives the u flag', () => {
+    expect(() => new RegExp(escapeRegex('a-b'), 'u')).not.toThrow();
   });
   it('handles plain text', () => {
     expect(escapeRegex('hello')).toBe('hello');
