@@ -6,6 +6,13 @@ import {
   BinaryEncoding,
   CompressionFormat,
 } from '@/Components/Functions/CompressionTools/logic';
+import {
+  LZ_VARIANTS,
+  LzVariant,
+  lzCompress,
+  lzDecompress,
+  variantLabel,
+} from '@/Components/Functions/LzStringTools/logic';
 import { Operation } from '../types';
 
 const encodingParam = {
@@ -60,6 +67,21 @@ function decompress(
   return new TextDecoder().decode(bytes);
 }
 
+// LZString ships one compressor in four wrappings, so the wrapping is a
+// setting on one block rather than four near-identical blocks.
+const variantParam = {
+  id: 'variant',
+  label: 'Payload as',
+  kind: 'select' as const,
+  options: LZ_VARIANTS.map((v) => ({ value: v, label: variantLabel[v] })),
+  default: 'base64',
+};
+
+const variantOf = (params: Record<string, string>): LzVariant =>
+  (LZ_VARIANTS as readonly string[]).includes(params.variant)
+    ? (params.variant as LzVariant)
+    : 'base64';
+
 export const compressionOperations: Operation[] = [
   {
     id: 'gzip-compress',
@@ -102,5 +124,19 @@ export const compressionOperations: Operation[] = [
     category: 'encoding',
     params: [encodingParam, resultParam],
     fn: (input, params) => decompress(input, 'raw', params),
+  },
+  {
+    id: 'lzstring-compress',
+    name: 'LZString Compress',
+    category: 'encoding',
+    params: [variantParam],
+    fn: (input, params) => lzCompress(input, variantOf(params)),
+  },
+  {
+    id: 'lzstring-decompress',
+    name: 'LZString Decompress',
+    category: 'encoding',
+    params: [variantParam],
+    fn: (input, params) => lzDecompress(input, variantOf(params)),
   },
 ];

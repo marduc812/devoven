@@ -33,6 +33,7 @@ export const THIRD_PARTY_LIBRARIES: ThirdPartyLibrary[] = [
     { name: 'js-sha3', license: 'MIT', url: 'https://github.com/emn178/js-sha3', used: 'SHA-3 and Keccak hashing' },
     { name: 'js-yaml', license: 'MIT', url: 'https://github.com/nodeca/js-yaml', used: 'YAML reading and writing' },
     { name: 'jsbarcode', license: 'MIT', url: 'https://github.com/lindell/JsBarcode', used: 'Barcode rendering' },
+    { name: 'lz-string', license: 'MIT', url: 'https://github.com/pieroxy/lz-string', used: 'LZString compression' },
     { name: 'marked', license: 'MIT', url: 'https://github.com/markedjs/marked', used: 'Markdown to HTML' },
     { name: 'next', license: 'MIT', url: 'https://github.com/vercel/next.js', used: 'The framework the site is built on' },
     { name: 'next-themes', license: 'MIT', url: 'https://github.com/pacocoursey/next-themes', used: 'Dark mode' },
