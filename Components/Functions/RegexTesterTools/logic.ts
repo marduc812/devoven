@@ -12,7 +12,17 @@ export type RegexTestResult = {
   isValid: boolean;
   error: string | null;
   flags: string;
+  /** True when the text held more matches than MAX_MATCHES and the rest were dropped. */
+  truncated: boolean;
 };
+
+/**
+ * A global pattern over a large text can match hundreds of thousands of times,
+ * and every match becomes a highlight and a details card. Collecting them all
+ * costs more than anyone can read, so the scan stops here and says so rather
+ * than reporting a match count that is quietly wrong.
+ */
+export const MAX_MATCHES = 10000;
 
 export type RegexFlags = {
   global: boolean;
@@ -32,7 +42,7 @@ export function buildFlags(flags: RegexFlags): string {
 
 export function testRegex(pattern: string, testString: string, flags: RegexFlags): RegexTestResult {
   if (!pattern) {
-    return { matches: [], matchCount: 0, isValid: true, error: null, flags: buildFlags(flags) };
+    return { matches: [], matchCount: 0, isValid: true, error: null, flags: buildFlags(flags), truncated: false };
   }
 
   const flagStr = buildFlags(flags);
@@ -47,23 +57,29 @@ export function testRegex(pattern: string, testString: string, flags: RegexFlags
       isValid: false,
       error: e instanceof Error ? e.message : 'Invalid regular expression',
       flags: flagStr,
+      truncated: false,
     };
   }
 
   if (!testString) {
-    return { matches: [], matchCount: 0, isValid: true, error: null, flags: flagStr };
+    return { matches: [], matchCount: 0, isValid: true, error: null, flags: flagStr, truncated: false };
   }
 
   const matches: RegexMatch[] = [];
+  let truncated = false;
 
   if (flags.global) {
     let m: RegExpExecArray | null;
     // Reset lastIndex just in case
     regex.lastIndex = 0;
-    let iterations = 0;
-    const MAX_ITERATIONS = 10000;
-    while ((m = regex.exec(testString)) !== null && iterations < MAX_ITERATIONS) {
-      iterations++;
+    while ((m = regex.exec(testString)) !== null) {
+      // The cap is tested after a successful exec, so it only ever trips once a
+      // match beyond it has actually been found: a text with exactly MAX_MATCHES
+      // matches is reported in full, not as truncated.
+      if (matches.length === MAX_MATCHES) {
+        truncated = true;
+        break;
+      }
       matches.push({
         match: m[0],
         index: m.index,
@@ -71,9 +87,14 @@ export function testRegex(pattern: string, testString: string, flags: RegexFlags
         groups: m.groups ? Object.assign({}, m.groups) : null,
         captureGroups: m.slice(1),
       });
-      // Prevent infinite loop on zero-length matches
+      // Prevent infinite loop on zero-length matches. The step is the whole
+      // character: nudging by one code unit lands inside a surrogate pair and
+      // reports a third, meaningless match in the middle of an emoji.
       if (m[0].length === 0) {
-        regex.lastIndex++;
+        const high = testString.charCodeAt(regex.lastIndex);
+        const low = testString.charCodeAt(regex.lastIndex + 1);
+        const pair = high >= 0xd800 && high <= 0xdbff && low >= 0xdc00 && low <= 0xdfff;
+        regex.lastIndex += pair ? 2 : 1;
       }
     }
   } else {
@@ -95,5 +116,6 @@ export function testRegex(pattern: string, testString: string, flags: RegexFlags
     isValid: true,
     error: null,
     flags: flagStr,
+    truncated,
   };
 }

@@ -336,7 +336,10 @@ export const TextReplace = () => {
         const regex = new RegExp(find, 'g');
         setToValue(fromValue.replace(regex, replace));
       } else {
-        setToValue(fromValue.replaceAll(find, replace));
+        // split/join rather than replaceAll: a string pattern still lets the
+        // engine read `$&` and `$1` in the replacement, so a literal replace of
+        // "world" with "$&!" would quietly produce "world!".
+        setToValue(fromValue.split(find).join(replace));
       }
       setRegexError('');
     } catch {

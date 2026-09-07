@@ -1,4 +1,4 @@
-import { testRegex, buildFlags, type RegexFlags } from '@/Components/Functions/RegexTesterTools/logic';
+import { testRegex, buildFlags, MAX_MATCHES, type RegexFlags } from '@/Components/Functions/RegexTesterTools/logic';
 
 const defaultFlags: RegexFlags = { global: true, ignoreCase: false, multiline: false, dotAll: false };
 
@@ -86,5 +86,30 @@ describe('testRegex', () => {
     expect(withMultiline.matchCount).toBe(3);
     const withoutMultiline = testRegex('^line\\d', text, { ...defaultFlags, multiline: false });
     expect(withoutMultiline.matchCount).toBe(1);
+  });
+});
+
+describe('match cap', () => {
+  const flags = { global: true, ignoreCase: false, multiline: false, dotAll: false };
+
+  it('reports every match when the text stays under the cap', () => {
+    const result = testRegex('a', 'a'.repeat(MAX_MATCHES), flags);
+    expect(result.matchCount).toBe(MAX_MATCHES);
+    expect(result.truncated).toBe(false);
+  });
+
+  it('flags a text that holds more matches than the cap', () => {
+    const result = testRegex('a', 'a'.repeat(MAX_MATCHES + 1), flags);
+    expect(result.matchCount).toBe(MAX_MATCHES);
+    expect(result.truncated).toBe(true);
+  });
+});
+
+describe('zero-width matches around astral characters', () => {
+  const flags = { global: true, ignoreCase: false, multiline: false, dotAll: false };
+
+  it('does not report a match inside a surrogate pair', () => {
+    const result = testRegex('x*', 'a\u{1F600}b', flags);
+    expect(result.matches.map((m) => m.index)).toEqual([0, 1, 3, 4]);
   });
 });

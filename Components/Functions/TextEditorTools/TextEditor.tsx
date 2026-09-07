@@ -22,12 +22,14 @@ import {
   flatIndexOf,
   locate,
   matchesFor,
-  searchOne,
   step as stepFlat,
   totalCount,
   type FileMatches,
   type Located,
 } from './crossFileSearch';
+import { useTimeboxedWorker, DEFAULT_TIMEOUT_MS } from '@/Components/Functions/useTimeboxedWorker';
+import { spawnRegexWorker } from '@/lib/regex/spawn';
+import type { RegexFindJob } from '@/lib/regex/types';
 import {
   MAX_TABS,
   addTab,
@@ -62,6 +64,10 @@ import {
 
 const HIGHLIGHT_CAP = 2000;
 const SEARCH_DEBOUNCE_MS = 120;
+const FIND_TIMEOUT_SECONDS = DEFAULT_TIMEOUT_MS / 1000;
+
+// Stable, so an idle find bar does not hand every consumer a new array per render.
+const NO_RESULTS: FileMatches[] = [];
 const LINE_HEIGHT_PX = 24; // must match `leading-6` on the editor surface
 
 const buttonClass =
@@ -252,46 +258,62 @@ const TextEditor = () => {
     return () => clearTimeout(timer);
   }, [active.value, find.query]);
 
-  const searchFiles = useCallback(
-    (all: boolean, list: Tab[] = tabs) =>
-      (all ? list : list.filter((tab) => tab.id === activeId)).map((tab) => ({
-        id: tab.id,
-        text: tab.id === activeId ? debouncedValue : tab.value,
-      })),
-    [tabs, activeId, debouncedValue]
-  );
+  // The search runs in a worker. A pattern the user typed is not hostile but it is
+  // unbounded: `(a+)+$` backtracks for minutes on a few dozen characters, and a
+  // running RegExp cannot be interrupted — only the worker holding it can be
+  // killed. The scan's own `timeBudgetMs` still catches the merely slow patterns;
+  // this catches the ones that would otherwise take the tab down, and every
+  // unsaved buffer in it.
+  const jobRef = useRef<RegexFindJob | null>(null);
 
-  // Background buffers cannot change while you type, so re-searching all of them on
-  // every keystroke is pure waste. Each tab's result is kept until its text, the
-  // query, or the options actually change — the text check is a pointer comparison
-  // for untouched tabs, so a cache hit is O(1) rather than O(file size).
-  const cacheRef = useRef(new Map<string, { text: string; key: string; result: FileMatches }>());
+  const job = useMemo<RegexFindJob | null>(() => {
+    if (!find.open || !debouncedQuery) return null;
 
-  const searchResults = useMemo<FileMatches[]>(() => {
-    if (!find.open || !debouncedQuery) return [];
+    const files = (searchAllTabs ? tabs : tabs.filter((tab) => tab.id === activeId)).map((tab) => ({
+      id: tab.id,
+      text: tab.id === activeId ? debouncedValue : tab.value,
+    }));
 
-    const key = `${debouncedQuery} ${JSON.stringify(find.options)}`;
-    const cache = cacheRef.current;
+    // Every keystroke rebuilds `tabs`, so handing back a fresh object here would
+    // post a job on each one and undo the debounce. An untouched buffer is the
+    // same string, so this comparison is a pointer check per file.
+    const previous = jobRef.current;
+    const unchanged =
+      previous !== null &&
+      previous.query === debouncedQuery &&
+      previous.options === find.options &&
+      previous.files.length === files.length &&
+      previous.files.every((file, i) => file.id === files[i].id && file.text === files[i].text);
+    if (unchanged) return previous;
 
-    const results = searchFiles(searchAllTabs).map((file) => {
-      const hit = cache.get(file.id);
-      if (hit && hit.key === key && hit.text === file.text) return hit.result;
+    const next: RegexFindJob = { kind: 'find', files, query: debouncedQuery, options: find.options };
+    jobRef.current = next;
+    return next;
+  }, [find.open, find.options, debouncedQuery, debouncedValue, searchAllTabs, tabs, activeId]);
 
-      const result = searchOne(file, debouncedQuery, find.options);
-      cache.set(file.id, { text: file.text, key, result });
-      return result;
-    });
+  const run = useTimeboxedWorker<RegexFindJob, FileMatches[]>({
+    spawn: spawnRegexWorker,
+    request: job,
+    fallback: (request) => findAcross(request.files, request.query, request.options),
+  });
 
-    for (const id of cache.keys()) {
-      if (!tabs.some((tab) => tab.id === id)) cache.delete(id);
-    }
-    return results;
-  }, [find.open, find.options, debouncedQuery, searchAllTabs, searchFiles, tabs]);
+  // The hook clears itself in an effect, one render after the job goes away, so
+  // without this the closing frame of the find bar still paints its highlights.
+  const searchResults = job === null ? NO_RESULTS : run.result ?? NO_RESULTS;
+
+  // The snapshot the current offsets were measured against. A result that lands
+  // after the buffer has moved on is painted over the text it belongs to rather
+  // than over the live one — the same bargain the debounce already makes, for as
+  // long as the round trip takes.
+  const searchedText =
+    (job !== null && run.source?.files.find((file) => file.id === activeId)?.text) || debouncedValue;
 
   const activeMatches = useMemo(() => matchesFor(searchResults, activeId), [searchResults, activeId]);
   const matchCount = totalCount(searchResults);
   const matchFileCount = fileCount(searchResults);
-  const searchError = firstError(searchResults);
+  const searchError = run.timedOut
+    ? `Stopped after ${FIND_TIMEOUT_SECONDS} seconds — this pattern backtracks catastrophically on this text.`
+    : run.error ?? firstError(searchResults);
 
   // -1 means "no match in the visible tab". An all-tabs search can legitimately be
   // in that state while other files have results.
@@ -382,14 +404,29 @@ const TextEditor = () => {
   // Turning "All" on is a deliberate "look everywhere", so if this tab has nothing
   // it goes straight to where the matches are. Typing never does that — switching
   // tabs under someone mid-keystroke would be maddening.
+  //
+  // The jump waits for the all-tabs result instead of searching here: this runs on
+  // a click, and a scan on this thread is exactly what the worker exists to avoid.
+  const jumpWhenFoundRef = useRef(false);
+
   const toggleSearchAllTabs = useCallback(() => {
     const next = !searchAllTabs;
     setSearchAllTabs(next);
-    if (!next || activeMatches.length > 0 || !debouncedQuery) return;
+    jumpWhenFoundRef.current = next && activeMatches.length === 0 && !!debouncedQuery;
+  }, [searchAllTabs, activeMatches.length, debouncedQuery]);
 
-    const target = locate(findAcross(searchFiles(true), debouncedQuery, find.options), 0);
+  useEffect(() => {
+    if (!jumpWhenFoundRef.current || !run.result || !run.source) return;
+    // Results from before the toggle cover this tab alone and cannot answer the
+    // question that was asked.
+    if (run.source.files.length < 2) return;
+
+    jumpWhenFoundRef.current = false;
+    if (matchesFor(run.result, activeId).length > 0) return;
+
+    const target = locate(run.result, 0);
     if (target && target.id !== activeId) jumpTo(target);
-  }, [searchAllTabs, activeMatches.length, debouncedQuery, searchFiles, find.options, activeId, jumpTo]);
+  }, [run.result, run.source, activeId, jumpTo]);
 
   const onReplace = useCallback(() => {
     const match = activeMatches[safeIndex];
@@ -399,14 +436,14 @@ const TextEditor = () => {
     // (a keystroke inside the debounce window), the offsets no longer describe the
     // same text and applying them would corrupt the edit.
     const matched = active.value.slice(match.start, match.end);
-    if (matched !== debouncedValue.slice(match.start, match.end)) return;
+    if (matched !== searchedText.slice(match.start, match.end)) return;
 
     applyEdit(
       match.start,
       match.end,
-      expandReplacement(matched, debouncedQuery, find.replacement, find.options)
+      expandReplacement(active.value, match, debouncedQuery, find.replacement, find.options)
     );
-  }, [activeMatches, safeIndex, active.value, debouncedValue, debouncedQuery, find.replacement, find.options, applyEdit]);
+  }, [activeMatches, safeIndex, active.value, searchedText, debouncedQuery, find.replacement, find.options, applyEdit]);
 
   const onReplaceAll = useCallback(() => {
     if (!debouncedQuery || searchError) return;
@@ -470,7 +507,7 @@ const TextEditor = () => {
   // what the counter beside it says: every tab when All is on, and always against
   // the snapshot those offsets belong to.
   const copyMatches = useCallback(() => {
-    const matches = collectText(searchResults, searchFiles(searchAllTabs));
+    const matches = collectText(searchResults, run.source?.files ?? []);
     if (matches.length === 0) return;
 
     const matchWord = matches.length === 1 ? 'match' : 'matches';
@@ -484,7 +521,7 @@ const TextEditor = () => {
         ),
       () => toast.error('Could not copy to the clipboard.')
     );
-  }, [searchResults, searchFiles, searchAllTabs, matchFileCount]);
+  }, [searchResults, run.source, matchFileCount]);
 
   const closeFind = useCallback(() => {
     patchActiveFind({ open: false });
@@ -894,7 +931,7 @@ const TextEditor = () => {
       <EditorSurface
         key={activeId}
         value={active.value}
-        highlightText={debouncedValue}
+        highlightText={searchedText}
         onChange={onChange}
         matches={highlighted}
         currentMatchIndex={safeIndex < 0 ? -1 : safeIndex - highlightOffset}

@@ -18,8 +18,12 @@ export function unescapeHtml(text: string): string {
     .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)));
 }
 
+// The set every engine treats as syntax outside a character class. `-` is not in
+// it on purpose: it is only special inside `[...]`, and `\-` outside a class is a
+// syntax error under the `u` and `v` flags, so escaping it turns a working pattern
+// into one that throws the moment someone adds `u`.
 export function escapeRegex(text: string): string {
-  return text.replace(/[.*+?^${}()|[\]\\-]/g, '\\$&');
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 export function escapeJson(text: string): string {
