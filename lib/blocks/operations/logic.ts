@@ -1,3 +1,4 @@
+import { countUnit } from '@/Components/Functions/TextUtilities/logic';
 import { Operation, DroppedItem } from '../types';
 
 // Numbers, comparisons and true/false values. Every block here reads and
@@ -113,6 +114,28 @@ export const logicOperations: Operation[] = [
         default: return String(Array.from(input).length);
       }
     },
+  },
+  {
+    id: 'count',
+    name: 'Count',
+    category: 'logic',
+    params: [
+      {
+        id: 'unit', label: 'Count', kind: 'select', default: 'words',
+        options: [
+          { value: 'words', label: 'Words' },
+          { value: 'chars', label: 'Characters' },
+          { value: 'chars-no-spaces', label: 'Characters (no spaces)' },
+          { value: 'lines', label: 'Lines' },
+          { value: 'non-empty-lines', label: 'Non-empty lines' },
+          { value: 'paragraphs', label: 'Paragraphs' },
+          { value: 'sentences', label: 'Sentences' },
+          { value: 'unique-words', label: 'Unique words' },
+          { value: 'bytes', label: 'Bytes (UTF-8)' },
+        ],
+      },
+    ],
+    fn: (input, p) => String(countUnit(input, p.unit)),
   },
   {
     id: 'arithmetic',

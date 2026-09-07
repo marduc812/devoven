@@ -16,6 +16,7 @@ import { networkOperations } from './operations/network';
 import { analysisOperations } from './operations/analysis';
 import { compressionOperations } from './operations/compression';
 import { binaryOperations } from './operations/binary';
+import { archiveOperations } from './operations/archive';
 import { compareOperations } from './operations/compare';
 import { logicOperations } from './operations/logic';
 import { flowOperations } from './operations/flow';
@@ -38,6 +39,7 @@ export const OPERATIONS: Operation[] = [
   ...analysisOperations,
   ...compressionOperations,
   ...binaryOperations,
+  ...archiveOperations,
   ...compareOperations,
   ...logicOperations,
   ...flowOperations,

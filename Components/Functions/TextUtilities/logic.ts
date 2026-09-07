@@ -113,8 +113,76 @@ export function countLines(s: string): number {
 
 export function countSentences(s: string): number {
   if (!s.trim()) return 0;
-  const matches = s.match(/[^.!?]*[.!?]+/g);
-  return matches ? matches.length : 0;
+  const terminated = s.match(/[^.!?]*[.!?]+/g) ?? [];
+  // Text that runs out before its terminator is still a sentence: "Hi. And so"
+  // is two, not one.
+  const tail = s.slice(terminated.join('').length);
+  return terminated.length + (tail.trim() === '' ? 0 : 1);
+}
+
+/** Lines with something on them; blank and whitespace-only lines don't count. */
+export function countNonEmptyLines(s: string): number {
+  if (!s) return 0;
+  return s.split(/\r\n|\r|\n/).filter((line) => line.trim() !== '').length;
+}
+
+/**
+ * Blocks of text separated by one or more blank lines. A run of blank lines is
+ * a single break, and a document with no blank line in it is one paragraph.
+ */
+export function countParagraphs(s: string): number {
+  if (!s.trim()) return 0;
+  return s
+    .replace(/\r\n?/g, '\n')
+    .split(/\n[ \t]*\n/)
+    .filter((block) => block.trim() !== '').length;
+}
+
+/**
+ * Distinct words, ignoring case and the punctuation hanging off either end, so
+ * `cat`, `Cat,` and `(cat)` are one word but `don't` and `dont` are two.
+ */
+export function countUniqueWords(s: string): number {
+  if (!s.trim()) return 0;
+  const words = s
+    .toLowerCase()
+    .split(/\s+/)
+    .map((word) => word.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, ''))
+    .filter(Boolean);
+  return new Set(words).size;
+}
+
+export const COUNT_UNITS = [
+  'words',
+  'chars',
+  'chars-no-spaces',
+  'lines',
+  'non-empty-lines',
+  'paragraphs',
+  'sentences',
+  'unique-words',
+  'bytes',
+] as const;
+
+export type CountUnit = (typeof COUNT_UNITS)[number];
+
+/**
+ * One entry point for every way of measuring a piece of text. Characters are
+ * counted by code point, so an emoji is one character and not two.
+ */
+export function countUnit(s: string, unit: string): number {
+  switch (unit) {
+    case 'words': return countWords(s);
+    case 'chars': return Array.from(s).length;
+    case 'chars-no-spaces': return countCharsNoSpaces(s);
+    case 'lines': return countLines(s);
+    case 'non-empty-lines': return countNonEmptyLines(s);
+    case 'paragraphs': return countParagraphs(s);
+    case 'sentences': return countSentences(s);
+    case 'unique-words': return countUniqueWords(s);
+    case 'bytes': return new TextEncoder().encode(s).length;
+    default: throw new Error(`Unknown unit "${unit}"`);
+  }
 }
 
 // ─── Lorem ipsum ─────────────────────────────────────────────────────────────

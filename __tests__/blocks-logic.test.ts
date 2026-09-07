@@ -27,7 +27,7 @@ function firstError(input: string, ...blocks: BlockState[]): string | null {
 
 describe('logic blocks are registered', () => {
   it('puts every block in the logic category', () => {
-    for (const id of ['length', 'arithmetic', 'round', 'compare', 'logic-and', 'logic-or', 'logic-xor', 'logic-not', 'choose', 'keep-if']) {
+    for (const id of ['length', 'count', 'arithmetic', 'round', 'compare', 'logic-and', 'logic-or', 'logic-xor', 'logic-not', 'choose', 'keep-if']) {
       expect(OPERATION_MAP[id]?.category).toBe('logic');
       expect(OPERATION_MAP[id]?.terminal).toBeFalsy();
     }
@@ -161,5 +161,49 @@ describe('keep if', () => {
     const results = runPipeline({ input: '3', blocks: [block('keep-if', { how: 'gt', value: '10' }), block('sha256')] });
     expect(results[0]).toEqual(expect.objectContaining({ output: '', error: null }));
     expect(results[1]).toEqual(expect.objectContaining({ output: '', error: null }));
+  });
+});
+
+describe('count', () => {
+  const text = 'The cat sat.\n\nThe cat sat again, and then the cat left.';
+
+  it('counts words by default', () => {
+    expect(run(text, block('count'))).toBe('12');
+  });
+
+  it('counts every unit it offers', () => {
+    const got = Object.fromEntries(
+      (OPERATION_MAP['count']?.params[0].options ?? []).map((o) => [o.value, run(text, block('count', { unit: o.value }))])
+    );
+    expect(got).toEqual({
+      words: '12',
+      chars: String(Array.from(text).length),
+      'chars-no-spaces': '43',
+      lines: '3',
+      'non-empty-lines': '2',
+      paragraphs: '2',
+      sentences: '2',
+      'unique-words': '7',
+      bytes: String(text.length),
+    });
+  });
+
+  it('counts an emoji as one character and four bytes', () => {
+    expect(run('\u{1F44D}', block('count', { unit: 'chars' }))).toBe('1');
+    expect(run('\u{1F44D}', block('count', { unit: 'bytes' }))).toBe('4');
+  });
+
+  it('returns 0 for empty input rather than erroring', () => {
+    for (const unit of ['words', 'lines', 'paragraphs', 'sentences', 'unique-words']) {
+      expect(run('', block('count', { unit }))).toBe('0');
+    }
+  });
+
+  it('feeds a number onward to the next block', () => {
+    expect(run('one two three', block('count'), block('arithmetic', { b: '2', op: 'mul' }))).toBe('6');
+  });
+
+  it('rejects a unit it does not know', () => {
+    expect(firstError('hi', block('count', { unit: 'furlongs' }))).toContain('furlongs');
   });
 });

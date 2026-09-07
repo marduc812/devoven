@@ -71,9 +71,11 @@ into a pipeline where each block's output feeds the next. It imports the tools'
 
 - **Registry**: `lib/blocks/registry.ts` concatenates the files in
   `lib/blocks/operations/` (`encoding.ts`, `encoding-new.ts`, `encoding-extra.ts`,
-  `ciphers.ts`, `hashing.ts`, `hashing-extra.ts`, `conversion.ts`,
-  `color.ts`, `data-format.ts`, `data-extra.ts`, `text-utils.ts`,
-  `text-extra.ts`, `network.ts`, `analysis.ts`, `compare.ts`, `logic.ts`, `flow.ts`). Add to the file that matches the operation, or
+  `ciphers.ts`, `hashing.ts`, `hashing-extra.ts`, `hashing-modern.ts`,
+  `conversion.ts`, `color.ts`, `data-format.ts`, `data-extra.ts`,
+  `text-utils.ts`, `text-extra.ts`, `network.ts`, `analysis.ts`,
+  `compression.ts`, `binary.ts`, `archive.ts`, `compare.ts`, `logic.ts`,
+  `flow.ts`). Add to the file that matches the operation, or
   start a new one and wire it into the registry.
 - **Shape**: an `Operation` is `(input: string, params) => string`. It throws an
   `Error` with a human-readable message on bad input; the pipeline catches it and
@@ -94,6 +96,12 @@ into a pipeline where each block's output feeds the next. It imports the tools'
   Choose and Keep If. Booleans travel as the strings `true`/`false` and numbers
   as decimal text, so they chain like anything else. Keep If throws
   `DroppedItem` (from `types.ts`) to remove the current item without an error.
+- **Bytes** (`compression.ts`, `binary.ts`, `archive.ts`): a pipeline carries
+  strings, so binary payloads travel as Base64 or hex. Every block that takes
+  bytes has a `source` select saying which, and every block that *produces*
+  bytes has an `as` select offering Text / Base64 / Hex. Keep both, and default
+  to Base64: it is what makes `Gzip Decompress → List Archive Contents` work on
+  a `.tar.gz`, where reading the tar as UTF-8 text would destroy it.
 - **Flow** (`flow.ts`): blocks with `control` set, which the runner in
   `pipeline.ts` handles itself and never calls `fn` on. `each` (Each Line)
   splits the value and runs every later block once per item until `collect`

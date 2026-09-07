@@ -2,6 +2,7 @@ import {
   toUpperCase, toLowerCase, toTitleCase,
   toCamelCase, toSnakeCase, toKebabCase, toPascalCase, convertCase,
   countWords, countChars, countCharsNoSpaces, countLines, countSentences,
+  countNonEmptyLines, countParagraphs, countUniqueWords, countUnit,
   generateLoremIpsum, generateLoremWords,
   removeDuplicateLines, sortLinesAsc, sortLinesDesc,
   reverseString, reverseLines,
@@ -114,6 +115,69 @@ describe('countSentences', () => {
   it('counts sentences ending with question mark', () => expect(countSentences('Hello? World?')).toBe(2));
   it('mixed terminators', () => expect(countSentences('Hi. How are you? Good!')).toBe(3));
   it('empty input returns 0', () => expect(countSentences('')).toBe(0));
+  it('counts a last sentence that stops without punctuation', () => {
+    expect(countSentences('Hi. And then this')).toBe(2);
+    expect(countSentences('no punctuation at all')).toBe(1);
+  });
+  it('ignores trailing whitespace after the last terminator', () => {
+    expect(countSentences('Hello. World.  \n')).toBe(2);
+  });
+});
+
+describe('countNonEmptyLines', () => {
+  it('skips blank and whitespace-only lines', () => {
+    expect(countNonEmptyLines('a\n\nb\n   \nc')).toBe(3);
+  });
+  it('empty input returns 0', () => expect(countNonEmptyLines('')).toBe(0));
+  it('whitespace-only input returns 0', () => expect(countNonEmptyLines('  \n\t')).toBe(0));
+});
+
+describe('countParagraphs', () => {
+  it('splits on blank lines', () => {
+    expect(countParagraphs('One line.\nStill one.\n\nTwo.')).toBe(2);
+  });
+  it('treats several blank lines as one break', () => {
+    expect(countParagraphs('a\n\n\n\nb')).toBe(2);
+  });
+  it('treats a whitespace-only line as a break', () => {
+    expect(countParagraphs('a\n   \nb')).toBe(2);
+  });
+  it('handles CRLF the same as LF', () => {
+    expect(countParagraphs('a\r\n\r\nb')).toBe(2);
+  });
+  it('counts unbroken text as one paragraph', () => expect(countParagraphs('a\nb\nc')).toBe(1));
+  it('empty input returns 0', () => expect(countParagraphs('')).toBe(0));
+  it('whitespace-only input returns 0', () => expect(countParagraphs('\n\n  \n')).toBe(0));
+});
+
+describe('countUniqueWords', () => {
+  it('ignores case', () => expect(countUniqueWords('The the THE')).toBe(1));
+  it('ignores surrounding punctuation', () => expect(countUniqueWords('cat, cat. (cat)')).toBe(1));
+  it('counts distinct words', () => expect(countUniqueWords('one two two three')).toBe(3));
+  it('keeps inner punctuation', () => expect(countUniqueWords("don't dont")).toBe(2));
+  it('empty input returns 0', () => expect(countUniqueWords('   ')).toBe(0));
+});
+
+describe('countUnit', () => {
+  const text = 'Hello world.\n\nSecond paragraph here.';
+  it('dispatches to each counter', () => {
+    expect(countUnit(text, 'words')).toBe(5);
+    expect(countUnit(text, 'chars')).toBe(text.length);
+    expect(countUnit(text, 'chars-no-spaces')).toBe(countCharsNoSpaces(text));
+    expect(countUnit(text, 'lines')).toBe(3);
+    expect(countUnit(text, 'non-empty-lines')).toBe(2);
+    expect(countUnit(text, 'paragraphs')).toBe(2);
+    expect(countUnit(text, 'sentences')).toBe(2);
+    expect(countUnit(text, 'unique-words')).toBe(5);
+    expect(countUnit(text, 'bytes')).toBe(text.length);
+  });
+  it('counts characters by code point, so an emoji is one', () => {
+    expect(countUnit('a\u{1F44D}', 'chars')).toBe(2);
+    expect(countUnit('a\u{1F44D}', 'bytes')).toBe(5);
+  });
+  it('rejects an unknown unit', () => {
+    expect(() => countUnit('x', 'furlongs')).toThrow('furlongs');
+  });
 });
 
 // ─── Lorem ipsum ─────────────────────────────────────────────────────────────
