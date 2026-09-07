@@ -6,7 +6,14 @@ import Panel from '@/Components/MainView/MainPanel/Panel';
 import { useTimeboxedWorker, DEFAULT_TIMEOUT_MS } from '@/Components/Functions/useTimeboxedWorker';
 import { spawnRegexWorker } from '@/lib/regex/spawn';
 import type { RegexTestJob } from '@/lib/regex/types';
-import { testRegex, type RegexFlags, type RegexTestResult } from './logic';
+import { MAX_MATCHES, testRegex, type RegexFlags, type RegexTestResult } from './logic';
+
+// Every highlight is a <mark> and every detail card is a handful of nodes, both
+// rebuilt on each keystroke. A pattern like `\w` over a pasted file matches tens
+// of thousands of times, which is enough DOM to make typing stutter and far more
+// than anyone reads, so both lists are capped and the page says where it stopped.
+const PREVIEW_CAP = 500;
+const DETAIL_CAP = 100;
 
 export const RegexTesterTool = () => {
   const [pattern, setPattern] = useState('');
@@ -54,7 +61,7 @@ export const RegexTesterTool = () => {
     }
     const parts: React.JSX.Element[] = [];
     let lastIndex = 0;
-    for (const m of result.matches) {
+    for (const m of result.matches.slice(0, PREVIEW_CAP)) {
       if (m.index > lastIndex) {
         parts.push(<span key={'pre-' + m.index}>{text.slice(lastIndex, m.index)}</span>);
       }
@@ -142,11 +149,22 @@ export const RegexTesterTool = () => {
           {result && result.isValid && resultMatchesText && testString && (
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
-                Preview ({result.matchCount} match{result.matchCount !== 1 ? 'es' : ''})
+                Preview ({result.truncated ? `first ${MAX_MATCHES.toLocaleString()}` : result.matchCount} match
+                {result.matchCount !== 1 ? 'es' : ''})
               </p>
               <div className="bg-gray-50 text-gray-900 p-3 border border-gray-200 font-mono text-xs whitespace-pre-wrap break-all">
                 {highlightMatches(testString)}
               </div>
+              {result.matches.length > PREVIEW_CAP && (
+                <p className="text-xs text-gray-500 mt-2">
+                  Highlighting the first {PREVIEW_CAP.toLocaleString()} matches.
+                </p>
+              )}
+              {result.truncated && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Counting stopped at {MAX_MATCHES.toLocaleString()} matches — this text holds more.
+                </p>
+              )}
             </div>
           )}
 
@@ -155,7 +173,7 @@ export const RegexTesterTool = () => {
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Match Details</p>
               <div className="flex flex-col gap-2">
-                {result.matches.map((m, i) => (
+                {result.matches.slice(0, DETAIL_CAP).map((m, i) => (
                   <div key={i} className="border border-gray-200 bg-gray-50 p-3 text-xs font-mono">
                     <div className="flex gap-4 mb-1">
                       <span className="text-gray-500">#{i + 1}</span>
@@ -185,6 +203,12 @@ export const RegexTesterTool = () => {
                   </div>
                 ))}
               </div>
+              {result.matches.length > DETAIL_CAP && (
+                <p className="text-xs text-gray-500 mt-2">
+                  Showing {DETAIL_CAP} of {result.matchCount.toLocaleString()}
+                  {result.truncated ? '+' : ''} matches.
+                </p>
+              )}
             </div>
           )}
 
