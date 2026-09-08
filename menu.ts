@@ -570,7 +570,11 @@ export const menu: MenuGroupType[] = [
             {"name": "Soundex & Phonetic Codes", "link": "/text/soundex", "type": "text", "tag": ""},
             {"name": "Levenshtein Distance", "link": "/text/levenshtein", "type": "text", "tag": ""},
             {"name": "Text Entropy Calculator", "link": "/text/text-entropy", "type": "text", "tag": ""},
-            {"name": "Text Diff Highlighter", "link": "/text/char-diff", "type": "text", "tag": ""}
+            {"name": "Text Diff Highlighter", "link": "/text/char-diff", "type": "text", "tag": ""},
+            {"name": "Remove Diacritics", "link": "/text/remove-diacritics", "type": "text", "tag": ""},
+            {"name": "Strip ANSI Codes", "link": "/text/strip-ansi", "type": "text", "tag": ""},
+            {"name": "Strip HTML Tags", "link": "/text/strip-html", "type": "text", "tag": ""},
+            {"name": "Pad Lines", "link": "/text/pad-lines", "type": "text", "tag": ""}
         ],
         "color": "rose",
         "titleColor": "roseTitle",

@@ -11,6 +11,12 @@ import { alignLines, columnAlign } from '@/Components/Functions/TextAlignTools/l
 import { tokenize, TokenMode } from '@/Components/Functions/TokenizerTools/logic';
 import { findDuplicateLines, findDuplicateWords } from '@/Components/Functions/DuplicateFinderTools/logic';
 import { soundexBatch } from '@/Components/Functions/SoundexTools/logic';
+import {
+  removeDiacritics, listDiacritics, DiacriticsMode,
+  stripAnsi, listAnsi,
+  stripHtmlTags,
+  padLines, PadSide,
+} from '@/Components/Functions/TextCleanupTools/logic';
 import { Operation } from '../types';
 
 const widthOptions = [40, 60, 72, 80, 100, 120].map((n) => ({ value: String(n), label: String(n) }));
@@ -216,5 +222,124 @@ export const textExtraOperations: Operation[] = [
     ],
     terminal: true,
     fn: (input, p) => (p.mode === 'words' ? findDuplicateWords(input) : findDuplicateLines(input)),
+  },
+  {
+    id: 'remove-diacritics',
+    name: 'Remove Diacritics',
+    category: 'text',
+    params: [
+      {
+        id: 'mode',
+        label: 'Mode',
+        kind: 'select',
+        options: [
+          { value: 'marks', label: 'Combining marks only' },
+          { value: 'fold', label: 'Also fold ø, ł, æ, ß' },
+        ],
+        default: 'marks',
+      },
+    ],
+    fn: (input, p) => removeDiacritics(input, (p.mode ?? 'marks') as DiacriticsMode),
+  },
+  {
+    id: 'list-diacritics',
+    name: 'List Diacritics',
+    category: 'analysis',
+    params: [
+      {
+        id: 'mode',
+        label: 'Mode',
+        kind: 'select',
+        options: [
+          { value: 'marks', label: 'Combining marks only' },
+          { value: 'fold', label: 'Also fold ø, ł, æ, ß' },
+        ],
+        default: 'marks',
+      },
+    ],
+    terminal: true,
+    fn: (input, p) => listDiacritics(input, (p.mode ?? 'marks') as DiacriticsMode),
+  },
+  {
+    id: 'strip-ansi',
+    name: 'Strip ANSI Codes',
+    category: 'text',
+    params: [
+      {
+        id: 'controls',
+        label: 'Other control chars',
+        kind: 'select',
+        options: [
+          { value: 'keep', label: 'Keep' },
+          { value: 'remove', label: 'Remove' },
+        ],
+        default: 'keep',
+      },
+    ],
+    fn: (input, p) => stripAnsi(input, p.controls === 'remove'),
+  },
+  {
+    id: 'list-ansi',
+    name: 'List ANSI Codes',
+    category: 'analysis',
+    params: [],
+    terminal: true,
+    fn: (input) => listAnsi(input),
+  },
+  {
+    id: 'strip-html-tags',
+    name: 'Strip HTML Tags',
+    category: 'text',
+    params: [
+      {
+        id: 'breaks',
+        label: 'Block tags',
+        kind: 'select',
+        options: [
+          { value: 'newline', label: 'Become line breaks' },
+          { value: 'drop', label: 'Just removed' },
+        ],
+        default: 'newline',
+      },
+      {
+        id: 'entities',
+        label: 'Entities',
+        kind: 'select',
+        options: [
+          { value: 'decode', label: 'Decode' },
+          { value: 'keep', label: 'Leave as is' },
+        ],
+        default: 'decode',
+      },
+    ],
+    fn: (input, p) => stripHtmlTags(input, {
+      keepBreaks: (p.breaks ?? 'newline') === 'newline',
+      decodeEntities: (p.entities ?? 'decode') === 'decode',
+    }),
+  },
+  {
+    id: 'pad-lines',
+    name: 'Pad Lines',
+    category: 'text',
+    params: [
+      { id: 'width', label: 'Width', kind: 'text', default: '20' },
+      {
+        id: 'side',
+        label: 'Pad',
+        kind: 'select',
+        options: [
+          { value: 'right', label: 'Right' },
+          { value: 'left', label: 'Left' },
+          { value: 'both', label: 'Both (centre)' },
+        ],
+        default: 'right',
+      },
+      { id: 'fill', label: 'Fill character', kind: 'text', default: ' ' },
+    ],
+    fn: (input, p) => {
+      const width = Number(p.width ?? '20');
+      if (!Number.isFinite(width)) throw new Error('Width must be a number');
+      return padLines(input, { width, side: (p.side ?? 'right') as PadSide, fill: p.fill ?? ' ' });
+    },
   },
 ];
