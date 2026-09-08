@@ -3,6 +3,10 @@ import { hexToBytes, stringToHex, hexToString, numberToHex, hexToNumber } from '
 import { hexToRgb, textToBinary, binaryToString, hexToBinary as hexToBinaryFn } from '@/Components/Functions/Utils';
 import { generateColorScheme } from '@/Components/Functions/ColorSchemeTools/logic';
 import { toEIP55Checksum } from '@/Components/Functions/EthChecksumTools/logic';
+import {
+  parseObjectId, objectIdForDate,
+  parseFileTime, toFileTime,
+} from '@/Components/Functions/TimestampIdTools/logic';
 import { Operation } from '../types';
 
 const ethPublicToAddress: Operation = {
@@ -294,6 +298,61 @@ const colorScheme: Operation = {
   fn: (input) => generateColorScheme(input.trim()),
 };
 
+const dateOutput = {
+  id: 'format',
+  label: 'As',
+  kind: 'select' as const,
+  options: [
+    { value: 'iso', label: 'ISO 8601' },
+    { value: 'utc', label: 'UTC string' },
+    { value: 's', label: 'Unix seconds' },
+    { value: 'ms', label: 'Unix milliseconds' },
+  ],
+  default: 'iso',
+};
+
+const showDate = (date: Date, format: string): string => {
+  if (format === 'utc') return date.toUTCString();
+  if (format === 's') return String(Math.floor(date.getTime() / 1000));
+  if (format === 'ms') return String(date.getTime());
+  return date.toISOString();
+};
+
+const objectIdToDate: Operation = {
+  id: 'objectid-to-date',
+  name: 'ObjectId → Date',
+  category: 'conversion',
+  params: [dateOutput],
+  fn: (input, p) => showDate(parseObjectId(input).date, p.format ?? 'iso'),
+};
+
+const dateToObjectId: Operation = {
+  id: 'date-to-objectid',
+  name: 'Date → ObjectId',
+  category: 'conversion',
+  params: [],
+  fn: (input) => objectIdForDate(input),
+};
+
+const fileTimeToUnix: Operation = {
+  id: 'filetime-to-unix',
+  name: 'FILETIME → Date',
+  category: 'conversion',
+  params: [dateOutput],
+  fn: (input, p) => showDate(parseFileTime(input).date, p.format ?? 'iso'),
+};
+
+const unixToFileTime: Operation = {
+  id: 'unix-to-filetime',
+  name: 'Date → FILETIME',
+  category: 'conversion',
+  params: [],
+  fn: (input) => {
+    const line = toFileTime(input).split('\n')[0];
+    return line.replace(/^FILETIME:\s*/, '');
+  },
+};
+
 export const conversionOperations: Operation[] = [
   ethPublicToAddress,
   ethChecksum,
@@ -316,4 +375,8 @@ export const conversionOperations: Operation[] = [
   timestampToHuman,
   humanToTimestamp,
   colorScheme,
+  objectIdToDate,
+  dateToObjectId,
+  fileTimeToUnix,
+  unixToFileTime,
 ];

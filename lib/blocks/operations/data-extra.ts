@@ -14,6 +14,11 @@ import {
 } from '@/Components/Functions/ExtraConverters/logic';
 import { propertiesToJson, jsonToProperties } from '@/Components/Functions/PropertiesJsonTools/logic';
 import { jsonToSqlInsert } from '@/Components/Functions/ExtraConverters3/logic';
+import { cssExtract, xpathExtract, QueryOutput } from '@/Components/Functions/MarkupQueryTools/logic';
+import { decodeBinaryToJson, BinaryEncoding } from '@/Components/Functions/BinaryFormatTools/logic';
+import { phpToJson, jsonToPhp } from '@/Components/Functions/PhpSerializeTools/logic';
+import { risonToJson, jsonToRison, RisonMode } from '@/Components/Functions/RisonTools/logic';
+import { flaskSessionPayload } from '@/Components/Functions/FlaskSessionTools/logic';
 import { Operation } from '../types';
 
 export const dataExtraOperations: Operation[] = [
@@ -180,5 +185,161 @@ export const dataExtraOperations: Operation[] = [
     category: 'data',
     params: [],
     fn: (input) => svgToDataUri(input),
+  },
+  {
+    id: 'css-extract',
+    name: 'CSS Selector Extract',
+    category: 'data',
+    params: [
+      { id: 'selector', label: 'Selector', kind: 'text', default: 'a' },
+      {
+        id: 'output',
+        label: 'Show',
+        kind: 'select',
+        options: [
+          { value: 'text', label: 'Text content' },
+          { value: 'markup', label: 'Matched markup' },
+          { value: 'attribute', label: 'One attribute' },
+          { value: 'path', label: 'Path to the node' },
+          { value: 'json', label: 'JSON' },
+        ],
+        default: 'text',
+      },
+      { id: 'attribute', label: 'Attribute', kind: 'text', default: 'href' },
+    ],
+    fn: (input, p) => cssExtract(input, p.selector ?? '', {
+      mode: 'html',
+      output: (p.output ?? 'text') as QueryOutput,
+      attribute: p.attribute ?? 'href',
+    }),
+  },
+  {
+    id: 'xpath-extract',
+    name: 'XPath Extract',
+    category: 'data',
+    params: [
+      { id: 'xpath', label: 'Expression', kind: 'text', default: '//text()' },
+      {
+        id: 'mode',
+        label: 'Parse as',
+        kind: 'select',
+        options: [
+          { value: 'xml', label: 'XML' },
+          { value: 'html', label: 'HTML' },
+        ],
+        default: 'xml',
+      },
+      {
+        id: 'output',
+        label: 'Show',
+        kind: 'select',
+        options: [
+          { value: 'text', label: 'Text content' },
+          { value: 'markup', label: 'Matched markup' },
+          { value: 'path', label: 'Path to the node' },
+          { value: 'json', label: 'JSON' },
+        ],
+        default: 'text',
+      },
+    ],
+    fn: (input, p) => xpathExtract(input, p.xpath ?? '', {
+      mode: (p.mode ?? 'xml') === 'html' ? 'html' : 'xml',
+      output: (p.output ?? 'text') as QueryOutput,
+    }),
+  },
+  {
+    id: 'cbor-decode',
+    name: 'CBOR → JSON',
+    category: 'data',
+    params: [
+      {
+        id: 'source',
+        label: 'Bytes as',
+        kind: 'select',
+        options: [
+          { value: 'base64', label: 'Base64' },
+          { value: 'hex', label: 'Hex' },
+        ],
+        default: 'base64',
+      },
+    ],
+    fn: (input, p) => decodeBinaryToJson(input, 'cbor', (p.source ?? 'base64') as BinaryEncoding),
+  },
+  {
+    id: 'msgpack-decode',
+    name: 'MessagePack → JSON',
+    category: 'data',
+    params: [
+      {
+        id: 'source',
+        label: 'Bytes as',
+        kind: 'select',
+        options: [
+          { value: 'base64', label: 'Base64' },
+          { value: 'hex', label: 'Hex' },
+        ],
+        default: 'base64',
+      },
+    ],
+    fn: (input, p) => decodeBinaryToJson(input, 'msgpack', (p.source ?? 'base64') as BinaryEncoding),
+  },
+  {
+    id: 'php-unserialize',
+    name: 'PHP Unserialize → JSON',
+    category: 'data',
+    params: [],
+    fn: (input) => phpToJson(input),
+  },
+  {
+    id: 'php-serialize',
+    name: 'JSON → PHP Serialize',
+    category: 'data',
+    params: [],
+    fn: (input) => jsonToPhp(input),
+  },
+  {
+    id: 'rison-decode',
+    name: 'Rison → JSON',
+    category: 'data',
+    params: [
+      {
+        id: 'flavour',
+        label: 'Flavour',
+        kind: 'select',
+        options: [
+          { value: 'rison', label: 'Rison' },
+          { value: 'o-rison', label: 'o-rison' },
+          { value: 'a-rison', label: 'a-rison' },
+        ],
+        default: 'rison',
+      },
+    ],
+    fn: (input, p) => risonToJson(input, (p.flavour ?? 'rison') as RisonMode),
+  },
+  {
+    id: 'rison-encode',
+    name: 'JSON → Rison',
+    category: 'data',
+    params: [
+      {
+        id: 'flavour',
+        label: 'Flavour',
+        kind: 'select',
+        options: [
+          { value: 'rison', label: 'Rison' },
+          { value: 'o-rison', label: 'o-rison' },
+          { value: 'a-rison', label: 'a-rison' },
+        ],
+        default: 'rison',
+      },
+    ],
+    fn: (input, p) => jsonToRison(input, (p.flavour ?? 'rison') as RisonMode),
+  },
+  {
+    id: 'flask-session-decode',
+    name: 'Flask Session → JSON',
+    category: 'data',
+    params: [],
+    fn: (input) => flaskSessionPayload(input),
   },
 ];

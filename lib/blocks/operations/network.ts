@@ -9,6 +9,8 @@ import { formatIpClassification } from '@/Components/Functions/NetworkTools2/log
 import { parseCookieHeader, formatParsedCookies } from '@/Components/Functions/NetworkTools3/logic';
 import { extractFromText, formatExtractResults, ExtractType } from '@/Components/Functions/SecurityTools/logic';
 import { defangText, fangText, DotStyle, DefangScope } from '@/Components/Functions/DefangTools/logic';
+import { dissectText, Layer } from '@/Components/Functions/PacketTools/logic';
+import { groupIpsText } from '@/Components/Functions/IpGroupTools/logic';
 import { Operation } from '../types';
 
 export const networkOperations: Operation[] = [
@@ -153,5 +155,47 @@ export const networkOperations: Operation[] = [
     category: 'network',
     params: [],
     fn: (input) => fangText(input),
+  },
+  {
+    id: 'packet-dissect',
+    name: 'Parse Packet Header',
+    category: 'network',
+    params: [
+      {
+        id: 'layer',
+        label: 'Starts at',
+        kind: 'select',
+        options: [
+          { value: 'ethernet', label: 'Ethernet frame' },
+          { value: 'ipv4', label: 'IPv4 header' },
+          { value: 'tcp', label: 'TCP header' },
+          { value: 'udp', label: 'UDP header' },
+          { value: 'tls', label: 'TLS record' },
+        ],
+        default: 'ipv4',
+      },
+    ],
+    terminal: true,
+    fn: (input, p) => dissectText(input, (p.layer ?? 'ipv4') as Layer),
+  },
+  {
+    id: 'group-ips',
+    name: 'Group IP Addresses',
+    category: 'network',
+    params: [
+      {
+        id: 'floor',
+        label: 'Widen to',
+        kind: 'select',
+        options: [
+          { value: 'off', label: 'Exact cover' },
+          { value: '28', label: '/28 or wider' },
+          { value: '24', label: '/24 or wider' },
+          { value: '16', label: '/16 or wider' },
+        ],
+        default: 'off',
+      },
+    ],
+    fn: (input, p) => groupIpsText(input, p.floor === 'off' || !p.floor ? undefined : Number(p.floor)),
   },
 ];
