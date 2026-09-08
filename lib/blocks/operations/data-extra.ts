@@ -15,6 +15,7 @@ import {
 import { propertiesToJson, jsonToProperties } from '@/Components/Functions/PropertiesJsonTools/logic';
 import { jsonToSqlInsert } from '@/Components/Functions/ExtraConverters3/logic';
 import { cssExtract, xpathExtract, QueryOutput } from '@/Components/Functions/MarkupQueryTools/logic';
+import { decodeBinaryToJson, BinaryEncoding } from '@/Components/Functions/BinaryFormatTools/logic';
 import { Operation } from '../types';
 
 export const dataExtraOperations: Operation[] = [
@@ -242,5 +243,41 @@ export const dataExtraOperations: Operation[] = [
       mode: (p.mode ?? 'xml') === 'html' ? 'html' : 'xml',
       output: (p.output ?? 'text') as QueryOutput,
     }),
+  },
+  {
+    id: 'cbor-decode',
+    name: 'CBOR → JSON',
+    category: 'data',
+    params: [
+      {
+        id: 'source',
+        label: 'Bytes as',
+        kind: 'select',
+        options: [
+          { value: 'base64', label: 'Base64' },
+          { value: 'hex', label: 'Hex' },
+        ],
+        default: 'base64',
+      },
+    ],
+    fn: (input, p) => decodeBinaryToJson(input, 'cbor', (p.source ?? 'base64') as BinaryEncoding),
+  },
+  {
+    id: 'msgpack-decode',
+    name: 'MessagePack → JSON',
+    category: 'data',
+    params: [
+      {
+        id: 'source',
+        label: 'Bytes as',
+        kind: 'select',
+        options: [
+          { value: 'base64', label: 'Base64' },
+          { value: 'hex', label: 'Hex' },
+        ],
+        default: 'base64',
+      },
+    ],
+    fn: (input, p) => decodeBinaryToJson(input, 'msgpack', (p.source ?? 'base64') as BinaryEncoding),
   },
 ];

@@ -250,6 +250,8 @@ export const menu: MenuGroupType[] = [
                 {"name": "JSON Schema Generator", "link": "/converting/json-schema", "type": "json", "tag": ""},
                 {"name": "TypeScript to Zod", "link": "/converting/ts-to-zod", "type": "json", "tag": ""},
                 {"name": "Protobuf Decoder", "link": "/converting/protobuf", "type": "json", "tag": ""},
+                {"name": "CBOR Decoder", "link": "/converting/cbor", "type": "json", "tag": ""},
+                {"name": "MessagePack to JSON", "link": "/converting/messagepack", "type": "json", "tag": ""},
                 {"name": "Properties to JSON", "link": "/converting/properties-json", "type": "json", "tag": ""},
                 {"name": "REST to GraphQL", "link": "/converting/rest-to-graphql", "type": "json", "tag": ""},
                 {"name": "Python to JS Syntax", "link": "/converting/py-to-js", "type": "json", "tag": ""},
