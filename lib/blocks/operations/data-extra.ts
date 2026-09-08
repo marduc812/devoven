@@ -14,6 +14,7 @@ import {
 } from '@/Components/Functions/ExtraConverters/logic';
 import { propertiesToJson, jsonToProperties } from '@/Components/Functions/PropertiesJsonTools/logic';
 import { jsonToSqlInsert } from '@/Components/Functions/ExtraConverters3/logic';
+import { cssExtract, xpathExtract, QueryOutput } from '@/Components/Functions/MarkupQueryTools/logic';
 import { Operation } from '../types';
 
 export const dataExtraOperations: Operation[] = [
@@ -180,5 +181,66 @@ export const dataExtraOperations: Operation[] = [
     category: 'data',
     params: [],
     fn: (input) => svgToDataUri(input),
+  },
+  {
+    id: 'css-extract',
+    name: 'CSS Selector Extract',
+    category: 'data',
+    params: [
+      { id: 'selector', label: 'Selector', kind: 'text', default: 'a' },
+      {
+        id: 'output',
+        label: 'Show',
+        kind: 'select',
+        options: [
+          { value: 'text', label: 'Text content' },
+          { value: 'markup', label: 'Matched markup' },
+          { value: 'attribute', label: 'One attribute' },
+          { value: 'path', label: 'Path to the node' },
+          { value: 'json', label: 'JSON' },
+        ],
+        default: 'text',
+      },
+      { id: 'attribute', label: 'Attribute', kind: 'text', default: 'href' },
+    ],
+    fn: (input, p) => cssExtract(input, p.selector ?? '', {
+      mode: 'html',
+      output: (p.output ?? 'text') as QueryOutput,
+      attribute: p.attribute ?? 'href',
+    }),
+  },
+  {
+    id: 'xpath-extract',
+    name: 'XPath Extract',
+    category: 'data',
+    params: [
+      { id: 'xpath', label: 'Expression', kind: 'text', default: '//text()' },
+      {
+        id: 'mode',
+        label: 'Parse as',
+        kind: 'select',
+        options: [
+          { value: 'xml', label: 'XML' },
+          { value: 'html', label: 'HTML' },
+        ],
+        default: 'xml',
+      },
+      {
+        id: 'output',
+        label: 'Show',
+        kind: 'select',
+        options: [
+          { value: 'text', label: 'Text content' },
+          { value: 'markup', label: 'Matched markup' },
+          { value: 'path', label: 'Path to the node' },
+          { value: 'json', label: 'JSON' },
+        ],
+        default: 'text',
+      },
+    ],
+    fn: (input, p) => xpathExtract(input, p.xpath ?? '', {
+      mode: (p.mode ?? 'xml') === 'html' ? 'html' : 'xml',
+      output: (p.output ?? 'text') as QueryOutput,
+    }),
   },
 ];

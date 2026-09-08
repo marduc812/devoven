@@ -440,6 +440,8 @@ export const menu: MenuGroupType[] = [
                     {"name": "Passphrase Strength Checker", "link": "/tools/passphrase-strength", "type": "Security", "tag": ""},
                     {"name": "Bit Pattern Viewer", "link": "/tools/bit-pattern", "type": "binary", "tag": ""},
                     {"name": "JSON Path Evaluator", "link": "/tools/json-path", "type": "code", "tag": ""},
+                    {"name": "XPath Evaluator", "link": "/tools/xpath-evaluator", "type": "code", "tag": ""},
+                    {"name": "CSS Selector Extractor", "link": "/tools/css-selector", "type": "code", "tag": ""},
                     {"name": "Protobuf Schema Builder", "link": "/tools/protobuf-schema", "type": "dev", "tag": ""},
                     {"name": "Diff Viewer", "link": "/tools/diff-viewer", "type": "dev", "tag": ""},
                     {"name": "Calendar Week Calculator", "link": "/tools/calendar-week", "type": "date", "tag": ""},
