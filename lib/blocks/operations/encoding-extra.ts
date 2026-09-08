@@ -14,6 +14,8 @@ import {
 } from '@/Components/Functions/TextEscapeTools/logic';
 import { normalizeText, NormalizationForm } from '@/Components/Functions/UnicodeNormalizerTools/logic';
 import { textToDataUrl } from '@/Components/Functions/DataUrlTools/logic';
+import { parseAsn1Text, lookupOid, formatOidLookup } from '@/Components/Functions/Asn1Tools/logic';
+import { publicKeyPem, formatCsr, parseCsr, jwkToPem, pemToJwk } from '@/Components/Functions/KeyTools/logic';
 import { Operation } from '../types';
 
 const escapeFlavors = {
@@ -189,5 +191,68 @@ export const encodingExtraOperations: Operation[] = [
     terminal: true,
     fn: (input, p) =>
       toHexDump(input, parseInt(p.width ?? '16'), (p.encoding ?? 'utf-8') as HexDumpEncoding),
+  },
+  {
+    id: 'asn1-parse',
+    name: 'ASN.1 Parse',
+    category: 'encoding',
+    params: [
+      {
+        id: 'offsets',
+        label: 'Offsets',
+        kind: 'select',
+        options: [
+          { value: 'show', label: 'Show' },
+          { value: 'hide', label: 'Hide' },
+        ],
+        default: 'show',
+      },
+    ],
+    terminal: true,
+    fn: (input, p) => parseAsn1Text(input, { offsets: (p.offsets ?? 'show') === 'show' }),
+  },
+  {
+    id: 'oid-lookup',
+    name: 'OID Lookup',
+    category: 'encoding',
+    params: [],
+    terminal: true,
+    fn: (input) => formatOidLookup(lookupOid(input)),
+  },
+  {
+    id: 'oid-to-hex',
+    name: 'OID → Hex',
+    category: 'encoding',
+    params: [],
+    fn: (input) => lookupOid(input).derHex,
+  },
+  {
+    id: 'extract-public-key',
+    name: 'Extract Public Key',
+    category: 'encoding',
+    params: [],
+    fn: (input) => publicKeyPem(input),
+  },
+  {
+    id: 'csr-parse',
+    name: 'Parse CSR',
+    category: 'encoding',
+    params: [],
+    terminal: true,
+    fn: (input) => formatCsr(parseCsr(input)),
+  },
+  {
+    id: 'jwk-to-pem',
+    name: 'JWK → PEM',
+    category: 'encoding',
+    params: [],
+    fn: (input) => jwkToPem(input),
+  },
+  {
+    id: 'pem-to-jwk',
+    name: 'PEM → JWK',
+    category: 'encoding',
+    params: [],
+    fn: (input) => pemToJwk(input),
   },
 ];

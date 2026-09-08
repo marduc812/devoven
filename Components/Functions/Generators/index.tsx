@@ -693,3 +693,135 @@ export function RsaKeyPairGenerator() {
     />
   );
 }
+
+// ─── ECDSA Key Pair Generator ─────────────────────────────────────────────────
+
+type EcCurve = 'P-256' | 'P-384' | 'P-521';
+
+const CURVE_NOTES: Record<EcCurve, string> = {
+  'P-256': 'P-256 (prime256v1) — ES256, the default nearly everywhere',
+  'P-384': 'P-384 (secp384r1) — ES384',
+  'P-521': 'P-521 (secp521r1) — ES512',
+};
+
+export function EcdsaKeyPairGenerator() {
+  const [curve, setCurve] = useState<EcCurve>('P-256');
+  const [publicKey, setPublicKey] = useState('');
+  const [privateKey, setPrivateKey] = useState('');
+  const [publicJwk, setPublicJwk] = useState('');
+  const [privateJwk, setPrivateJwk] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const generate = async () => {
+    setError('');
+    setPublicKey('');
+    setPrivateKey('');
+    setPublicJwk('');
+    setPrivateJwk('');
+    setIsLoading(true);
+    try {
+      const keyPair = await window.crypto.subtle.generateKey(
+        { name: 'ECDSA', namedCurve: curve },
+        true, // extractable
+        ['sign', 'verify'],
+      );
+      const [pubBuffer, privBuffer, pubJwk, privJwk] = await Promise.all([
+        window.crypto.subtle.exportKey('spki', keyPair.publicKey),
+        window.crypto.subtle.exportKey('pkcs8', keyPair.privateKey),
+        window.crypto.subtle.exportKey('jwk', keyPair.publicKey),
+        window.crypto.subtle.exportKey('jwk', keyPair.privateKey),
+      ]);
+      setPublicKey(arrayBufferToPem(pubBuffer, 'PUBLIC KEY'));
+      setPrivateKey(arrayBufferToPem(privBuffer, 'PRIVATE KEY'));
+      setPublicJwk(JSON.stringify(pubJwk, null, 2));
+      setPrivateJwk(JSON.stringify(privJwk, null, 2));
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to generate the key pair.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const downloadText = (content: string, filename: string) => {
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const pane = (
+    label: string,
+    value: string,
+    filename: string,
+    rows: number,
+  ) => (
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-row justify-between items-center">
+        <label className={labelClass}>{label}</label>
+        <button
+          onClick={() => downloadText(value, filename)}
+          className="text-xs text-gray-500 hover:text-gray-900 border border-gray-200 px-2 py-1 transition-colors"
+        >
+          Download
+        </button>
+      </div>
+      <textarea
+        readOnly
+        value={value}
+        rows={rows}
+        className={textareaClass}
+        onClick={e => (e.target as HTMLTextAreaElement).select()}
+      />
+    </div>
+  );
+
+  return (
+    <Panel
+      title="ECDSA Key Pair Generator"
+      description="Generate an [1 ECDSA 2] key pair in your browser with the WebCrypto API. Elliptic curve keys are a fraction of the size of an RSA key at the same strength, which is why [1 ES256 2] is the usual choice for a JWT. You get both the PEM pair (SPKI public, PKCS#8 private) and the JWK pair. Nothing leaves your browser."
+      backColor="lime"
+      extraElements={
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <label className={labelClass}>Curve</label>
+            <select
+              value={curve}
+              onChange={e => setCurve(e.target.value as EcCurve)}
+              className={selectClass}
+            >
+              {(Object.keys(CURVE_NOTES) as EcCurve[]).map(name => (
+                <option key={name} value={name}>{CURVE_NOTES[name]}</option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            onClick={generate}
+            disabled={isLoading}
+            className={`${buttonPrimaryClass} disabled:opacity-50`}
+          >
+            {isLoading ? 'Generating key pair...' : 'Generate Key Pair'}
+          </button>
+
+          {error && <p className="text-red-400 text-sm">{error}</p>}
+
+          {publicKey && (
+            <>
+              {pane('Public Key (SPKI PEM)', publicKey, 'ecdsa_public_key.pem', 5)}
+              {pane('Private Key (PKCS#8 PEM)', privateKey, 'ecdsa_private_key.pem', 6)}
+              {pane('Public Key (JWK)', publicJwk, 'ecdsa_public_key.jwk.json', 8)}
+              {pane('Private Key (JWK)', privateJwk, 'ecdsa_private_key.jwk.json', 9)}
+              <p className="text-xs text-yellow-400">
+                Keep your private key secret. Do not share it or commit it to version control.
+              </p>
+            </>
+          )}
+        </div>
+      }
+    />
+  );
+}
