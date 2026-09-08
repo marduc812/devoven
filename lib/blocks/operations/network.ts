@@ -11,6 +11,7 @@ import { extractFromText, formatExtractResults, ExtractType } from '@/Components
 import { defangText, fangText, DotStyle, DefangScope } from '@/Components/Functions/DefangTools/logic';
 import { dissectText, Layer } from '@/Components/Functions/PacketTools/logic';
 import { groupIpsText } from '@/Components/Functions/IpGroupTools/logic';
+import { bypassPayloadsText, ALL_SECTIONS, SECTION_TITLES, Section } from '@/Components/Functions/SsrfBypassTools/logic';
 import { Operation } from '../types';
 
 export const networkOperations: Operation[] = [
@@ -197,5 +198,32 @@ export const networkOperations: Operation[] = [
       },
     ],
     fn: (input, p) => groupIpsText(input, p.floor === 'off' || !p.floor ? undefined : Number(p.floor)),
+  },
+  {
+    id: 'ssrf-bypass',
+    name: 'SSRF Bypass Payloads',
+    category: 'network',
+    inputs: [
+      { id: 'target', label: 'Target', placeholder: 'http://127.0.0.1:8080/admin' },
+      { id: 'allowed', label: 'Allowlisted host', placeholder: 'allowed.example.com' },
+    ],
+    params: [
+      {
+        id: 'section',
+        label: 'Show',
+        kind: 'select',
+        options: [
+          { value: 'all', label: 'Everything' },
+          ...ALL_SECTIONS.map((key) => ({ value: key, label: SECTION_TITLES[key] })),
+        ],
+        default: 'all',
+      },
+    ],
+    fn: (_input, p) =>
+      bypassPayloadsText(
+        p.target ?? '',
+        p.allowed ?? '',
+        !p.section || p.section === 'all' ? undefined : [p.section as Section],
+      ),
   },
 ];

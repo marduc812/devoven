@@ -13,7 +13,16 @@ import { trimTrailingNewline } from '@/lib/textFile';
 export const inputClass =
   'bg-white text-gray-900 placeholder:text-gray-400 p-3 w-full border border-gray-300 focus:border-gray-900 focus:outline-none transition-colors duration-150 font-mono text-sm';
 
-export const CopyButton = ({ text, label }: { text: string; label?: string }) => {
+export const CopyButton = ({
+  text,
+  label,
+  verb = 'copy',
+}: {
+  text: string;
+  label?: string;
+  /** The resting word, for lists where a row copy and a copy-all sit together. */
+  verb?: string;
+}) => {
   const [copied, setCopied] = useState(false);
 
   const copy = () => {
@@ -32,7 +41,7 @@ export const CopyButton = ({ text, label }: { text: string; label?: string }) =>
       aria-label={`Copy ${label ?? text}`}
       className="text-[10px] uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-colors duration-150 cursor-pointer"
     >
-      {copied ? 'copied' : 'copy'}
+      {copied ? 'copied' : verb}
     </button>
   );
 };
