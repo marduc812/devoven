@@ -663,7 +663,13 @@ export const menu: MenuGroupType[] = [
             {"name": "IP Subnet Calculator", "link": "/network/subnet-calc", "type": "network", "tag": ""},
             {"name": "NTP Time Calculator", "link": "/network/ntp-time", "type": "network", "tag": ""},
             {"name": "URL Builder", "link": "/network/url-builder", "type": "network", "tag": ""},
-            {"name": "URL Defanger", "link": "/network/defang", "type": "network", "tag": ""}
+            {"name": "URL Defanger", "link": "/network/defang", "type": "network", "tag": ""},
+            {"name": "Ethernet Frame Parser", "link": "/network/ethernet-frame", "type": "network", "tag": ""},
+            {"name": "IPv4 Header Parser", "link": "/network/ipv4-header", "type": "network", "tag": ""},
+            {"name": "TCP Header Parser", "link": "/network/tcp-header", "type": "network", "tag": ""},
+            {"name": "UDP Header Parser", "link": "/network/udp-header", "type": "network", "tag": ""},
+            {"name": "TLS Record Parser", "link": "/network/tls-record", "type": "network", "tag": ""},
+            {"name": "Group IP Addresses", "link": "/network/group-ips", "type": "network", "tag": ""}
         ],
         "color": "sky",
         "titleColor": "skyTitle",
