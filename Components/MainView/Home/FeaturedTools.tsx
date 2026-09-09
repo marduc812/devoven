@@ -3,15 +3,15 @@ import Link from 'next/link';
 import { IoArrowForward } from 'react-icons/io5';
 
 const featured = [
-    { name: 'String to Bytes32',         link: '/converting/string-to-bytes32',    category: 'Web3',     color: 'bg-indigo-400' },
-    { name: 'Bytes32 to String',         link: '/converting/bytes32-to-string',    category: 'Web3',     color: 'bg-indigo-400' },
-    { name: 'Number to Bytes32',         link: '/converting/number-to-bytes32',    category: 'Web3',     color: 'bg-indigo-400' },
-    { name: 'Bytes32 to Number',         link: '/converting/bytes32-to-number',    category: 'Web3',     color: 'bg-indigo-400' },
-    { name: 'Google Maps API Scanner',   link: '/tools/gmaps-api-scanner',         category: 'Security', color: 'bg-emerald-400' },
-    { name: 'ETH Public Key to Address', link: '/converting/eth-public-to-address',category: 'Web3',     color: 'bg-indigo-400' },
-    { name: 'HMAC-SHA1',                 link: '/hashing/hmac-sha1',               category: 'Hashing',  color: 'bg-teal-400' },
-    { name: 'Password Strength',         link: '/tools/password-strength',         category: 'Security', color: 'bg-emerald-400' },
-    { name: 'JWT Editor',               link: '/encoding/jwt-editor',              category: 'Encoding', color: 'bg-amber-400' },
+    { name: 'Memory Address Calculator', link: '/tools/memory-addr',           category: 'Binary',   color: 'bg-lime-400' },
+    { name: 'Tic-Tac-Toe Analyzer',      link: '/tools/tic-tac-toe',           category: 'Games',    color: 'bg-fuchsia-400' },
+    { name: 'Google Maps API Scanner',   link: '/tools/gmaps-api-scanner',     category: 'Security', color: 'bg-emerald-400' },
+    { name: 'CRX Downloader',            link: '/tools/crx-downloader',        category: 'Developer',color: 'bg-sky-400' },
+    { name: 'HMAC-SHA256',               link: '/hashing/hmac-sha256',         category: 'Hashing',  color: 'bg-teal-400' },
+    { name: 'Bytes32 to String',         link: '/converting/bytes32-to-string',category: 'Web3',     color: 'bg-indigo-400' },
+    { name: 'String to Bytes32',         link: '/converting/string-to-bytes32',category: 'Web3',     color: 'bg-indigo-400' },
+    { name: 'Week Number Calculator',    link: '/converting/week-number-calculator', category: 'Date', color: 'bg-cyan-400' },
+    { name: 'Nmap Viewer',               link: '/tools/nmap-viewer',           category: 'Security', color: 'bg-emerald-400' },
 ];
 
 const FeaturedTools = () => {
