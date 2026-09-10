@@ -1,4 +1,4 @@
-import { atbashLatin, atbashHebrew, atbash, getSubstitutionTable, processAtbash } from '@/Components/Functions/AtbashCipherTools/logic';
+import { atbashLatin, atbashHebrew, atbash, processAtbash } from '@/Components/Functions/AtbashCipherTools/logic';
 
 describe('atbashLatin', () => {
   it('A becomes Z', () => expect(atbashLatin('A')).toBe('Z'));
@@ -39,28 +39,12 @@ describe('atbash', () => {
   });
 });
 
-describe('getSubstitutionTable', () => {
-  it('returns two lines', () => {
-    const table = getSubstitutionTable();
-    expect(table.split('\n')).toHaveLength(2);
-  });
-  it('plain line has 26 chars after prefix', () => {
-    const table = getSubstitutionTable();
-    const line = table.split('\n')[0];
-    expect(line).toContain('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
-  });
-  it('cipher line starts with Z (A->Z)', () => {
-    const table = getSubstitutionTable();
-    const line = table.split('\n')[1];
-    expect(line).toContain('ZYXWVUTSRQPONMLKJIHGFEDCBA');
-  });
-});
-
 describe('processAtbash', () => {
-  it('returns result and table', () => {
-    const r = processAtbash('Hello', false);
-    expect(r).toContain('---');
-    expect(r).toContain('Svool');
+  it('returns only the ciphered text', () => {
+    expect(processAtbash('Hello', false)).toBe('Svool');
+  });
+  it('is its own inverse', () => {
+    expect(processAtbash(processAtbash('Hello World', false), false)).toBe('Hello World');
   });
   it('returns empty for empty input', () => {
     expect(processAtbash('', false)).toBe('');

@@ -34,15 +34,7 @@ export function atbash(text: string, includeHebrew: boolean): string {
   return result;
 }
 
-export function getSubstitutionTable(): string {
-  const plain = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const cipher = plain.split('').map(ch => atbashLatin(ch)).join('');
-  return 'Plain:  ' + plain + '\nCipher: ' + cipher;
-}
-
 export function processAtbash(text: string, includeHebrew: boolean): string {
   if (!text.trim()) return '';
-  const result = atbash(text, includeHebrew);
-  const table = getSubstitutionTable();
-  return result + '\n\n---\nSubstitution alphabet (Atbash is its own inverse):\n' + table;
+  return atbash(text, includeHebrew);
 }

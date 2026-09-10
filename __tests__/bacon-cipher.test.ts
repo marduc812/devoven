@@ -51,14 +51,13 @@ describe('isBaconEncoded', () => {
 
 describe('processBacon', () => {
   it('encodes plain text', () => {
-    const r = processBacon('A', 'AB');
-    expect(r).toContain('Encode');
-    expect(r).toContain('AAAAA');
+    expect(processBacon('A', 'AB')).toBe('AAAAA');
   });
   it('decodes bacon codes', () => {
-    const r = processBacon('AAAAA', 'AB');
-    expect(r).toContain('Decode');
-    expect(r).toContain('A');
+    expect(processBacon('AAAAA', 'AB')).toBe('A');
+  });
+  it('round-trips its own output', () => {
+    expect(processBacon(processBacon('HELLO', 'AB'), 'AB')).toBe('HELLO');
   });
   it('returns empty for empty input', () => {
     expect(processBacon('', 'AB')).toBe('');
