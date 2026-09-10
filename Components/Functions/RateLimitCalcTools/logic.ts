@@ -157,3 +157,105 @@ export function calculateRateLimit(input: string): RateLimitResult | null {
     formatted: lines.join('\n'),
   };
 }
+
+// ─── Helpers for the interactive UI ──────────────────────────────────────────
+
+/** Rates scaled by an arbitrary fraction of the limit (0.8 = 80% headroom). */
+export function marginRates(perSecond: number, fraction: number) {
+  return safetyMargin(perSecond, fraction);
+}
+
+/** Seconds between two requests when sending at exactly `perSecond`. */
+export function requestInterval(perSecond: number): number {
+  return perSecond > 0 ? 1 / perSecond : 0;
+}
+
+/** A duration in seconds written the way a person would say it. */
+export function humanDuration(seconds: number): string {
+  if (!isFinite(seconds) || seconds <= 0) return '0 s';
+  if (seconds < 0.001) return `${(seconds * 1_000_000).toFixed(0)} µs`;
+  if (seconds < 1) return `${(seconds * 1000).toFixed(seconds < 0.01 ? 1 : 0)} ms`;
+  if (seconds < 60) return `${seconds < 10 ? seconds.toFixed(2) : seconds.toFixed(1)} s`;
+  if (seconds < 3600) {
+    const m = Math.floor(seconds / 60);
+    const s = Math.round(seconds % 60);
+    return s ? `${m} min ${s} s` : `${m} min`;
+  }
+  if (seconds < 86400) {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.round((seconds % 3600) / 60);
+    return m ? `${h} h ${m} min` : `${h} h`;
+  }
+  const d = Math.floor(seconds / 86400);
+  const h = Math.round((seconds % 86400) / 3600);
+  return h ? `${d} d ${h} h` : `${d} d`;
+}
+
+export type TokenBucketParams = {
+  capacity: number;
+  refillPerSecond: number;
+  burstCapacity: number;
+  drainSeconds: number;
+  refillSeconds: number;
+};
+
+/**
+ * Token bucket sized so a client can burst for `burstSeconds` of quota before
+ * the bucket empties and the refill rate takes over.
+ */
+export function tokenBucketParams(perSecond: number, burstSeconds: number): TokenBucketParams {
+  const capacity = Math.max(1, Math.round(perSecond * burstSeconds));
+  return {
+    capacity,
+    refillPerSecond: perSecond,
+    burstCapacity: capacity,
+    drainSeconds: burstSeconds,
+    refillSeconds: perSecond > 0 ? capacity / perSecond : 0,
+  };
+}
+
+/** The quota one client gets when `clients` of them share the same limit. */
+export function perClientRates(perSecond: number, clients: number) {
+  const n = Math.max(1, Math.floor(clients));
+  const each = perSecond / n;
+  return {
+    clients: n,
+    perSecond: each,
+    perMinute: each * 60,
+    perHour: each * 3600,
+    perDay: each * 86400,
+    intervalSeconds: requestInterval(each),
+  };
+}
+
+export type BackoffStep = { attempt: number; delaySeconds: number; cumulativeSeconds: number };
+
+/**
+ * Exponential backoff starting at `baseSeconds` and doubling, clamped to
+ * `capSeconds`. Delays are what you wait *before* each retry.
+ */
+export function backoffSchedule(baseSeconds: number, attempts: number, capSeconds: number): BackoffStep[] {
+  const base = baseSeconds > 0 ? baseSeconds : 1;
+  const cap = capSeconds > 0 ? capSeconds : base;
+  const steps: BackoffStep[] = [];
+  let cumulative = 0;
+  for (let i = 0; i < attempts; i++) {
+    const delay = Math.min(base * Math.pow(2, i), cap);
+    cumulative += delay;
+    steps.push({ attempt: i + 1, delaySeconds: delay, cumulativeSeconds: cumulative });
+  }
+  return steps;
+}
+
+/** Build a ParsedRate straight from a number and a unit, skipping the parser. */
+export function rateFromParts(requests: number, unit: RateUnit): ParsedRate {
+  const perSecond = requests / UNIT_TO_SECONDS[unit];
+  return {
+    requests,
+    unit,
+    perSecond,
+    perMinute: perSecond * 60,
+    perHour: perSecond * 3600,
+    perDay: perSecond * 86400,
+  };
+}
