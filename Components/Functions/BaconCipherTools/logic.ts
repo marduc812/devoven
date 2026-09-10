@@ -87,11 +87,7 @@ export function isBaconEncoded(text: string, repr: BaconRepresentation): boolean
 
 export function processBacon(text: string, repr: BaconRepresentation): string {
   if (!text.trim()) return '';
-  if (isBaconEncoded(text, repr)) {
-    const decoded = decodeFromBacon(text, repr);
-    return 'Mode: Decode\n\nPlaintext: ' + decoded;
-  }
-  const encoded = encodeToBacon(text, repr);
-  return 'Mode: Encode\n\nBacon codes:\n' + encoded;
+  if (isBaconEncoded(text, repr)) return decodeFromBacon(text, repr);
+  return encodeToBacon(text, repr);
 }
 
