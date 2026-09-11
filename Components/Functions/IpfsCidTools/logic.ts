@@ -228,7 +228,7 @@ export function decodeCID(cid: string): CIDInfo {
 export function formatCIDInfo(info: CIDInfo): string {
   if (!info.valid) return `Error: ${info.error}`;
 
-  return [
+  const lines = [
     `CID Version:     v${info.version}`,
     `Base Encoding:   ${info.baseEncoding}`,
     `Codec:           ${info.codec} (0x${info.codecCode?.toString(16)})`,
@@ -239,5 +239,179 @@ export function formatCIDInfo(info: CIDInfo): string {
     `  Digest (hex):  ${info.digestHex}`,
     ``,
     `Structure: <version><codec><hash-fn><digest-len><digest>`,
-  ].join('\n');
+  ];
+
+  const forms = cidForms(info);
+  if (forms) {
+    lines.push(
+      ``,
+      `Other Encodings:`,
+      `  CIDv1 base32:  ${forms.v1Base32}`,
+      `  CIDv1 base58:  ${forms.v1Base58}`,
+      `  CIDv1 base16:  ${forms.v1Hex}`,
+      forms.v0 ? `  CIDv0:         ${forms.v0}` : `  CIDv0:         not applicable — ${forms.v0Note}`,
+    );
+  }
+
+  return lines.join('\n');
+}
+
+// ---------------------------------------------------------------------------
+// Re-encoding
+//
+// A decoded CID is the same digest wearing a different coat: the multihash can
+// be wrapped as v1 and printed in any multibase, and — when the block is dag-pb
+// with a 32-byte sha2-256 digest — as the bare v0 multihash people still paste
+// around. The tool shows all of them so nobody has to run `ipfs cid base32`.
+
+function varintEncode(value: number): number[] {
+  const out: number[] = [];
+  let v = value;
+  while (v >= 0x80) {
+    out.push((v & 0x7f) | 0x80);
+    v >>>= 7;
+  }
+  out.push(v);
+  return out;
+}
+
+function base58Encode(bytes: Uint8Array): string {
+  let zeros = 0;
+  while (zeros < bytes.length && bytes[zeros] === 0) zeros++;
+
+  const digits: number[] = [];
+  for (let i = zeros; i < bytes.length; i++) {
+    let carry = bytes[i];
+    for (let j = 0; j < digits.length; j++) {
+      const val = digits[j] * 256 + carry;
+      digits[j] = val % 58;
+      carry = (val / 58) | 0;
+    }
+    while (carry > 0) {
+      digits.push(carry % 58);
+      carry = (carry / 58) | 0;
+    }
+  }
+
+  let out = '1'.repeat(zeros);
+  for (let i = digits.length - 1; i >= 0; i--) out += BASE58_ALPHABET[digits[i]];
+  return out;
+}
+
+function base32Encode(bytes: Uint8Array): string {
+  let out = '';
+  let buffer = 0;
+  let bits = 0;
+  for (const b of bytes) {
+    buffer = (buffer << 8) | b;
+    bits += 8;
+    while (bits >= 5) {
+      bits -= 5;
+      out += BASE32_ALPHABET[(buffer >> bits) & 31];
+    }
+  }
+  if (bits > 0) out += BASE32_ALPHABET[(buffer << (5 - bits)) & 31];
+  return out;
+}
+
+function hexToBytes(hex: string): Uint8Array {
+  const bytes = new Uint8Array(Math.floor(hex.length / 2));
+  for (let i = 0; i < bytes.length; i++) bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+  return bytes;
+}
+
+export type CIDForms = {
+  /** Canonical CIDv1, base32 — what gateways and subdomain URLs want. */
+  v1Base32: string;
+  v1Base58: string;
+  v1Hex: string;
+  /** Present only when the CID is expressible as v0. */
+  v0?: string;
+  /** Why it is not, when it is not. */
+  v0Note?: string;
+};
+
+export function cidForms(info: CIDInfo): CIDForms | null {
+  if (!info.valid) return null;
+  if (info.codecCode === undefined || info.hashFunctionCode === undefined || !info.digestHex) return null;
+
+  const digest = hexToBytes(info.digestHex);
+  const multihash = Uint8Array.from([
+    ...varintEncode(info.hashFunctionCode),
+    ...varintEncode(digest.length),
+    ...digest,
+  ]);
+  const v1 = Uint8Array.from([...varintEncode(1), ...varintEncode(info.codecCode), ...multihash]);
+
+  const forms: CIDForms = {
+    v1Base32: `b${base32Encode(v1)}`,
+    v1Base58: `z${base58Encode(v1)}`,
+    v1Hex: `f${bytesToHex(v1)}`,
+  };
+
+  if (info.codecCode === 0x70 && info.hashFunctionCode === 0x12 && digest.length === 32) {
+    forms.v0 = base58Encode(multihash);
+  } else {
+    forms.v0Note = 'CIDv0 exists only for dag-pb blocks with a 32-byte sha2-256 digest';
+  }
+
+  return forms;
+}
+
+/** The decoded bytes, segment by segment — the multiformats layout made visible. */
+export type CIDSegment = { label: string; hex: string; note: string };
+
+export function cidSegments(info: CIDInfo): CIDSegment[] {
+  if (!info.valid || info.hashFunctionCode === undefined || !info.digestHex) return [];
+
+  const hashFn = { label: 'Hash function', hex: varintHex(info.hashFunctionCode), note: info.hashFunction ?? '' };
+  const digestLen = {
+    label: 'Digest length',
+    hex: varintHex(info.digestHex.length / 2),
+    note: `${info.digestHex.length / 2} bytes`,
+  };
+  const digest = { label: 'Digest', hex: info.digestHex, note: 'The hash of the content itself' };
+
+  if (info.version === 0) {
+    return [
+      { label: 'Version', hex: '—', note: 'Implicit: a bare multihash is CIDv0' },
+      { label: 'Codec', hex: '—', note: 'Implicit: dag-pb' },
+      hashFn,
+      digestLen,
+      digest,
+    ];
+  }
+
+  return [
+    { label: 'Version', hex: '01', note: 'CIDv1' },
+    { label: 'Codec', hex: varintHex(info.codecCode ?? 0), note: info.codec ?? '' },
+    hashFn,
+    digestLen,
+    digest,
+  ];
+}
+
+/** A multicodec/multihash code as it actually appears in the bytes. */
+function varintHex(code: number): string {
+  return bytesToHex(Uint8Array.from(varintEncode(code)));
+}
+
+export type GatewayLink = { name: string; url: string };
+
+/** Public gateways, plus the subdomain form that only a base32 v1 can take. */
+export function gatewayLinks(forms: CIDForms | null): GatewayLink[] {
+  if (!forms) return [];
+  const cid = forms.v1Base32;
+  return [
+    { name: 'ipfs.io', url: `https://ipfs.io/ipfs/${cid}` },
+    { name: 'dweb.link', url: `https://dweb.link/ipfs/${cid}` },
+    { name: 'w3s.link', url: `https://w3s.link/ipfs/${cid}` },
+    { name: 'dweb.link (subdomain)', url: `https://${cid}.ipfs.dweb.link/` },
+  ];
+}
+
+/** Splits "dag-pb (MerkleDAG protobuf)" into its name and its gloss. */
+export function splitLabel(label: string): { name: string; note?: string } {
+  const match = /^(.*?)\s*\((.*)\)$/.exec(label);
+  return match ? { name: match[1], note: match[2] } : { name: label };
 }
