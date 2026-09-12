@@ -65,6 +65,8 @@ export const menu: MenuGroupType[] = [
             {"name": "Zlib Deflate & Inflate", "link": "/encoding/zlib", "type": "compression", "tag": ""},
             {"name": "Raw Deflate & Inflate", "link": "/encoding/raw-deflate", "type": "compression", "tag": ""},
             {"name": "LZString Compress & Decompress", "link": "/encoding/lz-string", "type": "compression", "tag": ""},
+            {"name": "Bzip2 Decompress", "link": "/encoding/bzip2", "type": "compression", "tag": ""},
+            {"name": "LZMA Compress & Decompress", "link": "/encoding/lzma", "type": "compression", "tag": ""},
         ],
        "color": "yellow",
         "titleColor": "yellowTitle",
@@ -670,7 +672,8 @@ export const menu: MenuGroupType[] = [
             {"name": "UDP Header Parser", "link": "/network/udp-header", "type": "network", "tag": ""},
             {"name": "TLS Record Parser", "link": "/network/tls-record", "type": "network", "tag": ""},
             {"name": "Group IP Addresses", "link": "/network/group-ips", "type": "network", "tag": ""},
-            {"name": "SSRF Bypass Payloads", "link": "/network/ssrf-bypass", "type": "network", "tag": ""}
+            {"name": "SSRF Bypass Payloads", "link": "/network/ssrf-bypass", "type": "network", "tag": ""},
+            {"name": "User-Agent Parser", "link": "/network/user-agent", "type": "network", "tag": ""}
         ],
         "color": "sky",
         "titleColor": "skyTitle",

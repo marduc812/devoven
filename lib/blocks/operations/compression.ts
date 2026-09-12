@@ -13,6 +13,11 @@ import {
   lzDecompress,
   variantLabel,
 } from '@/Components/Functions/LzStringTools/logic';
+import {
+  compressLzma,
+  decompressBzip2,
+  decompressLzma,
+} from '@/Components/Functions/CompressionTools2/logic';
 import { Operation } from '../types';
 
 const encodingParam = {
@@ -56,15 +61,19 @@ const resultParam = {
 const encodingOf = (params: Record<string, string>): BinaryEncoding =>
   params.encoding === 'hex' ? 'hex' : 'base64';
 
+/** Render decompressed bytes the way the `as` param asks for. */
+function emit(bytes: Uint8Array, params: Record<string, string>): string {
+  if (params.as === 'base64' || params.as === 'hex') return encodeBytes(bytes, params.as);
+  return new TextDecoder().decode(bytes);
+}
+
 function decompress(
   input: string,
   format: CompressionFormat,
   params: Record<string, string>,
 ): string {
   if (!input.trim()) return '';
-  const bytes = decompressBytes(decodeBytes(input, encodingOf(params)), format);
-  if (params.as === 'base64' || params.as === 'hex') return encodeBytes(bytes, params.as);
-  return new TextDecoder().decode(bytes);
+  return emit(decompressBytes(decodeBytes(input, encodingOf(params)), format), params);
 }
 
 // LZString ships one compressor in four wrappings, so the wrapping is a
@@ -124,6 +133,39 @@ export const compressionOperations: Operation[] = [
     category: 'encoding',
     params: [encodingParam, resultParam],
     fn: (input, params) => decompress(input, 'raw', params),
+  },
+  {
+    // No compress counterpart: there is no bzip2 encoder small and sane enough
+    // to sit in a pipeline. Decompressing is the direction people need anyway.
+    id: 'bzip2-decompress',
+    name: 'Bzip2 Decompress',
+    category: 'encoding',
+    params: [encodingParam, resultParam],
+    fn: (input, params) => {
+      if (!input.trim()) return '';
+      return emit(decompressBzip2(decodeBytes(input, encodingOf(params))), params);
+    },
+  },
+  {
+    id: 'lzma-compress',
+    name: 'LZMA Compress',
+    category: 'encoding',
+    params: [encodingParam, levelParam],
+    fn: (input, params) => {
+      if (!input) return '';
+      const bytes = compressLzma(new TextEncoder().encode(input), params.level);
+      return encodeBytes(bytes, encodingOf(params));
+    },
+  },
+  {
+    id: 'lzma-decompress',
+    name: 'LZMA Decompress',
+    category: 'encoding',
+    params: [encodingParam, resultParam],
+    fn: (input, params) => {
+      if (!input.trim()) return '';
+      return emit(decompressLzma(decodeBytes(input, encodingOf(params))), params);
+    },
   },
   {
     id: 'lzstring-compress',
