@@ -192,11 +192,22 @@ export function parseUserAgent(ua: string): ParsedUserAgent {
   else if (/gecko/i.test(ua) && !/webkit/i.test(ua)) engine = 'Gecko';
   else if (/webkit/i.test(ua)) engine = /chrome/i.test(ua) ? 'Blink' : 'WebKit';
 
+  // Order matters: every Chromium fork keeps the Chrome token, and the iOS
+  // browsers keep Safari's, so the token that names the real browser has to be
+  // tried before the one it is impersonating.
   let browser = 'Unknown', browserVersion = '';
-  if (/edg\/([\d.]+)/i.test(ua)) {
-    browser = 'Edge'; browserVersion = ua.match(/edg\/([\d.]+)/i)![1];
+  if (/edg(?:a|ios)?\/([\d.]+)/i.test(ua)) {
+    browser = 'Edge'; browserVersion = ua.match(/edg(?:a|ios)?\/([\d.]+)/i)![1];
   } else if (/opr\/([\d.]+)/i.test(ua)) {
     browser = 'Opera'; browserVersion = ua.match(/opr\/([\d.]+)/i)![1];
+  } else if (/vivaldi\/([\d.]+)/i.test(ua)) {
+    browser = 'Vivaldi'; browserVersion = ua.match(/vivaldi\/([\d.]+)/i)![1];
+  } else if (/samsungbrowser\/([\d.]+)/i.test(ua)) {
+    browser = 'Samsung Internet'; browserVersion = ua.match(/samsungbrowser\/([\d.]+)/i)![1];
+  } else if (/crios\/([\d.]+)/i.test(ua)) {
+    browser = 'Chrome'; browserVersion = ua.match(/crios\/([\d.]+)/i)![1];
+  } else if (/fxios\/([\d.]+)/i.test(ua)) {
+    browser = 'Firefox'; browserVersion = ua.match(/fxios\/([\d.]+)/i)![1];
   } else if (/chrome\/([\d.]+)/i.test(ua)) {
     browser = 'Chrome'; browserVersion = ua.match(/chrome\/([\d.]+)/i)![1];
   } else if (/firefox\/([\d.]+)/i.test(ua)) {
