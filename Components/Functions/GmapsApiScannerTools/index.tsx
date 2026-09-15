@@ -5,7 +5,7 @@ import Panel from '@/Components/MainView/MainPanel/Panel';
 
 type CheckResult = {
   name: string;
-  status: 'vulnerable' | 'restricted' | 'error';
+  status: 'vulnerable' | 'restricted' | 'rejected' | 'error';
   detail: string;
 };
 
@@ -17,6 +17,10 @@ const statusStyles: Record<CheckResult['status'], { badge: string; label: string
   restricted: {
     badge: 'border border-green-300 bg-green-50 text-green-700 dark:border-green-700 dark:bg-green-950 dark:text-green-400',
     label: 'Restricted',
+  },
+  rejected: {
+    badge: 'border border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-400',
+    label: 'Rejected',
   },
   error: {
     badge: 'border border-gray-300 bg-gray-50 text-gray-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400',
@@ -63,6 +67,7 @@ export const GmapsApiScanner = () => {
 
   const vulnerableCount = results?.filter((r) => r.status === 'vulnerable').length ?? 0;
   const restrictedCount = results?.filter((r) => r.status === 'restricted').length ?? 0;
+  const rejectedCount = results?.filter((r) => r.status === 'rejected').length ?? 0;
 
   const content = (
     <div className="flex flex-col gap-5">
@@ -112,7 +117,24 @@ export const GmapsApiScanner = () => {
               <span className="w-2.5 h-2.5 bg-green-500 rounded-full" />
               <span className="text-sm text-gray-700 dark:text-gray-300">{restrictedCount} Restricted</span>
             </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 bg-amber-500 rounded-full" />
+              <span className="text-sm text-gray-700 dark:text-gray-300">{rejectedCount} Rejected</span>
+            </div>
           </div>
+
+          {/* A bare 403 used to be printed as a green Restricted, which reads as
+              "this key is safe". It is not the same claim. */}
+          {rejectedCount > 0 && (
+            <div className="border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950 px-4 py-3 text-amber-800 dark:text-amber-300 text-sm">
+              <span className="font-bold uppercase tracking-wider text-xs">Rejected is not the same as safe.</span>{' '}
+              Google refused these calls without saying why. A key locked to an HTTP
+              referrer, a key whose API is switched off, and a key that is simply over
+              quota all look identical from here. This scan sends no Referer header, so
+              referrer restrictions are never tested, and anyone holding a leaked key can
+              forge that header anyway.
+            </div>
+          )}
 
           <div className="border border-gray-200 dark:border-gray-700 overflow-hidden">
             <table className="w-full text-sm">

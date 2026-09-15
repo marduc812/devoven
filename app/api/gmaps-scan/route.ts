@@ -5,11 +5,21 @@ import { NextRequest, NextResponse } from 'next/server';
 // Throttling it is deliberately not done here: on the hosted site it belongs at
 // the edge (Vercel WAF rate-limit rules), and a local checkout does not need it.
 
+// `restricted` means Google said why it refused: a restriction message or a
+// not-enabled message. `rejected` means it refused without saying, which the
+// scan cannot tell apart from a key that is merely over quota, and which says
+// nothing about referrer restrictions because no Referer header is sent.
+// `error` is a failure on our side, such as a timeout.
 type CheckResult = {
   name: string;
-  status: 'vulnerable' | 'restricted' | 'error';
+  status: 'vulnerable' | 'restricted' | 'rejected' | 'error';
   detail: string;
 };
+
+/** Google refused and did not say why. */
+function unexplained(name: string, status: number): CheckResult {
+  return { name, status: 'rejected', detail: `HTTP ${status} (no reason given)` };
+}
 
 type CheckDef = {
   name: string;
@@ -34,6 +44,9 @@ async function checkJson(
       const raw = data[errorField];
       return { name, status: 'restricted', detail: typeof raw === 'string' ? raw : JSON.stringify(raw) };
     }
+    if (!res.ok) {
+      return unexplained(name, res.status);
+    }
     return { name, status: 'vulnerable', detail: 'API key is not restricted for this API' };
   } catch (e: unknown) {
     return { name, status: 'error', detail: safeMessage(e) };
@@ -50,7 +63,7 @@ async function checkImage(
     if (res.ok && ct.includes('image')) {
       return { name, status: 'vulnerable', detail: 'API key is not restricted for this API' };
     }
-    return { name, status: 'restricted', detail: `Response: ${res.status}` };
+    return unexplained(name, res.status);
   } catch (e: unknown) {
     return { name, status: 'error', detail: safeMessage(e) };
   }
@@ -75,7 +88,7 @@ async function checkPost(
       return { name, status: 'restricted', detail: typeof data[errorField] === 'string' ? data[errorField] : JSON.stringify(data[errorField]) };
     }
     if (!res.ok) {
-      return { name, status: 'restricted', detail: `HTTP ${res.status}` };
+      return unexplained(name, res.status);
     }
     return { name, status: 'vulnerable', detail: 'API key is not restricted for this API' };
   } catch (e: unknown) {
@@ -184,7 +197,7 @@ const checks: CheckDef[] = [
         if (data.routes) {
           return { name: 'Route Directions', status: 'vulnerable' as const, detail: 'API key is not restricted for this API' };
         }
-        return { name: 'Route Directions', status: 'restricted' as const, detail: `HTTP ${res.status}` };
+        return unexplained('Route Directions', res.status);
       } catch (e: unknown) {
         return { name: 'Route Directions', status: 'error' as const, detail: safeMessage(e) };
       }
@@ -223,7 +236,7 @@ const checks: CheckDef[] = [
         if (res.ok) {
           return { name: 'FCM', status: 'vulnerable' as const, detail: 'API key is not restricted for this API' };
         }
-        return { name: 'FCM', status: 'restricted' as const, detail: `HTTP ${res.status}` };
+        return unexplained('FCM', res.status);
       } catch (e: unknown) {
         return { name: 'FCM', status: 'error' as const, detail: safeMessage(e) };
       }

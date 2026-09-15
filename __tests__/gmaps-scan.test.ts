@@ -96,7 +96,7 @@ describe('POST /api/gmaps-scan – detail is always a string', () => {
 
     for (const result of results) {
       expect(typeof result.detail).toBe('string');
-      expect(['vulnerable', 'restricted', 'error']).toContain(result.status);
+      expect(['vulnerable', 'restricted', 'rejected', 'error']).toContain(result.status);
     }
   });
 
@@ -186,7 +186,54 @@ describe('POST /api/gmaps-scan – result structure', () => {
     for (const result of results) {
       expect(typeof result.name).toBe('string');
       expect(typeof result.detail).toBe('string');
-      expect(['vulnerable', 'restricted', 'error']).toContain(result.status);
+      expect(['vulnerable', 'restricted', 'rejected', 'error']).toContain(result.status);
     }
+  });
+});
+
+describe('POST /api/gmaps-scan – restricted vs rejected', () => {
+  it('reports restricted only when Google says why it refused', async () => {
+    mockFetchJson({ error_message: 'This API project is not authorized to use this API.' }, false, 403);
+
+    const res = await POST(makeRequest(VALID_KEY));
+    const results = await res.json();
+
+    const directions = results.find((r: { name: string }) => r.name === 'Directions');
+    expect(directions.status).toBe('restricted');
+    expect(directions.detail).toMatch(/not authorized/i);
+  });
+
+  it('reports rejected for a bare 403 with no explanation', async () => {
+    // No error field on the body, so the only thing Google told us is the status.
+    mockFetchJson({}, false, 403);
+
+    const res = await POST(makeRequest(VALID_KEY));
+    const results = await res.json();
+
+    for (const result of results) {
+      expect(result.status).toBe('rejected');
+      expect(result.detail).toBe('HTTP 403 (no reason given)');
+    }
+  });
+
+  it('no longer calls a non-OK JSON response vulnerable', async () => {
+    // The old checkJson ignored res.ok: a 403 whose body lacked error_message
+    // came back as "vulnerable", which is the opposite of what happened.
+    mockFetchJson({}, false, 403);
+
+    const res = await POST(makeRequest(VALID_KEY));
+    const results = await res.json();
+
+    expect(results.some((r: { status: string }) => r.status === 'vulnerable')).toBe(false);
+  });
+
+  it('still reports vulnerable when a check succeeds', async () => {
+    mockFetchJson({ results: [], status: 'OK' }, true, 200);
+
+    const res = await POST(makeRequest(VALID_KEY));
+    const results = await res.json();
+
+    const geocoding = results.find((r: { name: string }) => r.name === 'Geocoding');
+    expect(geocoding.status).toBe('vulnerable');
   });
 });
