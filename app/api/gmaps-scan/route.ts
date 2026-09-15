@@ -16,6 +16,12 @@ type CheckDef = {
   run: (key: string) => Promise<CheckResult>;
 };
 
+/** Error text is returned to the caller, and every outbound URL carries the key. */
+function safeMessage(e: unknown): string {
+  const msg = e instanceof Error ? e.message : 'Unknown error';
+  return msg.replace(/AIza[0-9A-Za-z_-]{35}/g, '<redacted>');
+}
+
 async function checkJson(
   name: string,
   url: string,
@@ -30,8 +36,7 @@ async function checkJson(
     }
     return { name, status: 'vulnerable', detail: 'API key is not restricted for this API' };
   } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : 'Unknown error';
-    return { name, status: 'error', detail: msg };
+    return { name, status: 'error', detail: safeMessage(e) };
   }
 }
 
@@ -47,8 +52,7 @@ async function checkImage(
     }
     return { name, status: 'restricted', detail: `Response: ${res.status}` };
   } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : 'Unknown error';
-    return { name, status: 'error', detail: msg };
+    return { name, status: 'error', detail: safeMessage(e) };
   }
 }
 
@@ -75,8 +79,7 @@ async function checkPost(
     }
     return { name, status: 'vulnerable', detail: 'API key is not restricted for this API' };
   } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : 'Unknown error';
-    return { name, status: 'error', detail: msg };
+    return { name, status: 'error', detail: safeMessage(e) };
   }
 }
 
@@ -183,8 +186,7 @@ const checks: CheckDef[] = [
         }
         return { name: 'Route Directions', status: 'restricted' as const, detail: `HTTP ${res.status}` };
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : 'Unknown error';
-        return { name: 'Route Directions', status: 'error' as const, detail: msg };
+        return { name: 'Route Directions', status: 'error' as const, detail: safeMessage(e) };
       }
     },
   },
@@ -223,8 +225,7 @@ const checks: CheckDef[] = [
         }
         return { name: 'FCM', status: 'restricted' as const, detail: `HTTP ${res.status}` };
       } catch (e: unknown) {
-        const msg = e instanceof Error ? e.message : 'Unknown error';
-        return { name: 'FCM', status: 'error' as const, detail: msg };
+        return { name: 'FCM', status: 'error' as const, detail: safeMessage(e) };
       }
     },
   },

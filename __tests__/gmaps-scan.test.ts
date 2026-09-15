@@ -138,6 +138,35 @@ describe('POST /api/gmaps-scan – detail is always a string', () => {
   });
 });
 
+describe('POST /api/gmaps-scan – the key never comes back in an error', () => {
+  it('redacts the key from a thrown error message', async () => {
+    // Node currently puts the failing URL on e.cause rather than e.message, but
+    // every outbound URL carries key=<apiKey>, so one Node change closes that gap.
+    (global.fetch as jest.Mock).mockRejectedValue(
+      new Error(`request to https://maps.googleapis.com/maps/api/geocode/json?latlng=40,30&key=${VALID_KEY} failed`),
+    );
+
+    const res = await POST(makeRequest(VALID_KEY));
+    const results = await res.json();
+
+    for (const result of results) {
+      expect(result.detail).not.toContain(VALID_KEY);
+      expect(result.detail).toContain('<redacted>');
+    }
+  });
+
+  it('leaves an error message without a key alone', async () => {
+    (global.fetch as jest.Mock).mockRejectedValue(new Error('Network failure'));
+
+    const res = await POST(makeRequest(VALID_KEY));
+    const results = await res.json();
+
+    for (const result of results) {
+      expect(result.detail).toBe('Network failure');
+    }
+  });
+});
+
 describe('POST /api/gmaps-scan – result structure', () => {
   it('returns an array of 19 results', async () => {
     mockFetchJson({ error_message: 'Restricted' }, false, 403);
