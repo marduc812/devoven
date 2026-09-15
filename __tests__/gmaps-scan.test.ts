@@ -11,6 +11,16 @@ function makeRequest(apiKey: string) {
   });
 }
 
+// Deliberately separate from makeRequest: the point of the test below is the
+// header, so it cannot share a builder that always sets the right one.
+function makeRequestWithContentType(apiKey: string, contentType: string) {
+  return new NextRequest('http://localhost/api/gmaps-scan', {
+    method: 'POST',
+    body: JSON.stringify({ apiKey }),
+    headers: { 'Content-Type': contentType },
+  });
+}
+
 function mockFetchJson(body: unknown, ok = true, status = 200) {
   (global.fetch as jest.Mock).mockResolvedValue({
     ok,
@@ -26,6 +36,22 @@ beforeEach(() => {
 
 afterEach(() => {
   jest.restoreAllMocks();
+});
+
+describe('POST /api/gmaps-scan – content type', () => {
+  it('rejects text/plain with 415', async () => {
+    const res = await POST(makeRequestWithContentType(VALID_KEY, 'text/plain'));
+    expect(res.status).toBe(415);
+    const body = await res.json();
+    expect(body.error).toMatch(/application\/json/i);
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('accepts application/json with a charset parameter', async () => {
+    mockFetchJson({ error_message: 'Restricted' }, false, 403);
+    const res = await POST(makeRequestWithContentType(VALID_KEY, 'application/json; charset=utf-8'));
+    expect(res.status).toBe(200);
+  });
 });
 
 describe('POST /api/gmaps-scan – input validation', () => {
@@ -70,7 +96,7 @@ describe('POST /api/gmaps-scan – detail is always a string', () => {
 
     for (const result of results) {
       expect(typeof result.detail).toBe('string');
-      expect(['vulnerable', 'restricted', 'error']).toContain(result.status);
+      expect(['vulnerable', 'restricted', 'rejected', 'error']).toContain(result.status);
     }
   });
 
@@ -112,6 +138,35 @@ describe('POST /api/gmaps-scan – detail is always a string', () => {
   });
 });
 
+describe('POST /api/gmaps-scan – the key never comes back in an error', () => {
+  it('redacts the key from a thrown error message', async () => {
+    // Node currently puts the failing URL on e.cause rather than e.message, but
+    // every outbound URL carries key=<apiKey>, so one Node change closes that gap.
+    (global.fetch as jest.Mock).mockRejectedValue(
+      new Error(`request to https://maps.googleapis.com/maps/api/geocode/json?latlng=40,30&key=${VALID_KEY} failed`),
+    );
+
+    const res = await POST(makeRequest(VALID_KEY));
+    const results = await res.json();
+
+    for (const result of results) {
+      expect(result.detail).not.toContain(VALID_KEY);
+      expect(result.detail).toContain('<redacted>');
+    }
+  });
+
+  it('leaves an error message without a key alone', async () => {
+    (global.fetch as jest.Mock).mockRejectedValue(new Error('Network failure'));
+
+    const res = await POST(makeRequest(VALID_KEY));
+    const results = await res.json();
+
+    for (const result of results) {
+      expect(result.detail).toBe('Network failure');
+    }
+  });
+});
+
 describe('POST /api/gmaps-scan – result structure', () => {
   it('returns an array of 19 results', async () => {
     mockFetchJson({ error_message: 'Restricted' }, false, 403);
@@ -131,7 +186,54 @@ describe('POST /api/gmaps-scan – result structure', () => {
     for (const result of results) {
       expect(typeof result.name).toBe('string');
       expect(typeof result.detail).toBe('string');
-      expect(['vulnerable', 'restricted', 'error']).toContain(result.status);
+      expect(['vulnerable', 'restricted', 'rejected', 'error']).toContain(result.status);
     }
+  });
+});
+
+describe('POST /api/gmaps-scan – restricted vs rejected', () => {
+  it('reports restricted only when Google says why it refused', async () => {
+    mockFetchJson({ error_message: 'This API project is not authorized to use this API.' }, false, 403);
+
+    const res = await POST(makeRequest(VALID_KEY));
+    const results = await res.json();
+
+    const directions = results.find((r: { name: string }) => r.name === 'Directions');
+    expect(directions.status).toBe('restricted');
+    expect(directions.detail).toMatch(/not authorized/i);
+  });
+
+  it('reports rejected for a bare 403 with no explanation', async () => {
+    // No error field on the body, so the only thing Google told us is the status.
+    mockFetchJson({}, false, 403);
+
+    const res = await POST(makeRequest(VALID_KEY));
+    const results = await res.json();
+
+    for (const result of results) {
+      expect(result.status).toBe('rejected');
+      expect(result.detail).toBe('HTTP 403 (no reason given)');
+    }
+  });
+
+  it('no longer calls a non-OK JSON response vulnerable', async () => {
+    // The old checkJson ignored res.ok: a 403 whose body lacked error_message
+    // came back as "vulnerable", which is the opposite of what happened.
+    mockFetchJson({}, false, 403);
+
+    const res = await POST(makeRequest(VALID_KEY));
+    const results = await res.json();
+
+    expect(results.some((r: { status: string }) => r.status === 'vulnerable')).toBe(false);
+  });
+
+  it('still reports vulnerable when a check succeeds', async () => {
+    mockFetchJson({ results: [], status: 'OK' }, true, 200);
+
+    const res = await POST(makeRequest(VALID_KEY));
+    const results = await res.json();
+
+    const geocoding = results.find((r: { name: string }) => r.name === 'Geocoding');
+    expect(geocoding.status).toBe('vulnerable');
   });
 });
