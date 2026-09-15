@@ -231,6 +231,15 @@ const checks: CheckDef[] = [
 ];
 
 export async function POST(request: NextRequest) {
+  // Without this the route parses any body at all, which makes it a CORS
+  // simple request: any page could fire it from a visitor's browser with no
+  // preflight and spend 19 outbound Google calls per hit. Demanding JSON
+  // forces a preflight, and the route sends no CORS headers, so it fails.
+  const contentType = request.headers.get('content-type') || '';
+  if (!contentType.toLowerCase().includes('application/json')) {
+    return NextResponse.json({ error: 'Content-Type must be application/json' }, { status: 415 });
+  }
+
   try {
     const body = await request.json();
     const apiKey = body.apiKey;

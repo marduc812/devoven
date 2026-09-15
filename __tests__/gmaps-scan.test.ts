@@ -11,6 +11,16 @@ function makeRequest(apiKey: string) {
   });
 }
 
+// Deliberately separate from makeRequest: the point of the test below is the
+// header, so it cannot share a builder that always sets the right one.
+function makeRequestWithContentType(apiKey: string, contentType: string) {
+  return new NextRequest('http://localhost/api/gmaps-scan', {
+    method: 'POST',
+    body: JSON.stringify({ apiKey }),
+    headers: { 'Content-Type': contentType },
+  });
+}
+
 function mockFetchJson(body: unknown, ok = true, status = 200) {
   (global.fetch as jest.Mock).mockResolvedValue({
     ok,
@@ -26,6 +36,22 @@ beforeEach(() => {
 
 afterEach(() => {
   jest.restoreAllMocks();
+});
+
+describe('POST /api/gmaps-scan – content type', () => {
+  it('rejects text/plain with 415', async () => {
+    const res = await POST(makeRequestWithContentType(VALID_KEY, 'text/plain'));
+    expect(res.status).toBe(415);
+    const body = await res.json();
+    expect(body.error).toMatch(/application\/json/i);
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  it('accepts application/json with a charset parameter', async () => {
+    mockFetchJson({ error_message: 'Restricted' }, false, 403);
+    const res = await POST(makeRequestWithContentType(VALID_KEY, 'application/json; charset=utf-8'));
+    expect(res.status).toBe(200);
+  });
 });
 
 describe('POST /api/gmaps-scan – input validation', () => {
