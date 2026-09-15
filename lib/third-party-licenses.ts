@@ -27,6 +27,7 @@ export const THIRD_PARTY_LIBRARIES: ThirdPartyLibrary[] = [
     { name: 'cron-parser', license: 'MIT', url: 'https://github.com/harrisiirak/cron-parser', used: 'Next run times for cron expressions' },
     { name: 'cronstrue', license: 'MIT', url: 'https://github.com/bradymholt/cronstrue', used: 'Cron expressions in plain English' },
     { name: 'crypto-js', license: 'MIT', url: 'https://github.com/brix/crypto-js', used: 'Classic ciphers and hashes' },
+    { name: 'dompurify', license: 'MPL-2.0 OR Apache-2.0', url: 'https://github.com/cure53/DOMPurify', used: 'Sanitising the Markdown preview before it is rendered' },
     { name: 'fast-xml-parser', license: 'MIT', url: 'https://github.com/NaturalIntelligence/fast-xml-parser', used: 'XML parsing, including the Nmap viewer' },
     { name: 'fflate', license: 'MIT', url: 'https://github.com/101arrowz/fflate', used: 'Gzip, zlib and DEFLATE compression' },
     { name: 'gmp-wasm', license: 'LGPL-3.0-only', url: 'https://github.com/Daninet/gmp-wasm', used: 'Arbitrary precision integer maths' },
