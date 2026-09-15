@@ -34,9 +34,14 @@ export const MarkdownPreview = () => {
 
   useEffect(() => {
     if (!md) { setHtml(''); return; }
-    import('marked').then(({ marked }) => {
-      setHtml(marked(md) as string);
+    let cancelled = false;
+    // Kept as a dynamic import so marked and dompurify stay out of the initial bundle.
+    import('./logic').then(({ renderMarkdown }) => {
+      // Two fast keystrokes start two imports, and without this an older result
+      // can resolve last and overwrite a newer one.
+      if (!cancelled) setHtml(renderMarkdown(md));
     });
+    return () => { cancelled = true; };
   }, [md]);
 
   // One height for both label rows, and `shrink-0` so the column's flex layout
