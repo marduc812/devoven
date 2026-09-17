@@ -58,8 +58,8 @@ export function CalendarWeekCalculator() {
 
   return (
     <Panel
-      title="Calendar Week Calculator"
-      description="Find the ISO week number, day of year, quarter, and full week for any date. Supports [1 2024-03-15 2], [1 March 15, 2024 2], or [1 03/15/2024 2]. Optionally calculate business days to a second date."
+      title="Business Days Calculator"
+      description="Count the working days between two dates, weekends excluded, and see the calendar week, quarter and day of year for each. Supports [1 2024-03-15 2], [1 March 15, 2024 2], or [1 03/15/2024 2]. For week numbers alone, use the Week Number Calculator."
       backColor="lime"
       extraElements={
         <div className="flex flex-col gap-5">

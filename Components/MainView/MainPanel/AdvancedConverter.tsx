@@ -121,6 +121,8 @@ const AdvancedConverter = (props: AdvancedCoversionType) => {
                 {props.belowOutput}
             </div>
 
+            {props.article}
+
             <div className="border-t border-gray-200 px-8 md:px-12">
                 <ShareView />
                 <AdditionalTools />

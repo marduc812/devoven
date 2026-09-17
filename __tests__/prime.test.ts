@@ -68,3 +68,67 @@ describe('analyzePrimeResult', () => {
   it('throws for negatives', () => expect(() => analyzePrimeResult('-5')).toThrow());
   it('throws for unreasonably large input', () => expect(() => analyzePrimeResult('999999999999999')).toThrow());
 });
+
+import {
+  bigPrimality,
+  parseBigInput,
+  analyzeBigPrime,
+  DETERMINISTIC_LIMIT,
+} from '@/Components/Functions/PrimeTools/logic';
+
+describe('bigPrimality', () => {
+  it('rejects everything below 2', () => {
+    expect(bigPrimality(0n)).toBe('composite');
+    expect(bigPrimality(1n)).toBe('composite');
+  });
+
+  it('agrees with trial division on small numbers', () => {
+    const primesUnder50 = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47];
+    for (let n = 0; n < 50; n++) {
+      const expected = primesUnder50.includes(n) ? 'prime' : 'composite';
+      expect(bigPrimality(BigInt(n))).toBe(expected);
+    }
+  });
+
+  it('catches the Carmichael numbers that fool a Fermat test', () => {
+    for (const n of [561n, 1105n, 1729n, 2465n, 2821n, 6601n, 8911n]) {
+      expect(bigPrimality(n)).toBe('composite');
+    }
+  });
+
+  it('handles a 39-digit Mersenne prime', () => {
+    expect(bigPrimality(2n ** 127n - 1n)).toBe('probably prime');
+  });
+
+  it('factors a semiprime of two large primes as composite', () => {
+    expect(bigPrimality(1000000007n * 1000000009n)).toBe('composite');
+  });
+
+  it('calls it proven below the deterministic limit and probable above it', () => {
+    expect(bigPrimality(999999999989n)).toBe('prime');
+    expect(DETERMINISTIC_LIMIT).toBeGreaterThan(10n ** 24n);
+    expect(bigPrimality(10n ** 30n + 57n)).toBe('probably prime');
+  });
+});
+
+describe('parseBigInput', () => {
+  it('strips separators', () => expect(parseBigInput(' 1,000 000_7 ')).toBe(10000007n));
+  it('rejects anything but digits', () => {
+    expect(() => parseBigInput('-5')).toThrow();
+    expect(() => parseBigInput('1e9')).toThrow();
+    expect(() => parseBigInput('')).toThrow();
+  });
+});
+
+describe('analyzeBigPrime', () => {
+  it('counts digits and finds the next prime', () => {
+    const result = analyzeBigPrime(100n);
+    expect(result.digits).toBe(3);
+    expect(result.primality).toBe('composite');
+    expect(result.nextProbablePrime).toBe(101n);
+  });
+
+  it('steps past an even start', () => {
+    expect(analyzeBigPrime(7n).nextProbablePrime).toBe(11n);
+  });
+});

@@ -13,7 +13,15 @@ import {
   StatusBadge,
   inputClass,
 } from '@/Components/MainView/MainPanel/ResultUI';
-import { analyzePrimeResult, type FactorPower } from './logic';
+import {
+  analyzePrimeResult,
+  analyzeBigPrime,
+  parseBigInput,
+  FULL_REPORT_LIMIT,
+  type BigPrimeResult,
+  type FactorPower,
+} from './logic';
+import { PrimeArticle } from './article';
 import { useShareLink } from '@/Components/Functions/ShareLink';
 
 const PRESETS = [
@@ -52,12 +60,30 @@ export function PrimeChecker() {
   // Mirrors the params read above, so the header's copy-link button carries them.
   useShareLink({ from: input })
 
-  const { result, error } = useMemo(() => {
-    if (!input.trim()) return { result: null, error: '' };
+  /**
+   * Two paths. Up to a trillion the full report is affordable, so nothing
+   * changes. Past that, factorisation and the sieve are hopeless but primality
+   * is not, so the number gets a Miller-Rabin verdict instead of an error.
+   */
+  const { result, big, error } = useMemo(() => {
+    const empty = { result: null, big: null as BigPrimeResult | null, error: '' };
+    if (!input.trim()) return empty;
+
+    let n: bigint;
     try {
-      return { result: analyzePrimeResult(input), error: '' };
+      n = parseBigInput(input);
     } catch (e) {
-      return { result: null, error: (e as Error).message };
+      return { ...empty, error: (e as Error).message };
+    }
+
+    if (n > FULL_REPORT_LIMIT) {
+      return { result: null, big: analyzeBigPrime(n), error: '' };
+    }
+
+    try {
+      return { result: analyzePrimeResult(input), big: null, error: '' };
+    } catch (e) {
+      return { ...empty, error: (e as Error).message };
     }
   }, [input]);
 
@@ -69,8 +95,9 @@ export function PrimeChecker() {
   return (
     <Panel
       title="Prime Number Checker"
-      description="Check whether a number is prime and see how it is built. Shows the [1 prime factorisation 2], every divisor, the neighbouring primes, and π(n) — the count of primes up to your number."
+      description="Check whether a number is prime and see how it is built. Shows the [1 prime factorisation 2], every divisor, the neighbouring primes, and π(n) — the count of primes up to your number. Numbers past a trillion get a Miller-Rabin verdict."
       backColor="lime"
+      article={PrimeArticle}
       extraElements={
         <div className="flex flex-col gap-6">
           {/* Input */}
@@ -105,6 +132,51 @@ export function PrimeChecker() {
           </div>
 
           {error && <ErrorNote>{error}</ErrorNote>}
+
+          {big && (
+            <div className="flex flex-col gap-6">
+              <HeroResult
+                label="Verdict"
+                tone={big.primality === 'composite' ? 'neutral' : 'pass'}
+                copyText={input.trim().replace(/[\s,_]/g, '')}
+                value={
+                  <span className="flex flex-wrap items-center gap-3">
+                    <span className="font-mono text-xl break-all">{input.trim().replace(/[\s,_]/g, '')}</span>
+                    <StatusBadge tone={big.primality === 'composite' ? 'fail' : 'pass'}>
+                      {big.primality === 'composite' ? 'Composite' : big.primality === 'prime' ? 'Prime' : 'Probably prime'}
+                    </StatusBadge>
+                  </span>
+                }
+                note={
+                  big.primality === 'probably prime'
+                    ? 'Passed Miller-Rabin against 13 witness bases. Above 3.317e24 that is a probable-prime result, not a proof.'
+                    : big.primality === 'prime'
+                      ? 'Proven by Miller-Rabin: below 3.317e24 those 13 bases are known to be exact.'
+                      : 'A Miller-Rabin witness proves a divisor exists. Finding it is a different and much harder problem.'
+                }
+              />
+
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
+                <StatTile label="Digits" value={big.digits.toLocaleString()} hint="decimal length" />
+                <StatTile
+                  label="Next prime"
+                  value={big.nextProbablePrime ? `+${(big.nextProbablePrime - parseBigInput(input)).toString()}` : '—'}
+                  hint={big.nextProbablePrime ? 'steps to the next one' : 'none within 5,000'}
+                />
+                <StatTile label="Method" value="Miller-Rabin" hint="too large to factorise" />
+              </div>
+
+              {big.nextProbablePrime && (
+                <div className="flex flex-col gap-3">
+                  <SectionTitle note="the next number up that passes the same test">Next prime</SectionTitle>
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <span className="font-mono text-sm text-gray-900 break-all">{big.nextProbablePrime.toString()}</span>
+                    <CopyButton text={big.nextProbablePrime.toString()} label="next prime" />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {result && (
             <>
