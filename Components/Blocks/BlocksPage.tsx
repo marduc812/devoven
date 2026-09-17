@@ -177,7 +177,7 @@ export default function BlocksPage() {
     <div className="min-h-screen">
       {/* Page header */}
       <div className="border-b border-gray-900 px-8 md:px-12 py-8">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
           <div>
             <div className="flex items-center gap-2 mb-3">
               <span className="w-3 h-3 bg-indigo-500 flex-shrink-0" />

@@ -10,11 +10,11 @@ const FooterMainView = () => {
 
     return (
         <div className='w-full border-t border-gray-900 dark:border-white/15'>
-            <div className='flex flex-row justify-between items-center px-8 md:px-12 py-5'>
+            <div className='flex flex-row flex-wrap justify-between items-center gap-x-4 gap-y-3 px-8 md:px-12 py-5'>
                 <p className="text-sm font-bold uppercase tracking-wide text-gray-900">
                     <span className='color-name'>marduc812</span>
                 </p>
-                <div className='flex flex-row items-center gap-4'>
+                <div className='flex flex-row flex-wrap items-center gap-x-4 gap-y-2'>
                     {/* AGPL section 13: everyone using the site over the network gets
                         an offer of the source, so this link belongs on every page. */}
                     <Link
