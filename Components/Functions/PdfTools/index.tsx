@@ -38,6 +38,14 @@ import {
     watermarkPdf,
     writeMetadata,
 } from './logic';
+import {
+    COMPRESS_LEVELS,
+    COMPRESS_PRESETS,
+    CompressLevel,
+    canvasJpegEncoder,
+    compressPdf,
+    describeCompression,
+} from './compress';
 
 const ACCEPT = 'application/pdf,.pdf';
 const COLOR = 'red' as const;
@@ -1100,6 +1108,84 @@ export const PdfFlatten = () => {
                         </div>
                     )}
                     <Note>Flattening cannot be undone — keep the original if you may need to edit it again. {NOTHING_UPLOADED}</Note>
+                </Options>
+            }
+        />
+    );
+};
+
+// ─── Compress PDF ───────────────────────────────────────────────────────────
+
+export const PdfCompress = () => {
+    const { loaded, source, error, setError, open, clear } = usePdfSource();
+    const { result, publish, clear: clearResult } = usePdfResult();
+    const [level, setLevel] = useState<CompressLevel>('balanced');
+    const [progress, setProgress] = useState<{ pct: number; label: string } | undefined>();
+    // Compressing a long document takes a while, and the level select stays
+    // live throughout. Each run claims a token and a superseded run drops its
+    // result, so an abandoned pass can never publish over a newer one.
+    const runToken = useRef(0);
+
+    const run = useCallback(async () => {
+        if (!loaded) return;
+        const token = ++runToken.current;
+        const current = () => runToken.current === token;
+
+        setError('');
+        setProgress({ pct: 0, label: 'Reading images' });
+        try {
+            const { bytes, report } = await compressPdf(loaded.bytes, COMPRESS_PRESETS[level], {
+                encode: canvasJpegEncoder,
+                onProgress: next => { if (current()) setProgress(next); },
+            });
+            if (!current()) return;
+            publish(bytes, outputName(loaded.file.name, 'compressed'), describeCompression(report));
+        } catch (err) {
+            if (!current()) return;
+            clearResult();
+            setError(readableError(err));
+        } finally {
+            if (current()) setProgress(undefined);
+        }
+    }, [loaded, level, publish, clearResult, setError]);
+
+    useEffect(() => { run(); }, [run]);
+
+    return (
+        <MediaConverter
+            backColor={COLOR}
+            title="Compress PDF"
+            description="Shrink a PDF by re-encoding the images inside it. Phone scans store every page as a raw bitmap and usually come out 80-95% smaller; text, pages and annotations are carried through untouched. All processing happens in your browser."
+            accept={ACCEPT}
+            inputMedium="pdf"
+            outputMedium="pdf"
+            onFiles={f => open(f[0])}
+            onClear={() => { clear(); clearResult(); }}
+            source={source}
+            result={result}
+            error={error}
+            progress={progress}
+            extraElements={
+                <Options>
+                    <Row>
+                        <Field label="Compression">
+                            <select
+                                className={selectClass}
+                                value={level}
+                                onChange={e => setLevel(e.target.value as CompressLevel)}
+                            >
+                                {COMPRESS_LEVELS.map(each => (
+                                    <option key={each} value={each}>{COMPRESS_PRESETS[each].label}</option>
+                                ))}
+                            </select>
+                        </Field>
+                    </Row>
+                    <Note>{COMPRESS_PRESETS[level].blurb}</Note>
+                    <Note>
+                        Only images are re-encoded. Anything a JPEG cannot hold — transparency, stencil
+                        masks, colour spaces that would not survive the round trip — is left exactly as it
+                        was, as is any image that would come out larger. {NOTHING_UPLOADED}
+                    </Note>
                 </Options>
             }
         />
