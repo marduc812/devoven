@@ -620,6 +620,7 @@ export const menu: MenuGroupType[] = [
         "links": [
             {"name": "Merge PDFs", "link": "/pdf/pdf-merge", "type": "pdf", "tag": ""},
             {"name": "Split PDF", "link": "/pdf/pdf-split", "type": "pdf", "tag": ""},
+            {"name": "Compress PDF", "link": "/pdf/pdf-compress", "type": "pdf", "tag": ""},
             {"name": "PDF to Images", "link": "/pdf/pdf-to-images", "type": "pdf", "tag": ""},
             {"name": "Images to PDF", "link": "/pdf/images-to-pdf", "type": "pdf", "tag": ""},
             {"name": "PDF to Text", "link": "/pdf/pdf-to-text", "type": "pdf", "tag": ""},
