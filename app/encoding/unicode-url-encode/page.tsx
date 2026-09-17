@@ -1,11 +1,11 @@
 import { URLEncode } from "@/Components/Functions/Encoders"
 import type { Metadata } from 'next'
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata = {
+export const metadata: Metadata = toolMetadata('/encoding/unicode-url-encode', {
   title: 'Unicode URL Encoder - %uXXXX Percent Encoding',
   description: 'Online tool to encode a string using the non-standard %uXXXX Unicode URL format, with options for standard and full percent encoding.'
-}
-
+});
 
 const page = () => {
     return (

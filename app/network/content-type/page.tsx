@@ -1,10 +1,11 @@
 import { ContentTypeBuilder } from '@/Components/Functions/ContentTypeBuilderTools';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/network/content-type', {
   title: 'Content-Type Builder - DevOven',
   description: 'Build Content-Type headers from file extensions, parse existing headers, or browse 100+ MIME type mappings. Handles charset, boundary for multipart, and media type lookup.',
-};
+});
 
 const page = () => <ContentTypeBuilder />;
 export default page;

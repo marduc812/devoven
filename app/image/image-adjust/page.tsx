@@ -1,10 +1,11 @@
 import { ImageAdjust } from '@/Components/Functions/ImageEditTools';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/image/image-adjust', {
   title: 'Brightness, Contrast & Saturation Editor | DevOven',
   description: 'Free online image adjuster. Change the brightness, contrast and saturation of a JPEG, PNG or WebP with live preview, and download the result. Runs entirely in your browser.',
-};
+});
 
 const page = () => <ImageAdjust />;
 export default page;

@@ -1,10 +1,11 @@
 import { RGBToCMYK } from "@/Components/Functions/Converters"
 import type { Metadata } from 'next'
+import { toolMetadata } from '@/lib/seo';
  
-export const metadata = {
+export const metadata: Metadata = toolMetadata('/converting/rgb-to-cmyk', {
     title: 'Online RGB to CMYK Converter',
     description: 'Online RGB to CMYK converter. Instant RGB to CMYK color conversion.'
-  }
+  });
 
 const page = () => {
     return (

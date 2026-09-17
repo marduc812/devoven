@@ -1,10 +1,11 @@
 import { SvgCleanerTools } from '@/Components/Functions/SvgCleanerTools';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/converting/svg-cleaner', {
   title: 'SVG Cleaner - DevOven',
   description: 'Remove unnecessary SVG metadata, comments, and empty elements to reduce file size. Clean XML declarations, titles, descriptions, data attributes, and empty defs.',
-};
+});
 
 const page = () => <SvgCleanerTools />;
 export default page;

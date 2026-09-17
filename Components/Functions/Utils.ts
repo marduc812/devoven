@@ -156,52 +156,74 @@ export const colorValidator = (userInput: string) => {
 }
 
 
-export const getSuggestions = (url: string, numberOfSuggestions: number = 5) => {
-    let suggestions: Array<{ name: string; link: string; type: string; tag: string }> = [];
-    let linkType: string | null = null;
-  
-    // Find the type associated with the provided URL
+/**
+ * Related tools for a tool page, as a stable list.
+ *
+ * Stable matters twice over. The list is rendered on the server, so a random
+ * order would mismatch on hydration; and these are the only links a tool page
+ * gives a crawler, so an order that changes per request is an internal link
+ * graph that never settles.
+ *
+ * Relevance is read off menu.ts: tools sharing the current tool's `type` come
+ * first, nearest neighbours in the list before distant ones, because the menu
+ * already groups related tools together. Anything left over is filled from the
+ * same menu group.
+ */
+export const getSuggestions = (url: string, numberOfSuggestions: number = 6) => {
+    type Link = { name: string; link: string; type: string; tag: string };
+
+    let current: Link | null = null;
+    let currentGroup: Link[] = [];
+
     for (const group of menu) {
-      for (const link of group.links) {
-        if (link.link === url) {
-          linkType = link.type;
-          break;
-        }
+      const found = group.links.find(link => link.link === url);
+      if (found) {
+        current = found;
+        currentGroup = group.links;
+        break;
       }
-      if (linkType) break; // Stop searching if we found the type
     }
-  
-    // Filter for similar links if the type was found
-    if (linkType) {
-      suggestions = menu.flatMap(group =>
-        group.links.filter(link => link.type === linkType && link.link !== url)
+
+    if (!current) return [];
+
+    const self = current;
+    const position = currentGroup.indexOf(self);
+
+    // Same type, same group: rank by how close they sit in the menu.
+    const sameTypeNearby = currentGroup
+      .filter(link => link.type === self.type && link.link !== self.link)
+      .sort((a, b) =>
+        Math.abs(currentGroup.indexOf(a) - position) - Math.abs(currentGroup.indexOf(b) - position)
       );
+
+    // Same type, elsewhere on the site: the cross-category links that tie a
+    // topic together, e.g. the Morse converter to the other ciphers.
+    const sameTypeElsewhere = menu
+      .filter(group => group.links !== currentGroup)
+      .flatMap(group => group.links)
+      .filter(link => link.type === self.type);
+
+    // Last resort, so a tool with a rare type is never a dead end.
+    const groupNeighbours = currentGroup
+      .filter(link => link.link !== self.link)
+      .sort((a, b) =>
+        Math.abs(currentGroup.indexOf(a) - position) - Math.abs(currentGroup.indexOf(b) - position)
+      );
+
+    const picked: Link[] = [];
+    const seen = new Set<string>([self.link]);
+
+    for (const link of [...sameTypeNearby, ...sameTypeElsewhere, ...groupNeighbours]) {
+      if (seen.has(link.link)) continue;
+      seen.add(link.link);
+      picked.push(link);
+      if (picked.length === numberOfSuggestions) break;
     }
-  
-    // Shuffle the array to ensure randomness
-    const shuffleArray = (array: any[]): any[] => {
-      return array.sort(() => Math.random() - 0.5);
-    };
-  
-    // Fill in with random suggestions if not enough similar links
-    if (suggestions.length < numberOfSuggestions) {
-      let allLinks = menu.flatMap(group => group.links);
-      allLinks = shuffleArray(allLinks); // Shuffle to pick random links
-  
-      // Add random links until the suggestions array has the desired length
-      while (suggestions.length < numberOfSuggestions && allLinks.length > 0) {
-        const randomLink = allLinks.pop();
-        if (randomLink && !suggestions.includes(randomLink)) {
-          suggestions.push(randomLink);
-        }
-      }
-    }
-  
-    // Return the requested number of suggestions
-    return shuffleArray(suggestions).slice(0, numberOfSuggestions);
+
+    return picked;
   };
 
-  
+
 // Hex to binary, shared by the /converting/hex-to-binary tool and the Blocks
 // operation of the same name. BigInt because parseInt loses precision above
 // 2^53 and overflows to Infinity past 1.8e308, so anything digest-sized came

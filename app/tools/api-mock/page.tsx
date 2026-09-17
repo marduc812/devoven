@@ -1,10 +1,11 @@
 import { ApiMockGenerator } from '@/Components/Functions/ApiMockTools';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/tools/api-mock', {
   title: 'API Mock Generator | DevOven',
   description: 'Generate mock API responses from a JSON Schema or example JSON. Output as a plain array, json-server db.json, or Mock Service Worker (MSW) handler code.',
-};
+});
 
 const page = () => <ApiMockGenerator />;
 export default page;

@@ -15,6 +15,9 @@ export type BasicCoversionType = {
     // the page: it then takes neither typing nor a dropped file.
     inputReadOnly?: boolean;
     pageTitle?: string;
+    // The written half of the page: explanation, reference tables, FAQ and the
+    // tool's JSON-LD. Rendered under the tool, above the related links.
+    article?: React.ReactNode;
     backColor: MainViewColorVariants;
 }
 
@@ -44,6 +47,9 @@ export type AdvancedCoversionType = {
     // As above: an input pane that only mirrors values gathered elsewhere.
     inputReadOnly?: boolean;
     pageTitle?: string;
+    // The written half of the page: explanation, reference tables, FAQ and the
+    // tool's JSON-LD. Rendered under the tool, above the related links.
+    article?: React.ReactNode;
     backColor: MainViewColorVariants;
 }
 
@@ -53,6 +59,9 @@ export type PanelType = {
     description: string;
     extraElements: React.JSX.Element;
     pageTitle?: string;
+    // The written half of the page: explanation, reference tables, FAQ and the
+    // tool's JSON-LD. Rendered under the tool, above the related links.
+    article?: React.ReactNode;
     backColor: MainViewColorVariants;
 }
 

@@ -1,10 +1,11 @@
 import { CurlToFetch } from "@/Components/Functions/DevTools"
 import type { Metadata } from 'next'
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/tools/curl-to-fetch', {
     title: 'cURL to Fetch Converter - Convert curl to JavaScript fetch()',
     description: 'Convert cURL commands to JavaScript fetch() API calls instantly. Supports headers, request methods, and request body. Instant cURL to Fetch conversion.',
-}
+});
 
 const page = () => {
     return (

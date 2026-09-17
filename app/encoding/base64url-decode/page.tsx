@@ -1,10 +1,11 @@
 import { Base64UrlDecode } from '@/Components/Functions/EncodingTools';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/encoding/base64url-decode', {
   title: 'Base64URL Decoder — DevOven',
   description: 'Decode Base64URL encoded text (RFC 4648 §5). Handles URL-safe characters (- and _) and missing padding automatically.',
-};
+});
 
 const page = () => (
   <>

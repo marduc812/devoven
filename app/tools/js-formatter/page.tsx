@@ -1,10 +1,11 @@
 import { JsFormatter } from '@/Components/Functions/CodeFormatters';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/tools/js-formatter', {
   title: 'JavaScript Formatter & Minifier — DevOven',
   description: 'Format or minify JavaScript online using Prettier. Pretty-print your code or strip comments and whitespace for production.',
-};
+});
 
 const page = () => (
   <>

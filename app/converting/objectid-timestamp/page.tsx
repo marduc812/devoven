@@ -1,11 +1,12 @@
 import { ObjectIdTimestamp } from '@/Components/Functions/TimestampIdTools';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/converting/objectid-timestamp', {
   title: 'MongoDB ObjectId to Timestamp',
   description:
     'Extract the creation time from a MongoDB ObjectId, and build the ObjectId bound for a date so you can range-query on _id. Shows ISO 8601, UTC and Unix formats.',
-};
+});
 
 const page = () => <ObjectIdTimestamp />;
 export default page;

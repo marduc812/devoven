@@ -1,10 +1,11 @@
 import { StatisticsCalculator } from '@/Components/Functions/StatisticsTools'
 import type { Metadata } from 'next'
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/tools/statistics-calculator', {
     title: 'Statistics Calculator - Mean, Median, Mode, Std Dev',
     description: 'Calculate descriptive statistics online. Enter numbers to get mean, median, mode, standard deviation, min, max, range, sum, and count instantly.',
-}
+});
 
 const page = () => {
     return (

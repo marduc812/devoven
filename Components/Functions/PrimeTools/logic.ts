@@ -192,3 +192,103 @@ export function analyzePrime(input: string): string {
   }
   return lines.join('\n');
 }
+
+/* ------------------------------------------------------------------------- *
+ * Big numbers
+ *
+ * Trial division to √n gives up somewhere past 10^12, which is where the full
+ * report below stops. Primality itself does not have to stop there: Miller-Rabin
+ * over BigInt answers for a number of any length in milliseconds, so a number
+ * too large to factorise still gets a verdict rather than an error.
+ * ------------------------------------------------------------------------- */
+
+/** Small primes, used to reject most composites before the expensive test. */
+const SMALL_PRIMES = [2n, 3n, 5n, 7n, 11n, 13n, 17n, 19n, 23n, 29n, 31n, 37n];
+
+/**
+ * Below this, the bases in SMALL_PRIMES make Miller-Rabin deterministic. The
+ * bound is Sorenson and Webster's: the first 13 primes as bases are proven to
+ * have no composite that fools all of them under 3.317e24. Above it the same
+ * test is a very strong probable-prime check, not a proof.
+ */
+export const DETERMINISTIC_LIMIT = 3317044064679887385961981n;
+
+function modPow(base: bigint, exponent: bigint, modulus: bigint): bigint {
+  let result = 1n;
+  let b = base % modulus;
+  let e = exponent;
+  while (e > 0n) {
+    if (e & 1n) result = (result * b) % modulus;
+    b = (b * b) % modulus;
+    e >>= 1n;
+  }
+  return result;
+}
+
+export type Primality = 'prime' | 'probably prime' | 'composite';
+
+/**
+ * Miller-Rabin. Returns 'prime' when the answer is proven (either by trial
+ * division against the small primes, or because n is under DETERMINISTIC_LIMIT),
+ * and 'probably prime' when it is only overwhelmingly likely.
+ */
+export function bigPrimality(n: bigint): Primality {
+  if (n < 2n) return 'composite';
+  for (const p of SMALL_PRIMES) {
+    if (n === p) return 'prime';
+    if (n % p === 0n) return 'composite';
+  }
+
+  // n - 1 = d * 2^r with d odd.
+  let d = n - 1n;
+  let r = 0n;
+  while (d % 2n === 0n) { d /= 2n; r++; }
+
+  for (const a of SMALL_PRIMES) {
+    let x = modPow(a, d, n);
+    if (x === 1n || x === n - 1n) continue;
+
+    let composite = true;
+    for (let i = 1n; i < r; i++) {
+      x = (x * x) % n;
+      if (x === n - 1n) { composite = false; break; }
+    }
+    if (composite) return 'composite';
+  }
+
+  return n < DETERMINISTIC_LIMIT ? 'prime' : 'probably prime';
+}
+
+/** Digits only, so a pasted number with spaces or separators still parses. */
+export function parseBigInput(input: string): bigint {
+  const cleaned = input.trim().replace(/[\s,_]/g, '');
+  if (!/^\d+$/.test(cleaned)) throw new Error('Enter a non-negative whole number');
+  return BigInt(cleaned);
+}
+
+/** Above this the full report is skipped and only primality is reported. */
+export const FULL_REPORT_LIMIT = 1_000_000_000_000n;
+
+export interface BigPrimeResult {
+  digits: number;
+  primality: Primality;
+  /** The next number up that passes the same test. Only walked a short way. */
+  nextProbablePrime: bigint | null;
+}
+
+export function analyzeBigPrime(n: bigint): BigPrimeResult {
+  const primality = bigPrimality(n);
+
+  // Prime gaps near a d-digit number average about ln(10^d), so a few thousand
+  // steps finds the next one for anything a person will paste in. Giving up is
+  // better than freezing the tab on a pathological gap.
+  let nextProbablePrime: bigint | null = null;
+  let candidate = n + 1n;
+  if (candidate % 2n === 0n) candidate += 1n;
+  for (let i = 0; i < 5000; i++) {
+    if (bigPrimality(candidate) !== 'composite') { nextProbablePrime = candidate; break; }
+    candidate += 2n;
+  }
+
+  return { digits: n.toString().length, primality, nextProbablePrime };
+}

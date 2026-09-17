@@ -32,6 +32,7 @@ import {
   type WeekReport,
 } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
+import { WeekNumberArticle } from './weekArticle';
 
 // ---------------------------------------------------------------------------
 // 1. Date Format Converter
@@ -235,13 +236,16 @@ const QUARTER_TINT = [
   'bg-rose-50 border-rose-200 text-rose-800',
 ];
 
-export function WeekNumberCalculator() {
-  const [input, setInput] = useState('');
-  /**
-   * Resolved after mount only. Rendering today's date during SSR would bake the
-   * build date into the HTML and mismatch on hydration.
-   */
-  const [today, setToday] = useState<string | null>(null);
+/**
+ * @param serverToday Today in UTC, computed by the page on the server and
+ * revalidated hourly. It seeds the input so the rendered HTML already answers
+ * "what week number is it" — the query people type — instead of being an empty
+ * form until JavaScript runs. The effect below then swaps in the visitor's own
+ * local date, which is the one they actually mean.
+ */
+export function WeekNumberCalculator({ serverToday }: { serverToday?: string } = {}) {
+  const [input, setInput] = useState(serverToday ?? '');
+  const [today, setToday] = useState<string | null>(serverToday ?? null);
 
   useEffect(() => {
     setToday(todayISO());
@@ -531,6 +535,7 @@ export function WeekNumberCalculator() {
 
   return (
     <Panel
+      article={WeekNumberArticle}
       title="Week Number Calculator"
       description="Find the week number for any date under both conventions — ISO 8601, where weeks run Monday to Sunday and week 1 holds the first Thursday, and the US rule, where weeks run Sunday to Saturday and week 1 holds 1 January. Example: [1 2026-04-08 2] is ISO 2026-W15."
       backColor="cyan"

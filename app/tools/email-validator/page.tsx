@@ -1,10 +1,11 @@
 import { EmailValidator } from '@/Components/Functions/EmailValidatorTools';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/tools/email-validator', {
   title: 'Email Address Validator - DevOven',
   description: 'Validate email address format and extract components like local part, domain, and TLD. Detects disposable email providers.',
-};
+});
 
 const page = () => <EmailValidator />;
 export default page;

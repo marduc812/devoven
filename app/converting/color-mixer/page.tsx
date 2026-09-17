@@ -1,10 +1,11 @@
 import { ColorMixerTools } from '@/Components/Functions/ColorMixerTools';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/converting/color-mixer', {
   title: 'Color Mixer - DevOven',
   description: 'Mix two colors together with an adjustable ratio. See the blended result in HEX and RGB, plus a 5-stop gradient scale.',
-};
+});
 
 const page = () => <ColorMixerTools />;
 export default page;

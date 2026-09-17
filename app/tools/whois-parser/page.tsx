@@ -1,10 +1,11 @@
 import { WhoisParser } from '@/Components/Functions/WhoisParserTools';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/tools/whois-parser', {
   title: 'WHOIS Parser | DevOven',
   description: 'Parse raw WHOIS output to extract key fields like domain name, registrar, creation date, expiry date, and name servers.',
-};
+});
 
 const page = () => <WhoisParser />;
 export default page;

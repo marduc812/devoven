@@ -1,11 +1,12 @@
 import { FlaskSession } from '@/Components/Functions/FlaskSessionTools';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/tools/flask-session', {
   title: 'Flask Session Cookie Decoder, Verifier & Signer',
   description:
     'Decode a Flask session cookie without the secret key, verify its itsdangerous HMAC-SHA1 signature against a key, or sign a payload of your own. Everything stays in your browser.',
-};
+});
 
 const page = () => <FlaskSession />;
 export default page;

@@ -1,10 +1,11 @@
 import { WiFiQRCodeGenerator } from "@/Components/Functions/Tools"
 import type { Metadata } from 'next'
+import { toolMetadata } from '@/lib/seo';
  
-export const metadata = {
+export const metadata: Metadata = toolMetadata('/tools/wifi-qr-generator', {
     title: 'Online WiFi QR Code Generator',
     description: 'Generate a QR code for your WiFi easily and securely with one click. Unlimited style and color options without the need to sign up.'
-  }
+  });
 
 const page = () => {
     return (

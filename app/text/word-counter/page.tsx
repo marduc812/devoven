@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import { WordCounter } from '@/Components/Functions/TextUtilities';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/text/word-counter', {
   title: 'Word & Character Counter | DevOven',
   description: 'Count words, characters (with and without spaces), lines, and sentences in any text. Live browser-side statistics.',
-};
+});
 
 const page = () => {
   return <WordCounter />;

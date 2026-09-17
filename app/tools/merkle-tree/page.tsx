@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import { MerkleTreeVisualizer } from '@/Components/Functions/MerkleTreeTools';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/tools/merkle-tree', {
   title: 'Merkle Tree Visualizer | DevOven',
   description: 'Build and visualize a Merkle tree from a list of items. Shows SHA-256 leaf hashes, intermediate node hashes, root hash, and proof path for the first item.',
-};
+});
 
 const page = () => <MerkleTreeVisualizer />;
 export default page;

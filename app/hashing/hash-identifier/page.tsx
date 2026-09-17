@@ -1,10 +1,11 @@
 import HashIdentifier from '@/Components/Functions/HashIdentifierTools';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/hashing/hash-identifier', {
   title: 'Hash Identifier - Name That Hash Online | DevOven',
   description: 'Identify a hash type from its format and get the hashcat mode to crack it. Recognises MD5, the SHA family, bcrypt, NTLM, Kerberos, KeePass, wallet hashes and 200+ more patterns, entirely in your browser.',
-};
+});
 
 const page = () => <HashIdentifier />;
 export default page;

@@ -1,10 +1,11 @@
 import { MagicSquareGenerator } from '@/Components/Functions/MagicSquareTools';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/tools/magic-square', {
   title: 'Magic Square Generator | DevOven',
   description: 'Generate magic squares of order 3-9. All rows, columns, and diagonals sum to the same magic constant. Uses Siamese method, doubly-even, and LUX algorithms.',
-};
+});
 
 const page = () => <MagicSquareGenerator />;
 export default page;
