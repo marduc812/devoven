@@ -1,11 +1,11 @@
 import { HmacSHA224 } from "@/Components/Functions/Hashers/hmacsha224"
 import type { Metadata } from 'next'
+import { toolMetadata } from '@/lib/seo';
  
-export const metadata = {
+export const metadata: Metadata = toolMetadata('/hashing/hmac-sha224', {
   title: 'Easy Online HMAC-SHA224 Hashing Tool',
   description: 'Simple, fast, HMAC-SHA224 Hashing built with JavaScript running on your browser, for developers and security reseachers.'
-}
-
+});
 
 const page = () => {
     return (

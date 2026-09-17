@@ -1,10 +1,11 @@
 import { ChiSquareTest } from '@/Components/Functions/ChiSquareTools';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/tools/chi-square', {
     title: 'Chi-Square Test - Goodness of Fit, p-Value Calculator',
     description: 'Compute the chi-square goodness-of-fit statistic for observed frequencies. Calculates chi-square (χ²), degrees of freedom, p-value, and hypothesis test decisions at α=0.05 and α=0.01.',
-};
+});
 
 const page = () => {
     return (

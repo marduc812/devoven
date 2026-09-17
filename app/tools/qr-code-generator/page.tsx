@@ -1,10 +1,11 @@
 import { QrCodeGenerator } from '@/Components/Functions/Generators';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/tools/qr-code-generator', {
   title: 'QR Code Generator — URL, Text, vCard | DevOven',
   description: 'Generate QR codes from URLs, text, or vCard contact info entirely in your browser. Download as PNG.',
-};
+});
 
 const page = () => {
   return (

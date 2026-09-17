@@ -1,11 +1,12 @@
 import { XPathEvaluator } from '@/Components/Functions/MarkupQueryTools';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/tools/xpath-evaluator', {
   title: 'XPath Evaluator & Tester',
   description:
     'Test XPath expressions against XML or HTML in your browser. Location paths, axes, predicates and the string and boolean functions, with the matches shown as text, markup or JSON.',
-};
+});
 
 const page = () => <XPathEvaluator />;
 export default page;

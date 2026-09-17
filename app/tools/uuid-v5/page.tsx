@@ -1,10 +1,11 @@
 import { UuidV5Generator } from '@/Components/Functions/UuidV5Tools';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/tools/uuid-v5', {
     title: 'UUID v5 Generator - Name-based SHA-1 UUID',
     description: 'Generate deterministic UUID v5 values using a namespace and name. Same inputs always produce the same UUID. Uses SHA-1 hashing per RFC 4122. Supports DNS, URL, OID, and X500 standard namespaces.',
-};
+});
 
 const page = () => {
     return (

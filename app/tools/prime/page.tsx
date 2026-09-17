@@ -1,10 +1,11 @@
 import { PrimeChecker } from '@/Components/Functions/PrimeTools';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: 'Prime Number Checker | DevOven',
-  description: 'Check if a number is prime, get its prime factorization, find the next prime, and see how many primes exist up to that number.',
-};
+export const metadata: Metadata = toolMetadata('/tools/prime', {
+  title: 'Prime Number Checker — Is It Prime? Any Size | DevOven',
+  description: 'Check whether a number is prime, with its prime factorization, every divisor, the neighbouring primes and the count of primes below it. Numbers past a trillion are tested with Miller-Rabin.',
+});
 
 const page = () => <PrimeChecker />;
 export default page;

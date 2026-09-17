@@ -1,11 +1,12 @@
 import { TcpHeaderParser } from '@/Components/Functions/PacketTools';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/network/tcp-header', {
   title: 'TCP Header Parser - Decode Flags and Options',
   description:
     'Decode a TCP header from hex: ports, sequence and acknowledgement numbers, all nine flags, window, and the MSS, window scale, SACK and timestamp options. Client-side only.',
-};
+});
 
 const page = () => <TcpHeaderParser />;
 export default page;

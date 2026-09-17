@@ -1,11 +1,11 @@
-import type { Metadata } from 'next';
 import { CalendarWeekCalculator } from '@/Components/Functions/CalendarWeekTools';
+import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: 'Calendar Week Calculator | DevOven',
-  description: 'Find the ISO week number, day of year, quarter, and full Mon-Sun week for any date. Calculate business days between two dates. Supports ISO, US, and long-form date formats.',
-};
+export const metadata: Metadata = toolMetadata('/tools/calendar-week', {
+  title: 'Business Days Calculator — Working Days Between Two Dates | DevOven',
+  description: 'Count the working days between two dates, excluding weekends, and see the calendar week, quarter and day of year for each. Accepts ISO, US and long-form dates.',
+});
 
-export default function Page() {
-  return <CalendarWeekCalculator />;
-}
+const page = () => <CalendarWeekCalculator />;
+export default page;

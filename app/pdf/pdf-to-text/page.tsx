@@ -1,11 +1,12 @@
 import { PdfToText } from '@/Components/Functions/PdfTools';
 import type { Metadata } from 'next';
+import { toolMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = toolMetadata('/pdf/pdf-to-text', {
   title: "PDF to Text",
   description:
     "Free online PDF text extractor. Pull the text layer out of a PDF page by page and copy or download it. Runs entirely in your browser — your file is never uploaded.",
-};
+});
 
 const page = () => <PdfToText />;
 export default page;

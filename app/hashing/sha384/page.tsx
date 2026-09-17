@@ -1,10 +1,11 @@
 import { SHA384 } from "@/Components/Functions/Hashers/sha384"
 import type { Metadata } from 'next'
+import { toolMetadata } from '@/lib/seo';
  
-export const metadata = {
+export const metadata: Metadata = toolMetadata('/hashing/sha384', {
     title: 'Online SHA384 Hashing',
     description: 'Best online JavaScript SHA384 Hashing'
-  }
+  });
 
 const page = () => {
     return (

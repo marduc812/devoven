@@ -1,10 +1,11 @@
 import { Keccak384 } from "@/Components/Functions/Hashers/keccak384"
 import type { Metadata } from 'next'
+import { toolMetadata } from '@/lib/seo';
  
-export const metadata = {
+export const metadata: Metadata = toolMetadata('/hashing/keccak384', {
     title: 'Advanced Online Keccak-384 Hash Calculator',
     description: 'Calculate the Keccak 384 hash value for your string or binary online, securely and fast without your data ever leaving your browser.'
-  }
+  });
 
 const page = () => {
     return (
