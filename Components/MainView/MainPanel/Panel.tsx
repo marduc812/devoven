@@ -28,7 +28,7 @@ const Panel = (props: PanelType) => {
                     <span className={`w-3 h-3 flex-shrink-0 ${categoryAccent[props.backColor] ?? 'bg-amber-400'}`} />
                     <span className="text-xs font-bold uppercase tracking-widest text-gray-500">{colorName[props.backColor]}</span>
                 </div>
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
                     <h1 className="text-3xl font-black text-gray-900 tracking-tight">{props.title}</h1>
                     <div className="flex-shrink-0 flex items-center gap-2">
                         <ShareLinkButton />
