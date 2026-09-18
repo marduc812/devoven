@@ -1,5 +1,6 @@
 import { Buffer } from 'buffer';
 import { Operation } from '../types';
+import { decodeHtmlEntities } from '@/Components/Functions/TextCleanupTools/logic';
 
 const urlEncode: Operation = {
   id: 'url-encode',
@@ -36,11 +37,8 @@ const htmlDecode: Operation = {
   name: 'HTML Decode',
   category: 'encoding',
   params: [],
-  fn: (input) => {
-    const area = document.createElement('textarea');
-    area.innerHTML = input;
-    return area.value;
-  },
+  // No DOM here: this runs in the pipeline worker and on the MCP server.
+  fn: (input) => decodeHtmlEntities(input),
 };
 
 const base64Encode: Operation = {

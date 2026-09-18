@@ -45,6 +45,8 @@ codebase that computes in the browser.
 | `TELEGRAM_BOT_TOKEN` | Feedback form delivery | The form answers "Feedback is not configured on this instance" |
 | `TELEGRAM_CHAT_ID` | Feedback form delivery | Same; both are needed, either one alone does nothing |
 | `NEXT_PUBLIC_GA_ID` | Google Analytics 4 | No analytics script is loaded and nothing is sent |
+| `DEVOVEN_MCP` | The MCP server at `/api/mcp` | The route answers 404; see [MCP server](#mcp-server) |
+| `DEVOVEN_MCP_TOKEN` | A bearer token the MCP server demands | Anyone who can reach the instance can use the server |
 
 The Telegram pair is read server-side in `app/api/feedback/route.ts` and never
 reaches the browser. `NEXT_PUBLIC_GA_ID` is public by design, since the ID ends
@@ -138,16 +140,66 @@ JWT decode into JSON format, say. The registry lives in `lib/blocks/operations/`
 and imports the tools' own logic modules, so an operation only shows up there
 if someone registers it.
 
+### MCP server
+
+Self-hosted instances can serve the same operations to AI agents over the
+[Model Context Protocol](https://modelcontextprotocol.io). Set `DEVOVEN_MCP=on`
+and the route `/api/mcp` becomes a Streamable HTTP MCP server, one tool per
+operation in `lib/blocks/operations/` (289 of them: encoders, hashes, ciphers,
+converters, formatters, text and network helpers) plus `run-pipeline`, which
+chains any of them the way `/blocks` does. Each tool takes strings and returns
+a string. Nothing is stored between calls.
+
+```bash
+DEVOVEN_MCP=on npm run dev
+claude mcp add --transport http devoven http://localhost:3000/api/mcp
+```
+
+Any MCP client that speaks Streamable HTTP works the same way; point it at
+`/api/mcp`.
+
+Some clients cap how many tools one server may offer, and 289 is past most
+caps. For those, `/api/mcp/compact` serves the same operations through two
+tools: `list-operations`, which prints one line per operation with its id and
+settings and filters by category or a search word, and `run-pipeline`, which
+runs any of them (a single operation is a one-block pipeline). Both URLs are
+live at once, so each client picks the one it can handle:
+
+```bash
+claude mcp add --transport http devoven http://localhost:3000/api/mcp/compact
+```
+
+Set `DEVOVEN_MCP_TOKEN` as well if the instance is reachable by anyone but
+you, and the server then requires `Authorization: Bearer <token>` on every
+request:
+
+```bash
+claude mcp add --transport http devoven http://devoven.internal/api/mcp \
+  --header "Authorization: Bearer $DEVOVEN_MCP_TOKEN"
+```
+
+The hosted site at devoven.com does not set the flag, so it answers 404 there.
+That is deliberate: the tools stay free to use in a browser, but an endpoint
+every agent on the internet could hammer would be paid for out of the site's
+hosting budget. Run your own instance and it is yours to use.
+
+The server is stateless and JSON-only: `POST` carries the JSON-RPC messages,
+and `GET` and `DELETE` answer 405. Input is capped at 100,000 characters per
+value and a pipeline at 50 blocks, the same limits a `/blocks` share link has.
+The code is `lib/mcp/`: the catalogue, the server and the HTTP gate. The two
+route files under `app/api/mcp/` only pick a tool set.
+
 ## Layout
 
 ```
 app/                    One thin page per tool: metadata + the component
-  api/                  The only server code (feedback, IP echo, key scanner)
+  api/                  The only server code (feedback, IP echo, key scanner, MCP)
 Components/
   Functions/            Tool logic and UI, one directory or module per tool
   MainView/MainPanel/   Layout primitives every tool page is built from
 lib/
   blocks/               Pipeline builder registry, operations and its worker
+  mcp/                  The blocks registry as MCP tools, for self-hosters
   regex/                Regex engine running off the main thread
 __tests__/              Jest, against the logic modules rather than the JSX
 menu.ts                 The catalogue
@@ -167,7 +219,8 @@ types.ts                Shared types, including the category colour map
    `MediaConverter` (image/audio/PDF/file), `Panel` (custom). Input and output
    should be the same shape and weight, in the medium of the data.
 5. If the logic is `string -> string`, register it in `lib/blocks/operations/`
-   too, so it reaches the pipeline builder.
+   too, so it reaches the pipeline builder and the MCP server. Both run
+   without a DOM, so the logic must not touch `document` or `window`.
 6. Add tests in `__tests__/` against the logic module.
 
 Tool pages read `?from=<value>` on mount to pre-populate their input, and some
