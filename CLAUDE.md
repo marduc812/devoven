@@ -135,6 +135,28 @@ into a pipeline where each block's output feeds the next. It imports the tools'
   invariants (unique ids, rendered outputs only on terminal blocks, select
   defaults valid, field ids distinct from param ids).
 
+### MCP server (`/api/mcp`)
+
+`lib/mcp/` is a third front door to the same registry, for self-hosted
+instances: `catalog.ts` turns every non-flow, text-output operation into an
+MCP tool (name = operation id, JSON Schema from its params and `inputs`) plus
+`run-pipeline`, and `server.ts` serves that over the MCP SDK. There are two
+tool sets (`ToolSet` in `catalog.ts`): `full` at `/api/mcp` is one tool per
+operation; `compact` at `/api/mcp/compact` is just `list-operations` and
+`run-pipeline`, for clients that cap tools per server. `http.ts` holds the
+gate and transport both routes share: 404 unless `DEVOVEN_MCP=on`, 401
+without the bearer token when `DEVOVEN_MCP_TOKEN` is set, stateless and
+JSON-only (POST; GET and DELETE are 405), so it works on a serverless host.
+
+- Operations run in Node here and in a worker on `/blocks`, so an operation's
+  `fn` must never touch `document`, `window` or any other DOM API.
+- A select param handed a value outside its options is an error to the agent,
+  not a silent fall-back to the default the way a `?p=` link is treated.
+- New runtime dependencies must also go in `lib/third-party-licenses.ts`, or
+  `__tests__/third-party-licenses.test.ts` fails.
+- Tests live in `__tests__/mcp.test.ts`, which also drives the real server
+  through the SDK's in-memory transport.
+
 ### View Components (`Components/MainView/MainPanel/`)
 
 Layout primitives for tool UIs, all accepting a `backColor: MainViewColorVariants` prop:

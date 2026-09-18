@@ -20,6 +20,7 @@ export const REPOSITORY_URL = 'https://github.com/marduc812/devoven';
 
 export const THIRD_PARTY_LIBRARIES: ThirdPartyLibrary[] = [
     { name: '@eslint-community/regexpp', license: 'MIT', url: 'https://github.com/eslint-community/regexpp', used: 'Regex parsing behind the ReDoS analyser' },
+    { name: '@modelcontextprotocol/sdk', license: 'MIT', url: 'https://github.com/modelcontextprotocol/typescript-sdk', used: 'The MCP server at /api/mcp on self-hosted instances' },
     { name: '@noble/hashes', license: 'MIT', url: 'https://github.com/paulmillr/noble-hashes', used: 'BLAKE2, BLAKE3, and the PBKDF2, HKDF, scrypt and Argon2 key derivation functions' },
     { name: '@vercel/analytics', license: 'MIT', url: 'https://github.com/vercel/analytics', used: 'Page view counts' },
     { name: 'bcryptjs', license: 'BSD-3-Clause', url: 'https://github.com/dcodeIO/bcrypt.js', used: 'Bcrypt hashing and verification' },
@@ -55,4 +56,5 @@ export const THIRD_PARTY_LIBRARIES: ThirdPartyLibrary[] = [
     { name: 'ulid', license: 'MIT', url: 'https://github.com/ulid/javascript', used: 'ULID generation' },
     { name: 'uuid', license: 'MIT', url: 'https://github.com/uuidjs/uuid', used: 'UUID generation' },
     { name: 'web3-utils', license: 'LGPL-3.0', url: 'https://github.com/ChainSafe/web3.js', used: 'Ethereum hex and unit conversion' },
+    { name: 'zod', license: 'MIT', url: 'https://github.com/colinhacks/zod', used: 'Message validation inside the MCP SDK' },
 ];
