@@ -5,6 +5,7 @@ import { FileDropZone, FileTextArea, LoadFileButton } from '@/Components/View/Fi
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import {
   decodeJwtParts,
+  base64urlEncodeString,
   signJwt,
   verifyJwt,
   generateKeyPair,
@@ -94,13 +95,13 @@ export function JwtEditor() {
   // Used whenever a key changes: a pasted token must keep its original signature so
   // the user can see whether the key they typed actually matches it.
   const reverify = async (tok: string, alg: JwtAlgorithm, o: KeyOverrides = {}) => {
+    const id = ++reqId.current;
     const fam = algFamily(alg);
     if (!tok.trim() || fam === 'none') {
       setVerified(null);
       return;
     }
     const verifyKey = fam === 'HMAC' ? (o.s ?? secret) : (o.pub ?? publicKey);
-    const id = ++reqId.current;
     try {
       const ok = await verifyJwt(tok, verifyKey, alg);
       if (id !== reqId.current) return;
@@ -116,6 +117,7 @@ export function JwtEditor() {
 
   // Decode an edited encoded token back into its parts and verify it.
   const redecode = async (value: string, o: KeyOverrides = {}) => {
+    const id = ++reqId.current;
     if (!value.trim()) {
       setDecodeError('');
       setVerified(null);
@@ -142,7 +144,6 @@ export function JwtEditor() {
       return;
     }
     const verifyKey = fam === 'HMAC' ? (o.s ?? secret) : (o.pub ?? publicKey);
-    const id = ++reqId.current;
     try {
       const ok = await verifyJwt(value, verifyKey, alg);
       if (id !== reqId.current) return;
@@ -231,14 +232,54 @@ export function JwtEditor() {
     redecode(value);
   };
 
+  // Encoding the edited JSON must not depend on having a signing key. Keep the
+  // existing signature until re-signing succeeds, and invalidate its old status.
+  const updateDecodedParts = (h: string, p: string) => {
+    ++reqId.current;
+    let parsedHeader;
+    let parsedPayload;
+    try {
+      parsedHeader = JSON.parse(h);
+    } catch {
+      setEncodeError('Header JSON is invalid');
+      setVerified(null);
+      return;
+    }
+    try {
+      parsedPayload = JSON.parse(p);
+    } catch {
+      setEncodeError('Payload JSON is invalid');
+      setVerified(null);
+      return;
+    }
+
+    const alg = (ALL_ALGORITHMS as string[]).includes(parsedHeader?.alg)
+      ? (parsedHeader.alg as JwtAlgorithm)
+      : algorithm;
+    setAlgorithm(alg);
+    const signature = alg === 'none' ? '' : (token.split('.')[2] ?? '');
+    const updated = `${base64urlEncodeString(JSON.stringify(parsedHeader))}.${base64urlEncodeString(JSON.stringify(parsedPayload))}.${signature}`;
+    setToken(updated);
+    setDecodeError('');
+    setEncodeError('');
+    setVerified(alg === 'none' ? null : false);
+
+    if (isAsymmetric(alg) && !privateKey.trim()) {
+      setEncodeError('Header and payload updated; existing signature retained. Provide a private key to re-sign the token.');
+      if (publicKey.trim()) reverify(updated, alg);
+      return;
+    }
+    resign(h, p, alg);
+  };
+
   const onHeaderChange = (value: string) => {
     setHeader(value);
-    resign(value, payload, algorithm);
+    updateDecodedParts(value, payload);
   };
 
   const onPayloadChange = (value: string) => {
     setPayload(value);
-    resign(header, value, algorithm);
+    updateDecodedParts(header, value);
   };
 
   // Key edits never rewrite the encoded token — they only re-check it, so a pasted
@@ -598,7 +639,7 @@ export function JwtEditor() {
   return (
     <Panel
       title="JWT Editor"
-      description="Decode, edit, and re-sign [1 JSON Web Tokens 2] live. Edit the encoded token on the left or the [1 header 2] and [1 payload 2] on the right — the other side updates instantly. Changing a key only re-checks the signature, so a pasted token keeps its own; press [1 Update encoded token 2] to re-sign with it. Signs and verifies HMAC ([1 HS256 2]), RSA (RS/PS), ECDSA (ES) and EdDSA, with PEM or JWK keys, entirely in your browser."
+      description="Decode, edit, and re-sign [1 JSON Web Tokens 2] live. Edit the encoded token on the left or the [1 header 2] and [1 payload 2] on the right — valid JSON edits update the other side instantly. Edits re-sign with the current key when possible; without a signing key, the existing signature is retained. Changing a key only re-checks the signature; press [1 Update encoded token 2] to re-sign with it. Signs and verifies HMAC ([1 HS256 2]), RSA (RS/PS), ECDSA (ES) and EdDSA, with PEM or JWK keys, entirely in your browser."
       backColor="yellow"
       extraElements={content}
     />
