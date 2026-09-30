@@ -169,6 +169,35 @@ live at once, so each client picks the one it can handle:
 claude mcp add --transport http devoven http://localhost:3000/api/mcp/compact
 ```
 
+#### Codex
+
+Codex uses the same Streamable HTTP server. Start DevOven with
+`DEVOVEN_MCP=on npm run dev`, then run this in another terminal:
+
+```bash
+codex mcp add devoven --url http://localhost:3000/api/mcp/compact
+codex mcp list
+```
+
+The compact endpoint keeps the tool list small while giving Codex access to
+every operation through `list-operations` and `run-pipeline`. Use `/api/mcp`
+instead if you want each operation exposed as a separate tool.
+
+Alternatively, add this to `~/.codex/config.toml` or the project's
+`.codex/config.toml`:
+
+```toml
+[mcp_servers.devoven]
+url = "http://localhost:3000/api/mcp/compact"
+```
+
+Start a new Codex session after configuring the server. In the CLI, `/mcp`
+shows active servers. Try: "Use DevOven to Base64-decode `aGVsbG8=`."
+See the [official Codex MCP documentation](https://developers.openai.com/codex/mcp/)
+for client configuration details.
+
+#### Authentication
+
 Set `DEVOVEN_MCP_TOKEN` as well if the instance is reachable by anyone but
 you, and the server then requires `Authorization: Bearer <token>` on every
 request:
@@ -177,6 +206,19 @@ request:
 claude mcp add --transport http devoven http://devoven.internal/api/mcp \
   --header "Authorization: Bearer $DEVOVEN_MCP_TOKEN"
 ```
+
+For Codex, register the environment variable containing the token:
+
+```bash
+codex mcp add devoven --url http://devoven.internal/api/mcp/compact \
+  --bearer-token-env-var DEVOVEN_MCP_TOKEN
+```
+
+Export `DEVOVEN_MCP_TOKEN` with the same value used by the server before
+starting Codex; Next.js's `.env.local` is not loaded by Codex. For TOML
+configuration, add `bearer_token_env_var = "DEVOVEN_MCP_TOKEN"` to the
+`[mcp_servers.devoven]` table. This server uses a static bearer token, so
+`codex mcp login` is unnecessary.
 
 The hosted site at devoven.com does not set the flag, so it answers 404 there.
 That is deliberate: the tools stay free to use in a browser, but an endpoint
