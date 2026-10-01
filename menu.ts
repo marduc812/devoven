@@ -482,6 +482,7 @@ export const menu: MenuGroupType[] = [
                     {"name": "Hash Length Extension", "link": "/tools/hash-length-ext", "type": "Security", "tag": ""},
                     {"name": "CORS Policy Builder", "link": "/tools/cors-builder", "type": "Security", "tag": ""},
                     {"name": "CSP Builder", "link": "/tools/csp-builder", "type": "Security", "tag": ""},
+                    {"name": "CSP Analyzer", "link": "/tools/csp-analyzer", "type": "Security", "tag": ""},
                     {"name": "Bitcoin Address Validator", "link": "/tools/bitcoin-addr", "type": "web3", "tag": ""},
                     {"name": "Ethereum Address Checksum", "link": "/tools/eth-checksum", "type": "web3", "tag": ""},
                     {"name": "IPFS CID Decoder", "link": "/tools/ipfs-cid", "type": "web3", "tag": ""},

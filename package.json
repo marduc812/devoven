@@ -29,6 +29,7 @@
     "cron-parser": "^3.5.0",
     "cronstrue": "^3.14.0",
     "crypto-js": "4.2.0",
+    "csp_evaluator": "^1.1.8",
     "dompurify": "^3.4.15",
     "fast-xml-parser": "^5.11.1",
     "fflate": "^0.8.3",
