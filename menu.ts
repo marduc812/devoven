@@ -660,6 +660,7 @@ export const menu: MenuGroupType[] = [
             {"name": "OAuth 2.0 Flow", "link": "/network/oauth-flow", "type": "network", "tag": ""},
             {"name": "Packet Size Calc", "link": "/network/packet-size", "type": "network", "tag": ""},
             {"name": "Email Header Analyzer", "link": "/network/email-headers", "type": "network", "tag": ""},
+            {"name": "Azure Blob Candidate Generator", "link": "/network/cloud-candidates", "type": "network", "tag": ""},
             {"name": "HTTP/2 Frame", "link": "/network/http2-frame", "type": "network", "tag": ""},
             {"name": "DoH Query Builder", "link": "/network/doh-simulator", "type": "network", "tag": ""},
             {"name": "VLSM Calculator", "link": "/network/vlsm", "type": "network", "tag": ""},
