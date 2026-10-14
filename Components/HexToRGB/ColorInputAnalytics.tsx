@@ -38,7 +38,7 @@ const ColorInputAnalytics = (props: TextAnalyticsType) => {
             <div onClick={downloadHandler} className="p-1.5 text-base hover:cursor-pointer text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-150 active:scale-95"><IoSaveOutline /></div>
         </div>
         {gotCode ? <Modal closeWindow={gotCodeUnclickedHandler}><div className='qrCodeOutput'>
-          <QRCodeCanvas value={props.userInput} size={256} includeMargin={true} />
+          <QRCodeCanvas value={props.userInput} size={256} style={{ maxWidth: '100%', height: 'auto' }} includeMargin={true} />
         </div></Modal> : ''}
     </div>
   )
