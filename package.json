@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@eslint-community/regexpp": "^4.12.2",
-    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@modelcontextprotocol/sdk": "^1.31.0",
     "@noble/hashes": "^2.4.0",
     "@vercel/analytics": "^2.0.1",
     "bcryptjs": "^3.0.3",
@@ -52,7 +52,7 @@
     "react-dom": "^19.2.4",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.11.0",
-    "smol-toml": "^1.6.1",
+    "smol-toml": "^1.9.0",
     "sql-formatter": "^15.7.3",
     "turndown": "^7.2.4",
     "ulid": "^3.0.2",
