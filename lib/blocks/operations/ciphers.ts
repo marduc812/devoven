@@ -12,6 +12,9 @@ import { tapEncode, tapDecode } from '@/Components/Functions/TapCodeTools/logic'
 import { toLeet, fromLeet } from '@/Components/Functions/LeetSpeakTools/logic';
 import { toPigLatin, fromPigLatin } from '@/Components/Functions/PigLatinTools/logic';
 import { textToBraille } from '@/Components/Functions/BrailleTools/logic';
+import { encodeA1Z26, decodeA1Z26 } from '@/Components/Functions/A1Z26Tools/logic';
+import { substitute, DEFAULT_CIPHER_ALPHABET } from '@/Components/Functions/SubstitutionCipherTools/logic';
+import { bruteForceRot47 } from '@/Components/Functions/RotationTools/logic';
 import { Operation } from '../types';
 
 // Ciphers take the text and the key as two named fields, so a block shows
@@ -61,6 +64,36 @@ const baconReprParam = {
 };
 
 export const cipherOperations: Operation[] = [
+  {
+    id: 'a1z26-encode',
+    name: 'A1Z26 Encode',
+    category: 'encoding',
+    params: [],
+    fn: (input) => encodeA1Z26(input),
+  },
+  {
+    id: 'a1z26-decode',
+    name: 'A1Z26 Decode',
+    category: 'encoding',
+    params: [],
+    fn: (input) => decodeA1Z26(input),
+  },
+  ...(['encrypt', 'decrypt'] as const).map((mode): Operation => ({
+    id: `substitution-${mode}`,
+    name: mode === 'encrypt' ? 'Substitution Encrypt' : 'Substitution Decrypt',
+    category: 'encoding',
+    inputs: [{ id: 'text', label: 'Text', long: true }, { id: 'alphabet', label: 'Cipher alphabet', placeholder: DEFAULT_CIPHER_ALPHABET }],
+    params: [],
+    fn: (_input, p) => substitute(p.text ?? '', p.alphabet ?? DEFAULT_CIPHER_ALPHABET, mode),
+  })),
+  {
+    id: 'rot47-brute-force',
+    name: 'ROT47 Brute Force',
+    category: 'analysis',
+    params: [],
+    terminal: true,
+    fn: (input) => bruteForceRot47(input),
+  },
   {
     id: 'atbash',
     name: 'Atbash Cipher',

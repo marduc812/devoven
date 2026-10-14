@@ -11,11 +11,20 @@ import { decodeCID, formatCIDInfo } from '@/Components/Functions/IpfsCidTools/lo
 import { parseWhois, formatWhoisSummary } from '@/Components/Functions/WhoisParserTools/logic';
 import { evaluatePassphrase, formatPassphraseResult } from '@/Components/Functions/PassphraseStrengthTools/logic';
 import { Operation } from '../types';
+import { formatIndexOfCoincidence } from '@/Components/Functions/IndexOfCoincidenceTools/logic';
 
 // Byte-mode capacity of a version-40 QR code at the lowest error correction level.
 const QR_MAX_BYTES = 2953;
 
 export const analysisOperations: Operation[] = [
+  {
+    id: 'index-of-coincidence',
+    name: 'Index of Coincidence',
+    category: 'analysis',
+    params: [],
+    terminal: true,
+    fn: (input) => formatIndexOfCoincidence(input),
+  },
   {
     id: 'qr-code',
     name: 'QR Code',

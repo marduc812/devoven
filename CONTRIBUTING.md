@@ -16,7 +16,7 @@ database, no API keys, no accounts. The optional environment variables in
 
 ```bash
 npm run build   # production build, and the type check
-npm test        # Jest, 370 suites
+npm test        # Jest, 413 suites
 ```
 
 There is no lint script. Next 16 removed `next lint`, and ESLint was dropped

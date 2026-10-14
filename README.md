@@ -1,11 +1,11 @@
 # DevOven
 
-A collection of 605 developer tools that run in your browser. Encode, hash,
+A collection of 615 developer tools that run in your browser. Encode, hash,
 convert, format, generate, inspect. No accounts, no uploads, no database. Live
 at [devoven.com](https://www.devoven.com), and it runs the same from a local
 checkout.
 
-603 of the 605 compute entirely client-side. The text you paste, the image you
+613 of the 615 compute entirely client-side. The text you paste, the image you
 drop and the PDF you split never leave the tab. Two tools cannot work that way,
 and the section below says exactly what they send and where.
 
@@ -26,7 +26,7 @@ Open <http://localhost:3000>. Node 22.x is what the project targets
 | `npm run dev` | Development server on port 3000 |
 | `npm run build` | Production build; also the type check |
 | `npm run start` | Serve the production build |
-| `npm test` | Jest suite (370 files under `__tests__/`) |
+| `npm test` | Jest suite (413 files under `__tests__/`) |
 
 There is no lint script. Next 16 removed `next lint`, and ESLint was dropped
 with it. `npm run build` is the type check.

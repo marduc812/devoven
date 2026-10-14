@@ -4,7 +4,7 @@ import { toolMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = toolMetadata('/encoding/rot47', {
   title: 'Online ROT47 Encoder / Decoder',
-  description: 'Free online ROT47 encoder and decoder. Rotates all printable ASCII characters by 47 — self-inverse.',
+  description: 'Encode and decode ROT47 text, or try all 94 ASCII rotation shifts with brute force. Runs in your browser.',
 });
 
 const page = () => <Rot47 />;
