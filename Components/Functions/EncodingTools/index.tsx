@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import BasicConverter from '@/Components/MainView/MainPanel/BasicConverter';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
+import { bruteForceRot47, MAX_ROTATION_INPUT } from '@/Components/Functions/RotationTools/logic';
+import { useShareLink } from '@/Components/Functions/ShareLink';
 import {
   base32Encode, base32Decode,
   base58Encode, base58Decode,
@@ -259,6 +261,7 @@ export const Rot13 = () => {
 export const Rot47 = () => {
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('');
+  const [mode, setMode] = useState<'rotate' | 'brute'>('rotate');
 
   useEffect(() => {
     const searchParams = new URLSearchParams(
@@ -266,22 +269,35 @@ export const Rot47 = () => {
     );
     const from = searchParams.get('from') ?? '';
     if (from) setFromValue(from);
+    if (searchParams.get('mode') === 'brute') setMode('brute');
   }, []);
 
+  useShareLink({ mode });
   useEffect(() => {
-    setToValue(rot47(fromValue));
-  }, [fromValue]);
+    try {
+      setToValue(mode === 'brute' ? bruteForceRot47(fromValue) : rot47(fromValue));
+    } catch (error) {
+      setToValue('Error: ' + (error instanceof Error ? error.message : String(error)));
+    }
+  }, [fromValue, mode]);
 
   return (
-    <BasicConverter
+    <AdvancedConverter
       title="ROT47 Encoder / Decoder"
-      description="Apply ROT47 substitution cipher. Rotates all printable ASCII characters (! through ~) by 47 positions, including digits and punctuation. ROT47 is its own inverse. For example, [1 Hello 2] becomes [1 w6==@ 2]."
+      description={`Rotate ASCII characters from ! through ~ by 47 positions, including digits and punctuation. Applying ROT47 twice restores the input. Brute force lists all 94 shifts and accepts up to ${MAX_ROTATION_INPUT.toLocaleString('en-US')} characters. Spaces, line breaks and other characters stay in place.`}
       fromValue={fromValue}
       toValue={toValue}
       setFromValue={setFromValue}
       fromTitle="Input"
-      toTitle="ROT47 Output"
+      toTitle={mode === 'brute' ? 'All shifts' : 'ROT47 output'}
       backColor="yellow"
+      extraElements={<label className="flex items-center gap-2 text-sm text-gray-700">
+        Mode
+        <select value={mode} onChange={(event) => setMode(event.target.value as 'rotate' | 'brute')}
+          className="border border-gray-300 bg-white px-3 py-1.5 text-gray-900">
+          <option value="rotate">Encode / decode</option><option value="brute">Brute force</option>
+        </select>
+      </label>}
     />
   );
 };
