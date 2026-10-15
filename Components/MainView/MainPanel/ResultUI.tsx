@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { IoCheckmarkOutline, IoClipboardOutline } from 'react-icons/io5';
 import { FileDropZone, LoadFileButton } from '@/Components/View/FileInput';
 import { trimTrailingNewline } from '@/lib/textFile';
 
@@ -17,11 +18,13 @@ export const CopyButton = ({
   text,
   label,
   verb = 'copy',
+  appearance = 'text',
 }: {
   text: string;
   label?: string;
   /** The resting word, for lists where a row copy and a copy-all sit together. */
   verb?: string;
+  appearance?: 'text' | 'icon' | 'button';
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -37,11 +40,20 @@ export const CopyButton = ({
 
   return (
     <button
+      type="button"
       onClick={copy}
       aria-label={`Copy ${label ?? text}`}
-      className="text-[10px] uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-colors duration-150 cursor-pointer"
+      title={copied ? 'Copied' : `Copy ${label ?? text}`}
+      className={appearance === 'text'
+        ? 'text-[10px] uppercase tracking-widest text-gray-400 hover:text-gray-900 transition-colors duration-150 cursor-pointer'
+        : `inline-flex shrink-0 items-center justify-center gap-2 border border-gray-300 bg-white text-gray-600 hover:border-gray-900 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-colors duration-150 cursor-pointer ${appearance === 'icon' ? 'h-9 w-9' : 'px-3 py-2 text-xs'}`}
     >
-      {copied ? 'copied' : verb}
+      {appearance !== 'text' && (copied
+        ? <IoCheckmarkOutline aria-hidden="true" className="text-base text-emerald-700" />
+        : <IoClipboardOutline aria-hidden="true" className="text-base" />)}
+      {appearance === 'icon'
+        ? <span className="sr-only" role="status">{copied ? 'Copied' : 'Copy'}</span>
+        : <span role="status">{copied ? 'copied' : verb}</span>}
     </button>
   );
 };

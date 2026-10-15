@@ -305,6 +305,7 @@ export const menu: MenuGroupType[] = [
                     {"name": "Regex Tester", "link": "/tools/regex-tester", "type": "code", "tag": ""},
                     {"name": "ReDoS Checker", "link": "/tools/redos-checker", "type": "code", "tag": ""},
                     {"name": "UUID Generator", "link": "/tools/uuid-generator", "type": "dev", "tag": "popular"},
+                    {"name": "IBAN Generator", "link": "/tools/iban-generator", "type": "dev", "tag": ""},
                     {"name": "ULID Generator", "link": "/tools/ulid-generator", "type": "dev", "tag": ""},
                     {"name": "QR Code Generator", "link": "/tools/qr-code-generator", "type": "dev", "tag": ""},
                     {"name": "Barcode Generator", "link": "/tools/barcode-generator", "type": "dev", "tag": ""},
