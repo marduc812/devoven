@@ -1,22 +1,19 @@
 'use client';
 
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { Match } from './logic';
 import type { TabView } from './tabs';
 import { HEIGHT_STEP, clampEditorHeight } from './editorHeight';
 
 // The textarea and the highlight layer must lay text out identically or the
 // highlights drift. Every metric that affects layout lives in this one string.
-const TEXT_METRICS = 'font-mono text-sm leading-6 p-3 tracking-normal';
+const NO_MATCHES: Match[] = [];
+
+const TEXT_METRICS = 'font-mono text-sm leading-6 p-3 tracking-normal [tab-size:8]';
 
 type Props = {
   value: string;
-  /**
-   * The buffer the matches were computed against. Trails `value` by the search
-   * debounce, and highlighting stale-by-one-frame text is what keeps typing cheap:
-   * the layer only re-slices when the debounced buffer settles, not per keystroke.
-   * It is invisible text either way — only the highlight boxes are seen.
-   */
+  /** The buffer the match offsets belong to. Hide them while the live text differs. */
   highlightText: string;
   onChange: (value: string) => void;
   matches: Match[];
@@ -37,10 +34,7 @@ type Props = {
 
 type Segment = { text: string; match: boolean; current: boolean };
 
-// One flat pass over the whole buffer. Because the layer is `whitespace-pre`, the
-// newlines inside the plain segments lay out exactly as the textarea's do — no
-// per-line elements needed, so the node count depends on the number of matches
-// rather than the size of the file.
+// Inline marks share the visible text's layout. They add no padding or borders.
 function buildSegments(text: string, matches: Match[], currentMatchIndex: number): Segment[] {
   const segments: Segment[] = [];
   let cursor = 0;
@@ -61,46 +55,6 @@ function buildSegments(text: string, matches: Match[], currentMatchIndex: number
   return segments;
 }
 
-// Wrapped mode still needs one box per logical line for the gutter to measure, so
-// there the same slicing is done per line.
-function buildLineSegments(lines: string[], matches: Match[], currentMatchIndex: number): Segment[][] {
-  const result: Segment[][] = [];
-  let lineStart = 0;
-  let cursor = 0;
-
-  for (const line of lines) {
-    const lineEnd = lineStart + line.length;
-    const segments: Segment[] = [];
-    let pos = lineStart;
-
-    while (cursor < matches.length && matches[cursor].start < lineEnd) {
-      const match = matches[cursor];
-      const from = Math.max(match.start, lineStart);
-      const to = Math.min(match.end, lineEnd);
-
-      if (from > pos) {
-        segments.push({ text: line.slice(pos - lineStart, from - lineStart), match: false, current: false });
-      }
-      segments.push({
-        text: line.slice(from - lineStart, to - lineStart),
-        match: true,
-        current: cursor === currentMatchIndex,
-      });
-      pos = to;
-
-      // A match spanning a newline carries over to the next line.
-      if (match.end > lineEnd) break;
-      cursor++;
-    }
-
-    segments.push({ text: line.slice(pos - lineStart), match: false, current: false });
-    result.push(segments);
-    lineStart = lineEnd + 1;
-  }
-
-  return result;
-}
-
 const EditorSurface = ({
   value,
   highlightText,
@@ -115,8 +69,11 @@ const EditorSurface = ({
   onHeightChange,
 }: Props) => {
   const highlightRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [nativeHighlights, setNativeHighlights] = useState<boolean | null>(null);
+  const matchRangesRef = useRef<Range[]>([]);
   const boxRef = useRef<HTMLDivElement>(null);
-  const gutterRef = useRef<HTMLDivElement>(null);
+  const gutterContentRef = useRef<HTMLDivElement>(null);
   const [lineHeights, setLineHeights] = useState<number[]>([]);
 
   // Counting separators is much cheaper than materialising an array of lines,
@@ -127,22 +84,16 @@ const EditorSurface = ({
     return count;
   }, [value]);
 
-  const hasMatches = matches.length > 0;
-  // Wrapped mode needs per-line boxes for the gutter to measure against; unwrapped
-  // mode needs nothing at all unless there is something to highlight.
-  const renderHighlight = hasMatches || wrap;
-
+  const freshMatches = value === highlightText ? matches : NO_MATCHES;
   const segments = useMemo(
-    () => (renderHighlight && !wrap ? buildSegments(highlightText, matches, currentMatchIndex) : []),
-    [renderHighlight, wrap, highlightText, matches, currentMatchIndex]
+    () => buildSegments(value, value === highlightText && nativeHighlights === false ? matches : [], currentMatchIndex),
+    [value, highlightText, nativeHighlights, matches, currentMatchIndex]
   );
+  const lines = useMemo(() => wrap ? value.split('\n') : [], [wrap, value]);
 
-  const wrappedLines = useMemo(() => (wrap ? highlightText.split('\n') : []), [wrap, highlightText]);
-
-  const wrappedSegments = useMemo(
-    () => (wrap && renderHighlight ? buildLineSegments(wrappedLines, matches, currentMatchIndex) : []),
-    [wrap, renderHighlight, wrappedLines, matches, currentMatchIndex]
-  );
+  useLayoutEffect(() => {
+    setNativeHighlights(typeof Highlight !== 'undefined' && typeof CSS !== 'undefined' && !!CSS.highlights);
+  }, []);
 
   const gutterText = useMemo(() => {
     if (!showLineNumbers || wrap) return '';
@@ -153,40 +104,91 @@ const EditorSurface = ({
 
   const syncScroll = useCallback(() => {
     const textarea = textareaRef.current;
-    if (!textarea) return;
-    if (highlightRef.current) {
-      highlightRef.current.scrollTop = textarea.scrollTop;
-      highlightRef.current.scrollLeft = textarea.scrollLeft;
-    }
-    if (gutterRef.current) {
-      gutterRef.current.scrollTop = textarea.scrollTop;
+    const content = contentRef.current;
+    const viewport = highlightRef.current;
+    if (!textarea || !content || !viewport) return;
+
+    // clientWidth excludes a native scrollbar. The mirror must wrap at exactly
+    // that width, even on systems that always reserve space for scrollbars.
+    viewport.style.width = `${textarea.clientWidth}px`;
+    viewport.style.height = `${textarea.clientHeight}px`;
+    content.style.transform = `translate(${-textarea.scrollLeft}px, ${-textarea.scrollTop}px)`;
+    if (gutterContentRef.current) {
+      gutterContentRef.current.style.transform = `translateY(${-textarea.scrollTop}px)`;
     }
   }, [textareaRef]);
 
-  // In wrapped mode a logical line can occupy several visual rows, so gutter
-  // numbers are aligned to measured line-box heights rather than a fixed step.
+  // Index the rendered text nodes once. Native highlights decorate ranges without
+  // adding a DOM element per match. The same ranges measure wrapped rows and reveal
+  // matches, so navigation uses the actual layout rather than a line-number guess.
   useLayoutEffect(() => {
-    if (!wrap || !showLineNumbers) {
-      setLineHeights([]);
-      return;
+    const content = contentRef.current;
+    if (!content || nativeHighlights === null) return;
+    const walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
+    const nodes: { node: Text; start: number; end: number }[] = [];
+    let offset = 0;
+    let node: Node | null;
+    while ((node = walker.nextNode())) {
+      const end = offset + (node.textContent?.length ?? 0);
+      nodes.push({ node: node as Text, start: offset, end });
+      offset = end;
     }
-    const container = highlightRef.current;
-    if (!container) return;
+    const point = (position: number) => {
+      let low = 0;
+      let high = nodes.length - 1;
+      while (low < high) {
+        const mid = (low + high) >>> 1;
+        if (nodes[mid].end <= position) low = mid + 1;
+        else high = mid;
+      }
+      const entry = nodes[low];
+      return { node: entry.node, offset: Math.min(position - entry.start, entry.node.length) };
+    };
+    const rangeFor = (start: number, end: number) => {
+      const range = document.createRange();
+      const from = point(start);
+      const to = point(end);
+      range.setStart(from.node, from.offset);
+      range.setEnd(to.node, to.offset);
+      return range;
+    };
+    const ranges = freshMatches.map((match) => rangeFor(match.start, match.end));
+    matchRangesRef.current = ranges;
+
+    if (nativeHighlights) {
+      const all = new Highlight();
+      for (const range of ranges) all.add(range);
+      CSS.highlights.set('text-editor-matches', all);
+    }
 
     const measure = () => {
-      const children = Array.from(container.children) as HTMLElement[];
-      setLineHeights(children.map((child) => child.offsetHeight));
+      syncScroll();
+      if (!wrap || !showLineNumbers || !rangeFor(0, 0).getBoundingClientRect) {
+        setLineHeights([]);
+        return;
+      }
+      const tops: number[] = [];
+      let start = 0;
+      for (const line of lines) {
+        // Include the sentinel on an empty final line so it has a measurable row.
+        tops.push(rangeFor(start, Math.min(start + 1, value.length + 1)).getBoundingClientRect().top);
+        start += line.length + 1;
+      }
+      const box = content.getBoundingClientRect();
+      const bottom = box.bottom - 12 + (tops[0] - box.top - 12);
+      setLineHeights(tops.map((top, i) => (tops[i + 1] ?? bottom) - top));
     };
-
     measure();
     const observer = new ResizeObserver(measure);
-    observer.observe(container);
-    return () => observer.disconnect();
-  }, [wrap, showLineNumbers, highlightText]);
-
-  useEffect(() => {
-    syncScroll();
-  }, [value, wrap, syncScroll]);
+    const textarea = textareaRef.current;
+    if (textarea) observer.observe(textarea);
+    return () => {
+      observer.disconnect();
+      if (nativeHighlights) {
+        CSS.highlights.delete('text-editor-matches');
+      }
+    };
+  }, [value, freshMatches, nativeHighlights, wrap, showLineNumbers, lines, syncScroll, textareaRef]);
 
   // Mount only. A background tab's buffer can shrink while it is unmounted — a
   // Replace all across every tab does exactly that — so the stored offsets are
@@ -202,6 +204,35 @@ const EditorSurface = ({
     syncScroll();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useLayoutEffect(() => {
+    if (!nativeHighlights) return;
+    const current = new Highlight();
+    const range = matchRangesRef.current[currentMatchIndex];
+    if (range) current.add(range);
+    current.priority = 1;
+    CSS.highlights.set('text-editor-current', current);
+    return () => { CSS.highlights.delete('text-editor-current'); };
+  }, [value, freshMatches, currentMatchIndex, nativeHighlights, wrap, showLineNumbers]);
+
+  useLayoutEffect(() => {
+    const textarea = textareaRef.current;
+    const range = matchRangesRef.current[currentMatchIndex];
+    if (!textarea || !range?.getBoundingClientRect) return;
+    const rect = range.getClientRects?.()[0] ?? range.getBoundingClientRect();
+    const box = textarea.getBoundingClientRect();
+    const left = box.left + 12;
+    const top = box.top + 12;
+    const right = box.left + textarea.clientWidth - 12;
+    const bottom = box.top + textarea.clientHeight - 12;
+    if (rect.top < top || rect.bottom > bottom) {
+      textarea.scrollTop += rect.top - top - textarea.clientHeight / 3;
+    }
+    if (rect.left < left || rect.right > right) {
+      textarea.scrollLeft += rect.left - left - textarea.clientWidth / 3;
+    }
+    syncScroll();
+  }, [value, freshMatches, currentMatchIndex, nativeHighlights, wrap, syncScroll, textareaRef]);
 
   // The drag works off the measured box rather than the `height` prop, because
   // until the first drag the height is whatever 60vh resolved to.
@@ -252,63 +283,45 @@ const EditorSurface = ({
       >
         {showLineNumbers && (
           <div
-            ref={gutterRef}
             aria-hidden="true"
             className={`${TEXT_METRICS} flex-shrink-0 overflow-hidden select-none text-right text-gray-400 bg-gray-50 border-r border-gray-200 w-14 px-2`}
           >
-            {wrap && lineHeights.length === wrappedLines.length ? (
-              wrappedLines.map((_, i) => (
-                <div key={i} style={{ height: lineHeights[i] }}>
-                  {i + 1}
-                </div>
-              ))
-            ) : (
-              <div className="whitespace-pre">{wrap ? wrappedLines.map((_, i) => i + 1).join('\n') : gutterText}</div>
-            )}
+            <div ref={gutterContentRef}>
+              {wrap && lineHeights.length === lines.length ? (
+                lines.map((_, i) => (
+                  <div key={i} style={{ height: lineHeights[i] }}>
+                    {i + 1}
+                  </div>
+                ))
+              ) : (
+                <div className="whitespace-pre">{wrap ? lines.map((_, i) => i + 1).join('\n') : gutterText}</div>
+              )}
+            </div>
           </div>
         )}
 
-        <div className="relative flex-1 overflow-hidden">
-          <div
-            ref={highlightRef}
-            aria-hidden="true"
-            className={`${TEXT_METRICS} ${whitespace} absolute inset-0 overflow-hidden pointer-events-none text-transparent`}
-          >
-            {wrap
-              ? wrappedSegments.map((lineSegments, i) => (
-                  <div key={i}>
-                    {lineSegments.map((segment, j) =>
-                      segment.match ? (
-                        <span key={j} className={segment.current ? 'bg-orange-300' : 'bg-yellow-200'}>
-                          {segment.text}
-                        </span>
-                      ) : (
-                        <React.Fragment key={j}>{segment.text}</React.Fragment>
-                      )
-                    )}
-                    {/* Keeps an empty line one row tall so the layers stay aligned. */}
-                    {lineSegments.every((segment) => segment.text === '') && '​'}
-                  </div>
-                ))
-              : segments.length > 0 && (
-                  <>
-                    {segments.map((segment, i) =>
-                      segment.match ? (
-                        <span key={i} className={segment.current ? 'bg-orange-300' : 'bg-yellow-200'}>
-                          {segment.text}
-                        </span>
-                      ) : (
-                        <React.Fragment key={i}>{segment.text}</React.Fragment>
-                      )
-                    )}
-                    {/* A buffer ending in a newline gets a final empty line in the
-                        textarea, but a trailing newline closes no line box in a div,
-                        so the layer would be one row shorter. Scrolling to the bottom
-                        would then clamp it a row above the text and every highlight
-                        would land on the line below the one it belongs to. */}
-                    {'​'}
-                  </>
-                )}
+        <div className="relative flex-1 min-w-0 overflow-hidden">
+          <div ref={highlightRef} aria-hidden="true" className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div
+              ref={contentRef}
+              className={`${TEXT_METRICS} ${whitespace} text-gray-900`}
+            >
+              {segments.map((segment, i) =>
+                segment.match ? (
+                  <span
+                    key={i}
+                    data-current-match={segment.current || undefined}
+                    className={segment.current ? 'text-editor-current' : 'text-editor-match'}
+                  >
+                    {segment.text}
+                  </span>
+                ) : (
+                  <React.Fragment key={i}>{segment.text}</React.Fragment>
+                )
+              )}
+              {/* A final row exists in a textarea even when the buffer ends in a newline. */}
+              {'\u200b'}
+            </div>
           </div>
 
           <textarea
@@ -317,10 +330,10 @@ const EditorSurface = ({
             onChange={(e) => onChange(e.target.value)}
             onScroll={syncScroll}
             spellCheck={false}
-          wrap={wrap ? 'soft' : 'off'}
-          aria-label="Editor content"
-          className={`${TEXT_METRICS} ${whitespace} absolute inset-0 w-full h-full resize-none bg-transparent text-gray-900 caret-gray-900 outline-none overflow-auto border-0`}
-        />
+            wrap={wrap ? 'soft' : 'off'}
+            aria-label="Editor content"
+            className={`text-editor-input ${TEXT_METRICS} ${whitespace} absolute inset-0 w-full h-full resize-none outline-none overflow-auto border-0`}
+          />
         </div>
       </div>
 

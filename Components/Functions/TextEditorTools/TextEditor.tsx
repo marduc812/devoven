@@ -62,7 +62,6 @@ import {
   type OpenedFile,
 } from './fileIO';
 
-const HIGHLIGHT_CAP = 2000;
 const SEARCH_DEBOUNCE_MS = 120;
 const FIND_TIMEOUT_SECONDS = DEFAULT_TIMEOUT_MS / 1000;
 
@@ -301,10 +300,8 @@ const TextEditor = () => {
   // without this the closing frame of the find bar still paints its highlights.
   const searchResults = job === null ? NO_RESULTS : run.result ?? NO_RESULTS;
 
-  // The snapshot the current offsets were measured against. A result that lands
-  // after the buffer has moved on is painted over the text it belongs to rather
-  // than over the live one — the same bargain the debounce already makes, for as
-  // long as the round trip takes.
+  // Keep the source snapshot with the offsets. The editor hides these ranges
+  // until they belong to its live text, including while a worker is still running.
   const searchedText =
     (job !== null && run.source?.files.find((file) => file.id === activeId)?.text) || debouncedValue;
 
@@ -320,18 +317,6 @@ const TextEditor = () => {
   const safeIndex =
     activeMatches.length === 0 ? -1 : Math.min(Math.max(find.matchIndex, 0), activeMatches.length - 1);
 
-  // Only a window of matches is painted. It slides with the current match so that
-  // stepping past the cap doesn't lose the marker on the current one.
-  const { highlighted, highlightOffset } = useMemo(() => {
-    if (activeMatches.length <= HIGHLIGHT_CAP) return { highlighted: activeMatches, highlightOffset: 0 };
-    const centre = Math.max(safeIndex, 0);
-    const start = Math.min(
-      Math.max(0, centre - Math.floor(HIGHLIGHT_CAP / 2)),
-      activeMatches.length - HIGHLIGHT_CAP
-    );
-    return { highlighted: activeMatches.slice(start, start + HIGHLIGHT_CAP), highlightOffset: start };
-  }, [activeMatches, safeIndex]);
-
   const setQuery = useCallback(
     (query: string) => patchActiveFind({ query, matchIndex: 0 }),
     [patchActiveFind]
@@ -342,22 +327,9 @@ const TextEditor = () => {
     [patchActiveFind]
   );
 
-  const scrollToMatch = useCallback((match: Match | undefined) => {
-    const textarea = textareaRef.current;
-    if (!textarea || !match) return;
-
-    const target = lineOfOffset(textarea.value, match.start) * LINE_HEIGHT_PX;
-    const viewport = textarea.clientHeight;
-
-    if (target < textarea.scrollTop || target > textarea.scrollTop + viewport - LINE_HEIGHT_PX * 2) {
-      // Assigning scrollTop fires a real scroll event, which syncs the other layers.
-      textarea.scrollTop = Math.max(0, target - viewport / 3);
-    }
-  }, []);
-
   // Landing on a match in another tab: the destination is given the same search and
   // a scroll position pointing at the match, then revealed. Its EditorSurface mounts
-  // already scrolled, so there is no jump-then-scroll flash.
+  // at an approximate position, then reveals the measured range after layout.
   const jumpTo = useCallback(
     (target: Located) => {
       const viewport = textareaRef.current?.clientHeight ?? 0;
@@ -393,12 +365,11 @@ const TextEditor = () => {
 
       if (target.id === activeId) {
         patchActiveFind({ matchIndex: target.matchIndex });
-        scrollToMatch(target.match);
       } else {
         jumpTo(target);
       }
     },
-    [matchCount, safeIndex, searchResults, activeId, patchActiveFind, scrollToMatch, jumpTo]
+    [matchCount, safeIndex, searchResults, activeId, patchActiveFind, jumpTo]
   );
 
   // Turning "All" on is a deliberate "look everywhere", so if this tab has nothing
@@ -913,9 +884,7 @@ const TextEditor = () => {
           canSearchAllTabs={tabs.length > 1}
           matchCount={matchCount}
           matchFileCount={matchFileCount}
-          visibleMatchCount={activeMatches.length}
           currentMatchIndex={safeIndex}
-          highlightCap={HIGHLIGHT_CAP}
           error={searchError}
           onNext={() => step(1)}
           onPrevious={() => step(-1)}
@@ -933,8 +902,8 @@ const TextEditor = () => {
         value={active.value}
         highlightText={searchedText}
         onChange={onChange}
-        matches={highlighted}
-        currentMatchIndex={safeIndex < 0 ? -1 : safeIndex - highlightOffset}
+        matches={activeMatches}
+        currentMatchIndex={safeIndex}
         showLineNumbers={showLineNumbers}
         wrap={wrap}
         textareaRef={textareaRef}

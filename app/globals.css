@@ -168,6 +168,28 @@ body {
 }
 .jwt-encoded-input { caret-color: #111827; }
 .dark .jwt-encoded-input { caret-color: #fafafa; }
+
+/* The text editor paints text and find ranges together beneath its input. */
+.text-editor-input,
+.dark .text-editor-input {
+  background-color: transparent;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  caret-color: #111827;
+}
+.dark .text-editor-input { caret-color: #fafafa; }
+.text-editor-input::selection {
+  background-color: rgba(59, 130, 246, 0.3);
+  color: transparent;
+}
+.text-editor-match { background-color: #fde68a; }
+.text-editor-current { background-color: #fdba74; }
+::highlight(text-editor-matches) { background-color: #fde68a; }
+::highlight(text-editor-current) { background-color: #fdba74; }
+.dark .text-editor-match { background-color: #654d16; }
+.dark .text-editor-current { background-color: #92400e; }
+.dark ::highlight(text-editor-matches) { background-color: #654d16; }
+.dark ::highlight(text-editor-current) { background-color: #92400e; }
 /* Header/payload/signature colours picked for a white field are too dim on the dark
    one — lift them to the 400 shades, as the palette overrides above do. */
 .dark .jwt-encoded-view .text-red-500     { color: #f87171; }

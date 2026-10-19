@@ -25,11 +25,8 @@ type Props = {
   matchCount: number;
   /** How many files those matches are spread over. */
   matchFileCount: number;
-  /** Matches in the visible tab — only these are ever painted, so only these can hit the cap. */
-  visibleMatchCount: number;
   /** Position within the visible tab's matches, or -1 when it has none. */
   currentMatchIndex: number;
-  highlightCap: number;
   error: string | null;
   onNext: () => void;
   onPrevious: () => void;
@@ -213,13 +210,6 @@ const FindBar = (props: Props) => {
       )}
 
       {props.error && <p className="text-xs text-red-600">{props.error}</p>}
-
-      {!props.error && props.visibleMatchCount > props.highlightCap && (
-        <p className="text-xs text-gray-500">
-          Highlighting {props.highlightCap.toLocaleString()} of {props.visibleMatchCount.toLocaleString()} matches in
-          this tab, around the current one. Stepping and Replace all still cover every match.
-        </p>
-      )}
     </div>
   );
 };
