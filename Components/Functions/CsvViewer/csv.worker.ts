@@ -1,17 +1,11 @@
 import { parseCsvRecord } from './parse';
+import type { ColumnFilter, CsvQuery } from './types';
 
-type Query = {
-  all: string;
-  column: number;
-  contains: string;
-  empty: 'any' | 'empty' | 'nonempty';
-  sortColumn: number;
-  sortDirection: 'asc' | 'desc';
-};
 type Input =
   | { type: 'open'; file: File }
   | { type: 'rows'; start: number; end: number; requestId: number }
-  | { type: 'query'; query: Query; queryId: number }
+  | { type: 'query'; query: CsvQuery; queryId: number }
+  | { type: 'facet'; column: number; search: string; query: CsvQuery; facetId: number }
   | { type: 'queryRows'; start: number; end: number; requestId: number; queryId: number };
 
 const CHUNK_SIZE = 1024 * 1024;
@@ -20,6 +14,7 @@ let starts: number[] = [0];
 let complete = false;
 let generation = 0;
 let activeQueryId = 0;
+let activeFacetId = 0;
 let matchedRows: number[] = [];
 const decoder = new TextDecoder('utf-8');
 
@@ -61,14 +56,30 @@ async function readRows(start: number, end: number, requestId: number, queryId?:
   self.postMessage({ type: 'rows', start, rows: records, rowNumbers: indices, requestId, queryId });
 }
 
-async function runQuery(query: Query, queryId: number) {
+function matchesFilters(cells: string[], filters: ColumnFilter[], valueSets: Map<number, Set<string>>): boolean {
+  for (const filter of filters) {
+    const value = cells[filter.column] ?? '';
+    if (filter.mode === 'empty' && value.trim() !== '') return false;
+    if (filter.mode === 'nonempty' && value.trim() === '') return false;
+    if (filter.mode === 'contains' && !value.toLocaleLowerCase().includes(filter.text.toLocaleLowerCase())) return false;
+    if (filter.mode === 'selected' && !valueSets.get(filter.column)?.has(value)) return false;
+    if (filter.mode === 'excluded' && valueSets.get(filter.column)?.has(value)) return false;
+  }
+  return true;
+}
+
+function makeValueSets(filters: ColumnFilter[]): Map<number, Set<string>> {
+  return new Map(filters.filter(filter => filter.mode === 'selected' || filter.mode === 'excluded').map(filter => [filter.column, new Set(filter.mode === 'selected' || filter.mode === 'excluded' ? filter.values : [])]));
+}
+
+async function runQuery(query: CsvQuery, queryId: number) {
   if (!file || !complete) return;
   const currentFile = file;
   const currentGeneration = generation;
   const matches: number[] = [];
   const sortKeys: string[] = [];
   const all = query.all.toLocaleLowerCase();
-  const contains = query.contains.toLocaleLowerCase();
+  const valueSets = makeValueSets(query.filters);
   const recordCount = starts.length - 1;
   try {
     for (let row = 1; row < recordCount;) {
@@ -79,11 +90,8 @@ async function runQuery(query: Query, queryId: number) {
       if (currentGeneration !== generation || queryId !== activeQueryId) return;
       for (let index = first; index < row; index++) {
         const cells = parseRecord(bytes, starts[index] - starts[first], starts[index + 1] - starts[first], index);
-        const value = cells[query.column] ?? '';
         if (all && !cells.some(cell => cell.toLocaleLowerCase().includes(all))) continue;
-        if (contains && !value.toLocaleLowerCase().includes(contains)) continue;
-        if (query.empty === 'empty' && value.trim() !== '') continue;
-        if (query.empty === 'nonempty' && value.trim() === '') continue;
+        if (!matchesFilters(cells, query.filters, valueSets)) continue;
         matches.push(index);
         if (query.sortColumn >= 0) sortKeys[index] = cells[query.sortColumn] ?? '';
       }
@@ -99,6 +107,44 @@ async function runQuery(query: Query, queryId: number) {
     self.postMessage({ type: 'queryComplete', queryId, count: matches.length });
   } catch (error) {
     if (currentGeneration === generation && queryId === activeQueryId) self.postMessage({ type: 'error', message: error instanceof Error ? error.message : 'Could not search the CSV file.' });
+  }
+}
+
+async function readFacet(column: number, search: string, query: CsvQuery, facetId: number) {
+  if (!file || !complete) return;
+  const currentFile = file;
+  const currentGeneration = generation;
+  const recordCount = starts.length - 1;
+  const all = query.all.toLocaleLowerCase();
+  const needle = search.toLocaleLowerCase();
+  const filters = query.filters.filter(filter => filter.column !== column);
+  const valueSets = makeValueSets(filters);
+  const values = new Set<string>();
+  let hasMore = false;
+  try {
+    for (let row = 1; row < recordCount;) {
+      const first = row;
+      while (row < recordCount && starts[row + 1] - starts[first] <= CHUNK_SIZE) row++;
+      if (row === first) row++;
+      const bytes = new Uint8Array(await currentFile.slice(starts[first], starts[row]).arrayBuffer());
+      if (currentGeneration !== generation || facetId !== activeFacetId) return;
+      for (let index = first; index < row; index++) {
+        const cells = parseRecord(bytes, starts[index] - starts[first], starts[index + 1] - starts[first], index);
+        if (all && !cells.some(cell => cell.toLocaleLowerCase().includes(all))) continue;
+        if (!matchesFilters(cells, filters, valueSets)) continue;
+        const value = cells[column] ?? '';
+        if (needle && !value.toLocaleLowerCase().includes(needle)) continue;
+        if (!values.has(value)) {
+          if (values.size === 100) { hasMore = true; continue; }
+          values.add(value);
+        }
+      }
+    }
+    if (currentGeneration !== generation || facetId !== activeFacetId) return;
+    const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+    self.postMessage({ type: 'facetComplete', facetId, values: [...values].sort(collator.compare), hasMore });
+  } catch (error) {
+    if (currentGeneration === generation && facetId === activeFacetId) self.postMessage({ type: 'error', message: error instanceof Error ? error.message : 'Could not list column values.' });
   }
 }
 
@@ -168,6 +214,7 @@ self.onmessage = (event: MessageEvent<Input>) => {
   if (message.type === 'open') {
     generation++;
     activeQueryId++;
+    activeFacetId++;
     file = message.file;
     starts = [0];
     matchedRows = [];
@@ -177,6 +224,9 @@ self.onmessage = (event: MessageEvent<Input>) => {
     activeQueryId = message.queryId;
     matchedRows = [];
     void runQuery(message.query, message.queryId);
+  } else if (message.type === 'facet') {
+    activeFacetId = message.facetId;
+    void readFacet(message.column, message.search, message.query, message.facetId);
   } else if (message.type === 'queryRows') {
     void readRows(message.start, message.end, message.requestId, message.queryId);
   } else if (message.type === 'rows' && (complete || message.end <= starts.length - 1)) {

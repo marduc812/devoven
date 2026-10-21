@@ -21,7 +21,7 @@ describe('CSV viewer worker', () => {
       scope.onmessage!({ data: { type: 'open', file: new File([csv], '10mb.csv') } });
       for (let i = 0; i < 200 && !messages.some(m => m.type === 'complete'); i++) await new Promise(resolve => setTimeout(resolve, 20));
       expect(messages.find(m => m.type === 'complete')).toMatchObject({ rows: 500001 });
-      scope.onmessage!({ data: { type: 'query', queryId: 1, query: { all: '', column: 1, contains: 'sample text 999', empty: 'nonempty', sortColumn: 0, sortDirection: 'desc' } } });
+      scope.onmessage!({ data: { type: 'query', queryId: 1, query: { all: '', filters: [{ column: 1, mode: 'contains', text: 'sample text 999' }, { column: 1, mode: 'nonempty' }], sortColumn: 0, sortDirection: 'desc' } } });
       for (let i = 0; i < 200 && !messages.some(m => m.type === 'queryComplete'); i++) await new Promise(resolve => setTimeout(resolve, 20));
       expect(messages.find(m => m.type === 'queryComplete')).toMatchObject({ count: 500 });
       scope.onmessage!({ data: { type: 'queryRows', start: 0, end: 25, requestId: 1, queryId: 1 } });
@@ -51,17 +51,24 @@ describe('CSV viewer worker', () => {
       const csv = 'name,note\nZoe,needle\nAmy,\nBob,"needle, quoted"\nCam,   \nDan,needle';
       scope.onmessage!({ data: { type: 'open', file: new File([csv], 'filters.csv') } });
       await waitFor('complete');
-      scope.onmessage!({ data: { type: 'query', queryId: 1, query: { all: 'needle', column: 1, contains: '', empty: 'nonempty', sortColumn: 0, sortDirection: 'desc' } } });
+      scope.onmessage!({ data: { type: 'query', queryId: 1, query: { all: 'needle', filters: [{ column: 1, mode: 'nonempty' }], sortColumn: 0, sortDirection: 'desc' } } });
       expect(await waitFor('queryComplete', 1)).toMatchObject({ count: 3 });
       scope.onmessage!({ data: { type: 'queryRows', start: 0, end: 3, requestId: 7, queryId: 1 } });
       const firstPage = await waitFor('rows', 1);
       expect(firstPage).toMatchObject({ rowNumbers: [1, 5, 3], rows: [['Zoe', 'needle'], ['Dan', 'needle'], ['Bob', 'needle, quoted']] });
-      scope.onmessage!({ data: { type: 'query', queryId: 2, query: { all: '', column: 1, contains: '', empty: 'empty', sortColumn: -1, sortDirection: 'asc' } } });
+      scope.onmessage!({ data: { type: 'query', queryId: 2, query: { all: '', filters: [{ column: 1, mode: 'empty' }], sortColumn: -1, sortDirection: 'asc' } } });
       expect(await waitFor('queryComplete', 2)).toMatchObject({ count: 2 });
       scope.onmessage!({ data: { type: 'queryRows', start: 0, end: 2, requestId: 8, queryId: 2 } });
       expect(await waitFor('rows', 2)).toMatchObject({ rowNumbers: [2, 4], rows: [['Amy', ''], ['Cam', '   ']] });
-      scope.onmessage!({ data: { type: 'query', queryId: 3, query: { all: '', column: 1, contains: 'QUOTED', empty: 'any', sortColumn: -1, sortDirection: 'asc' } } });
+      scope.onmessage!({ data: { type: 'query', queryId: 3, query: { all: '', filters: [{ column: 1, mode: 'contains', text: 'QUOTED' }], sortColumn: -1, sortDirection: 'asc' } } });
       expect(await waitFor('queryComplete', 3)).toMatchObject({ count: 1 });
+      scope.onmessage!({ data: { type: 'query', queryId: 4, query: { all: '', filters: [{ column: 0, mode: 'selected', values: ['Amy', 'Dan'] }, { column: 1, mode: 'nonempty' }], sortColumn: -1, sortDirection: 'asc' } } });
+      expect(await waitFor('queryComplete', 4)).toMatchObject({ count: 1 });
+      scope.onmessage!({ data: { type: 'query', queryId: 5, query: { all: '', filters: [{ column: 0, mode: 'excluded', values: ['Amy', 'Dan'] }], sortColumn: -1, sortDirection: 'asc' } } });
+      expect(await waitFor('queryComplete', 5)).toMatchObject({ count: 3 });
+      scope.onmessage!({ data: { type: 'facet', facetId: 1, column: 0, search: 'a', query: { all: '', filters: [{ column: 1, mode: 'nonempty' }], sortColumn: -1, sortDirection: 'asc' } } });
+      for (let i = 0; i < 100 && !messages.some(m => m.type === 'facetComplete'); i++) await new Promise(resolve => setTimeout(resolve, 10));
+      expect(messages.find(m => m.type === 'facetComplete')).toMatchObject({ values: ['Dan'], hasMore: false });
     } finally {
       delete (globalThis as { self?: unknown }).self;
     }
