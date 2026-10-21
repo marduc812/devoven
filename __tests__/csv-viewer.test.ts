@@ -9,6 +9,64 @@ describe('CSV viewer records', () => {
 });
 
 describe('CSV viewer worker', () => {
+  it('searches a 10 MB file without returning the whole file to the page', async () => {
+    const messages: Array<Record<string, unknown>> = [];
+    const scope = { postMessage: (message: Record<string, unknown>) => messages.push(message), onmessage: null as null | ((event: { data: unknown }) => void) };
+    Object.defineProperty(globalThis, 'self', { value: scope, configurable: true });
+    try {
+      jest.isolateModules(() => { require('../Components/Functions/CsvViewer/csv.worker'); });
+      const body = Array.from({ length: 500000 }, (_, i) => `${i},sample text ${i % 1000}`).join('\n');
+      const csv = `id,note\n${body}`;
+      expect(new Blob([csv]).size).toBeGreaterThan(10 * 1024 * 1024);
+      scope.onmessage!({ data: { type: 'open', file: new File([csv], '10mb.csv') } });
+      for (let i = 0; i < 200 && !messages.some(m => m.type === 'complete'); i++) await new Promise(resolve => setTimeout(resolve, 20));
+      expect(messages.find(m => m.type === 'complete')).toMatchObject({ rows: 500001 });
+      scope.onmessage!({ data: { type: 'query', queryId: 1, query: { all: '', column: 1, contains: 'sample text 999', empty: 'nonempty', sortColumn: 0, sortDirection: 'desc' } } });
+      for (let i = 0; i < 200 && !messages.some(m => m.type === 'queryComplete'); i++) await new Promise(resolve => setTimeout(resolve, 20));
+      expect(messages.find(m => m.type === 'queryComplete')).toMatchObject({ count: 500 });
+      scope.onmessage!({ data: { type: 'queryRows', start: 0, end: 25, requestId: 1, queryId: 1 } });
+      for (let i = 0; i < 200 && !messages.some(m => m.type === 'rows'); i++) await new Promise(resolve => setTimeout(resolve, 20));
+      const page = messages.find(m => m.type === 'rows');
+      expect(page?.rows).toHaveLength(25);
+      expect((page?.rows as string[][])[0]).toEqual(['499999', 'sample text 999']);
+    } finally {
+      delete (globalThis as { self?: unknown }).self;
+    }
+  }, 30000);
+
+  it('filters and sorts the whole file while returning only the requested page', async () => {
+    const messages: Array<Record<string, unknown>> = [];
+    const scope = { postMessage: (message: Record<string, unknown>) => messages.push(message), onmessage: null as null | ((event: { data: unknown }) => void) };
+    Object.defineProperty(globalThis, 'self', { value: scope, configurable: true });
+    const waitFor = async (type: string, id?: number) => {
+      for (let i = 0; i < 100; i++) {
+        const found = messages.find(m => m.type === type && (id === undefined || m.queryId === id));
+        if (found) return found;
+        await new Promise(resolve => setTimeout(resolve, 10));
+      }
+      throw new Error(`Timed out waiting for ${type}`);
+    };
+    try {
+      jest.isolateModules(() => { require('../Components/Functions/CsvViewer/csv.worker'); });
+      const csv = 'name,note\nZoe,needle\nAmy,\nBob,"needle, quoted"\nCam,   \nDan,needle';
+      scope.onmessage!({ data: { type: 'open', file: new File([csv], 'filters.csv') } });
+      await waitFor('complete');
+      scope.onmessage!({ data: { type: 'query', queryId: 1, query: { all: 'needle', column: 1, contains: '', empty: 'nonempty', sortColumn: 0, sortDirection: 'desc' } } });
+      expect(await waitFor('queryComplete', 1)).toMatchObject({ count: 3 });
+      scope.onmessage!({ data: { type: 'queryRows', start: 0, end: 3, requestId: 7, queryId: 1 } });
+      const firstPage = await waitFor('rows', 1);
+      expect(firstPage).toMatchObject({ rowNumbers: [1, 5, 3], rows: [['Zoe', 'needle'], ['Dan', 'needle'], ['Bob', 'needle, quoted']] });
+      scope.onmessage!({ data: { type: 'query', queryId: 2, query: { all: '', column: 1, contains: '', empty: 'empty', sortColumn: -1, sortDirection: 'asc' } } });
+      expect(await waitFor('queryComplete', 2)).toMatchObject({ count: 2 });
+      scope.onmessage!({ data: { type: 'queryRows', start: 0, end: 2, requestId: 8, queryId: 2 } });
+      expect(await waitFor('rows', 2)).toMatchObject({ rowNumbers: [2, 4], rows: [['Amy', ''], ['Cam', '   ']] });
+      scope.onmessage!({ data: { type: 'query', queryId: 3, query: { all: '', column: 1, contains: 'QUOTED', empty: 'any', sortColumn: -1, sortDirection: 'asc' } } });
+      expect(await waitFor('queryComplete', 3)).toMatchObject({ count: 1 });
+    } finally {
+      delete (globalThis as { self?: unknown }).self;
+    }
+  });
+
   it('indexes chunk boundaries and reads only requested rows', async () => {
     const messages: Array<Record<string, unknown>> = [];
     const scope = { postMessage: (message: Record<string, unknown>) => messages.push(message), onmessage: null as null | ((event: { data: unknown }) => void) };
