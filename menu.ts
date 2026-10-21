@@ -253,6 +253,7 @@ export const menu: MenuGroupType[] = [
                 {"name": "Colorblind Simulator", "link": "/converting/colorblind", "type": "color", "tag": ""},
                 {"name": "GraphQL to TypeScript", "link": "/converting/graphql-to-ts", "type": "json", "tag": ""},
                 {"name": "CSV Statistics", "link": "/converting/csv-stats", "type": "json", "tag": ""},
+                {"name": "CSV Viewer", "link": "/converting/csv-viewer", "type": "data", "tag": ""},
                 {"name": "Code Minifier", "link": "/converting/code-minifier", "type": "json", "tag": ""},
                 {"name": "SI Prefix Converter", "link": "/converting/si-prefix", "type": "number", "tag": ""},
                 {"name": "Julian Day Number", "link": "/converting/julian-day", "type": "number", "tag": ""},
