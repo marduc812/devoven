@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { IoSearch, IoMenu, IoClose, IoLogoGithub } from 'react-icons/io5'
 import ThemeToggle from '@/Components/ThemeToggle'
 import Logo from '@/Components/Navigation/Logo'
+import FavoritesMenu from '@/Components/Navigation/FavoritesMenu'
 import { REPOSITORY_URL } from '@/lib/third-party-licenses'
 
 const navItems = [
@@ -53,6 +54,7 @@ const NavigationHeader = () => {
             <IoSearch className="text-base" />
             <span className="hidden sm:inline">Search</span>
           </Link>
+          <FavoritesMenu />
           <a
             href={REPOSITORY_URL}
             target="_blank"

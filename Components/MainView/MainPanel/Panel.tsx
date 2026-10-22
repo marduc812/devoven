@@ -6,6 +6,7 @@ import AdditionalTools from '@/Components/View/AdditionalTools'
 import ShareView from './ShareView'
 import FeedbackModal from '@/Components/Feedback/FeedbackModal'
 import ShareLinkButton from './ShareLinkButton'
+import FavoriteButton from './FavoriteButton'
 
 const categoryAccent: Record<string, string> = {
     yellow: 'bg-amber-400',
@@ -30,8 +31,9 @@ const Panel = (props: PanelType) => {
                 </div>
                 <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
                     <h1 className="text-3xl font-black text-gray-900 tracking-tight">{props.title}</h1>
-                    <div className="flex-shrink-0 flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                         <ShareLinkButton />
+                        <FavoriteButton />
                         <FeedbackModal variant="report" />
                     </div>
                 </div>
