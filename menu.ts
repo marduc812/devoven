@@ -325,6 +325,7 @@ export const menu: MenuGroupType[] = [
                     {"name": "AES Decrypt", "link": "/tools/aes-decrypt", "type": "Security", "tag": ""},
                     {"name": "TOTP Generator", "link": "/tools/totp-generator", "type": "Security", "tag": ""},
                     {"name": "Extract from Text", "link": "/tools/extract-from-text", "type": "text", "tag": ""},
+                    {"name": "Source Map Inspector", "link": "/tools/source-map-inspector", "type": "Security", "tag": ""},
                     {"name": "Fake Data Generator", "link": "/tools/fake-data", "type": "dev", "tag": ""},
                     {"name": "Color Shades", "link": "/tools/color-shades", "type": "UX", "tag": ""},
                     {"name": "CSS Specificity", "link": "/tools/css-specificity", "type": "UX", "tag": ""},
