@@ -1,3 +1,5 @@
+require('./scripts/check-node.cjs').assertSupportedNode()
+
 const { execSync } = require('child_process')
 
 // Short commit SHA of the build. Vercel exposes the commit it built from;

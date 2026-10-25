@@ -14,12 +14,23 @@ and the section below says exactly what they send and where.
 ## Getting started
 
 ```bash
-npm install
+nvm install
+nvm use
+npm ci
 npm run dev
 ```
 
-Open <http://localhost:3000>. Node 22.x is what the project targets
-(`engines` in `package.json`).
+Open <http://localhost:3000>. The project requires Node 22.23.4 or newer
+within Node 22. `.nvmrc` selects 22.23.4 for development and CI. If you do not
+use nvm, install a supported Node 22 release yourself. npm rejects unsupported
+versions, and Next.js checks the runtime again when it loads its configuration.
+
+This minimum includes the [October 21, 2026 Node security fixes](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases),
+including CVE-2026-111497 in the Brotli decoder. Updating npm packages alone
+does not patch Node's bundled decoder. Self-hosters must upgrade the Node
+binary and restart the app. Vercel manages Node patch versions; keep the
+project on Node 22 and verify the deployed runtime has the fixes. See
+[Vercel's advisory](https://vercel.com/kb/bulletin/node-js-security-advisory).
 
 | Command | What it does |
 | --- | --- |

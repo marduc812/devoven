@@ -19,7 +19,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.x
+          node-version-file: .nvmrc
+          check-latest: true
           cache: npm
 
       - run: npm ci
@@ -41,7 +42,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22.x
+          node-version-file: .nvmrc
+          check-latest: true
           cache: npm
 
       - run: npm ci
