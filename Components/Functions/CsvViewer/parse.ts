@@ -1,12 +1,16 @@
-/** Parse one CSV record, including quoted commas, newlines, and doubled quotes. */
-export function parseCsvRecord(record: string): string[] {
+import type { CsvOptions } from './types';
+
+export const DEFAULT_CSV_OPTIONS: CsvOptions = { separator: ',', quotedFields: true };
+
+/** Parse one CSV record with optional quoted fields and doubled quote escapes. */
+export function parseCsvRecord(record: string, options: CsvOptions = DEFAULT_CSV_OPTIONS): string[] {
   const cells: string[] = [];
   let value = '';
   let quoted = false;
 
   for (let i = 0; i < record.length; i++) {
     const char = record[i];
-    if (char === '"') {
+    if (options.quotedFields && char === '"') {
       if (quoted && record[i + 1] === '"') {
         value += '"';
         i++;
@@ -15,7 +19,7 @@ export function parseCsvRecord(record: string): string[] {
       } else {
         value += char;
       }
-    } else if (char === ',' && !quoted) {
+    } else if (char === options.separator && !quoted) {
       cells.push(value);
       value = '';
     } else {

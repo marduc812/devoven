@@ -3,7 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Panel from '@/Components/MainView/MainPanel/Panel';
-import type { ColumnFilter } from './types';
+import { DEFAULT_CSV_OPTIONS } from './parse';
+import type { ColumnFilter, CsvOptions } from './types';
 
 const DEFAULT_COLUMN_WIDTH = 220;
 const MIN_COLUMN_WIDTH = 100;
@@ -39,6 +40,8 @@ export default function CsvViewer() {
   const menuRef = useRef<HTMLDivElement>(null);
   const resizing = useRef<{ index: number; x: number; width: number } | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [separator, setSeparator] = useState<CsvOptions['separator']>(DEFAULT_CSV_OPTIONS.separator);
+  const [quotedFields, setQuotedFields] = useState(DEFAULT_CSV_OPTIONS.quotedFields);
   const [headers, setHeaders] = useState<string[]>([]);
   const [indexedRecords, setIndexedRecords] = useState(0);
   const [available, setAvailable] = useState(0);
@@ -67,6 +70,7 @@ export default function CsvViewer() {
   const [facetLoading, setFacetLoading] = useState(false);
 
   useEffect(() => {
+    resetPreview();
     const instance = new Worker(new URL('./csv.worker.ts', import.meta.url));
     worker.current = instance;
     instance.onmessage = (event: MessageEvent<WorkerReply>) => {
@@ -87,12 +91,9 @@ export default function CsvViewer() {
       if (reply.type === 'facetComplete' && reply.facetId === facetId.current) { setFacetValues(reply.values); setFacetHasMore(reply.hasMore); setFacetLoading(false); }
     };
     instance.onerror = () => setError('Could not load the CSV reader.');
+    if (file) instance.postMessage({ type: 'open', file, options: { separator, quotedFields } });
     return () => { instance.terminate(); worker.current = null; };
-  }, []);
-
-  useEffect(() => {
-    if (file) worker.current?.postMessage({ type: 'open', file });
-  }, [file]);
+  }, [file, separator, quotedFields]);
 
   useEffect(() => {
     if (file && indexedRecords > 0 && headers.length === 0) {
@@ -173,10 +174,13 @@ export default function CsvViewer() {
 
   function openFile(next: File | undefined) {
     if (!next) return;
+    setFile(next);
+  }
+
+  function resetPreview() {
     requestId.current++;
     queryId.current++;
     facetId.current++;
-    setFile(next);
     setHeaders([]);
     setIndexedRecords(0);
     setAvailable(0);
@@ -308,6 +312,23 @@ export default function CsvViewer() {
             {file ? 'Choose another file' : 'Choose CSV file'}
           </button>
         </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-4 border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700">
+        <label className="flex items-center gap-2">Separator
+          <select value={separator} onChange={event => setSeparator(event.target.value as CsvOptions['separator'])} className="border border-gray-300 bg-white px-2 py-1.5">
+            <option value=",">Comma (,)</option>
+            <option value=";">Semicolon (;)</option>
+            <option value={'\t'}>Tab</option>
+            <option value="|">Pipe (|)</option>
+            <option value=":">Colon (:)</option>
+          </select>
+        </label>
+        <label className="flex items-center gap-2">
+          <input type="checkbox" checked={quotedFields} onChange={event => setQuotedFields(event.target.checked)} />
+          Use double quotes as text qualifiers
+        </label>
+        <p className="w-full text-xs text-gray-500">When enabled, double quotes keep separators and line breaks inside a cell. Two double quotes inside a quoted field represent one quote. Changing these options reloads the preview and clears filters and sorting.</p>
       </div>
 
       {error && <p role="alert" className="border border-red-300 bg-red-50 p-3 text-sm text-red-800">{error}</p>}

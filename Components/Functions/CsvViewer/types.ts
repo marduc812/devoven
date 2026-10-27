@@ -9,3 +9,8 @@ export type CsvQuery = {
   sortColumn: number;
   sortDirection: 'asc' | 'desc';
 };
+
+export type CsvOptions = {
+  separator: ',' | ';' | '\t' | '|' | ':';
+  quotedFields: boolean;
+};

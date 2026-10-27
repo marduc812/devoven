@@ -1,8 +1,8 @@
-import { parseCsvRecord } from './parse';
-import type { ColumnFilter, CsvQuery } from './types';
+import { DEFAULT_CSV_OPTIONS, parseCsvRecord } from './parse';
+import type { ColumnFilter, CsvOptions, CsvQuery } from './types';
 
 type Input =
-  | { type: 'open'; file: File }
+  | { type: 'open'; file: File; options?: CsvOptions }
   | { type: 'rows'; start: number; end: number; requestId: number }
   | { type: 'query'; query: CsvQuery; queryId: number }
   | { type: 'facet'; column: number; search: string; query: CsvQuery; facetId: number }
@@ -10,6 +10,7 @@ type Input =
 
 const CHUNK_SIZE = 1024 * 1024;
 let file: File | null = null;
+let options = DEFAULT_CSV_OPTIONS;
 let starts: number[] = [0];
 let complete = false;
 let generation = 0;
@@ -22,7 +23,7 @@ function parseRecord(view: Uint8Array, from: number, to: number, row: number): s
   while (to > from && (view[to - 1] === 10 || view[to - 1] === 13)) to--;
   let record = decoder.decode(view.subarray(from, to));
   if (row === 0 && record.charCodeAt(0) === 0xfeff) record = record.slice(1);
-  return parseCsvRecord(record);
+  return parseCsvRecord(record, options);
 }
 
 async function readRows(start: number, end: number, requestId: number, queryId?: number) {
@@ -149,6 +150,8 @@ async function readFacet(column: number, search: string, query: CsvQuery, facetI
 }
 
 async function indexFile(input: File, currentGeneration: number) {
+  const separatorByte = options.separator.charCodeAt(0);
+  const quotedFields = options.quotedFields;
   let quoted = false;
   let atFieldStart = true;
   let justClosedQuote = false;
@@ -169,7 +172,7 @@ async function indexFile(input: File, currentGeneration: number) {
           justClosedQuote = false;
           if (byte === 10) continue;
         }
-        if (byte === 34) {
+        if (quotedFields && byte === 34) {
           if (quoted) {
             quoted = false;
             justClosedQuote = true;
@@ -185,7 +188,7 @@ async function indexFile(input: File, currentGeneration: number) {
           starts.push(position + 1);
           atFieldStart = true;
           justClosedQuote = false;
-        } else if (!quoted && byte === 44) {
+        } else if (!quoted && byte === separatorByte) {
           atFieldStart = true;
           justClosedQuote = false;
         } else {
@@ -216,6 +219,7 @@ self.onmessage = (event: MessageEvent<Input>) => {
     activeQueryId++;
     activeFacetId++;
     file = message.file;
+    options = message.options ?? DEFAULT_CSV_OPTIONS;
     starts = [0];
     matchedRows = [];
     complete = false;

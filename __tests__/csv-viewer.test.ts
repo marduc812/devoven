@@ -1,4 +1,5 @@
 import { parseCsvRecord } from '../Components/Functions/CsvViewer/parse';
+import type { CsvOptions } from '../Components/Functions/CsvViewer/types';
 
 describe('CSV viewer records', () => {
   it('parses quoted commas, newlines, escaped quotes, and empty cells', () => {
@@ -6,9 +7,49 @@ describe('CSV viewer records', () => {
       'one', 'two, three', 'line 1\nline 2', 'a"b', '',
     ]);
   });
+
+  it.each<CsvOptions['separator']>([',', ';', '\t', '|', ':'])('supports the %j separator inside quoted fields', separator => {
+    expect(parseCsvRecord(`one${separator}"two${separator}three"${separator}"a""b"${separator}`, { separator, quotedFields: true }))
+      .toEqual(['one', `two${separator}three`, 'a"b', '']);
+  });
+
+  it('preserves literal quotes and splits quoted separators when qualifiers are disabled', () => {
+    expect(parseCsvRecord('one;"two;three";"unfinished', { separator: ';', quotedFields: false }))
+      .toEqual(['one', '"two', 'three"', '"unfinished']);
+  });
 });
 
 describe('CSV viewer worker', () => {
+  it.each([true, false])('uses the selected separator and quotedFields=%s for indexing, queries, and facets', async quotedFields => {
+    const messages: Array<Record<string, unknown>> = [];
+    const scope = { postMessage: (message: Record<string, unknown>) => messages.push(message), onmessage: null as null | ((event: { data: unknown }) => void) };
+    Object.defineProperty(globalThis, 'self', { value: scope, configurable: true });
+    const waitFor = async (type: string) => {
+      for (let i = 0; i < 100; i++) {
+        const found = messages.find(message => message.type === type);
+        if (found) return found;
+        await new Promise(resolve => setTimeout(resolve, 10));
+      }
+      throw new Error(`Timed out waiting for ${type}`);
+    };
+    try {
+      jest.isolateModules(() => { require('../Components/Functions/CsvViewer/csv.worker'); });
+      const csv = 'name;note\r\nBob;"first;line\r\nsecond ""quote"""\r\nAmy;plain';
+      scope.onmessage!({ data: { type: 'open', file: new File([csv], 'semicolon.csv'), options: { separator: ';', quotedFields } } });
+      expect(await waitFor('complete')).toMatchObject({ rows: quotedFields ? 3 : 4 });
+      const query = { all: 'first', filters: [{ column: 0, mode: 'selected', values: ['Bob'] }], sortColumn: 1, sortDirection: 'asc' };
+      scope.onmessage!({ data: { type: 'query', queryId: 1, query } });
+      expect(await waitFor('queryComplete')).toMatchObject({ count: 1 });
+      scope.onmessage!({ data: { type: 'queryRows', start: 0, end: 1, requestId: 1, queryId: 1 } });
+      const expected = quotedFields ? ['Bob', 'first;line\r\nsecond "quote"'] : ['Bob', '"first', 'line'];
+      expect(await waitFor('rows')).toMatchObject({ rows: [expected], rowNumbers: [1] });
+      scope.onmessage!({ data: { type: 'facet', facetId: 1, column: 1, search: '', query } });
+      expect(await waitFor('facetComplete')).toMatchObject({ values: [expected[1]], hasMore: false });
+    } finally {
+      delete (globalThis as { self?: unknown }).self;
+    }
+  });
+
   it('searches a 10 MB file without returning the whole file to the page', async () => {
     const messages: Array<Record<string, unknown>> = [];
     const scope = { postMessage: (message: Record<string, unknown>) => messages.push(message), onmessage: null as null | ((event: { data: unknown }) => void) };
