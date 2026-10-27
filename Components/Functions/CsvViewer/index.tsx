@@ -10,6 +10,12 @@ const DEFAULT_COLUMN_WIDTH = 220;
 const MIN_COLUMN_WIDTH = 100;
 const PAGE_SIZES = [25, 50, 100];
 
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
+
 type WorkerReply =
   | { type: 'progress'; rows: number; bytes: number; size: number }
   | { type: 'complete'; rows: number }
@@ -306,7 +312,7 @@ export default function CsvViewer() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-sm font-semibold text-gray-900">{file ? file.name : 'Drop a CSV file here'}</p>
-            <p className="mt-1 text-xs text-gray-500">{file ? `${(file.size / 1024 / 1024).toFixed(1)} MB` : 'Or choose a file from your device.'}</p>
+            <p className="mt-1 text-xs text-gray-500">{file ? formatFileSize(file.size) : 'Or choose a file from your device.'}</p>
           </div>
           <button type="button" onClick={() => input.current?.click()} className="border border-gray-900 bg-gray-900 px-4 py-2 text-xs font-bold uppercase tracking-wide text-white hover:bg-white hover:text-gray-900">
             {file ? 'Choose another file' : 'Choose CSV file'}
