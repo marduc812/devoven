@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, type CSSProperties } from 'react';
 import { IoTrashOutline } from 'react-icons/io5';
 import { FileDropZone, LoadFileButton } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
@@ -31,6 +31,12 @@ console.log('Hello, world!');
 export const MarkdownPreview = () => {
   const [md, setMd] = useState(SAMPLE);
   const [html, setHtml] = useState('');
+  const [inputWidth, setInputWidth] = useState(50);
+  const [dragging, setDragging] = useState(false);
+  const splitRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{ pointerId: number; x: number; width: number; availableWidth: number } | null>(null);
+
+  const resizeInput = (width: number) => setInputWidth(Math.min(80, Math.max(20, width)));
 
   useEffect(() => {
     if (!md) { setHtml(''); return; }
@@ -59,8 +65,12 @@ export const MarkdownPreview = () => {
       backColor="rose"
       extraElements={
         <div className="flex flex-col gap-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4" style={{ minHeight: '500px' }}>
-            <div className="flex flex-col gap-2 h-full">
+          <div
+            ref={splitRef}
+            className="grid grid-cols-1 gap-y-4 md:grid-cols-[minmax(0,var(--input-width))_1rem_minmax(0,var(--preview-width))] md:gap-y-0"
+            style={{ minHeight: '500px', '--input-width': `${inputWidth}fr`, '--preview-width': `${100 - inputWidth}fr` } as CSSProperties}
+          >
+            <div className="flex min-w-0 flex-col gap-2 h-full">
               {/* The count sits on the label line and follows what is typed,
                   rather than waiting behind a button. Both columns give that
                   line the same fixed height, so the label, the Clear button on
@@ -86,7 +96,58 @@ export const MarkdownPreview = () => {
                 />
               </FileDropZone>
             </div>
-            <div className="flex flex-col gap-2 h-full">
+            <div
+              role="separator"
+              aria-label="Resize Markdown input and preview"
+              aria-orientation="vertical"
+              aria-valuemin={20}
+              aria-valuemax={80}
+              aria-valuenow={Math.round(inputWidth)}
+              aria-valuetext={`Markdown input ${Math.round(inputWidth)}%, preview ${Math.round(100 - inputWidth)}%`}
+              tabIndex={0}
+              title="Drag to resize. Double-click to reset."
+              onPointerDown={event => {
+                if (event.button !== 0 || !splitRef.current) return;
+                event.preventDefault();
+                dragRef.current = {
+                  pointerId: event.pointerId,
+                  x: event.clientX,
+                  width: inputWidth,
+                  availableWidth: splitRef.current.getBoundingClientRect().width - event.currentTarget.getBoundingClientRect().width,
+                };
+                event.currentTarget.setPointerCapture(event.pointerId);
+                event.currentTarget.focus();
+                setDragging(true);
+              }}
+              onPointerMove={event => {
+                const drag = dragRef.current;
+                if (!drag || drag.pointerId !== event.pointerId || drag.availableWidth <= 0) return;
+                resizeInput(drag.width + (event.clientX - drag.x) / drag.availableWidth * 100);
+              }}
+              onPointerUp={event => {
+                if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+                  event.currentTarget.releasePointerCapture(event.pointerId);
+                }
+                dragRef.current = null;
+                setDragging(false);
+              }}
+              onPointerCancel={() => { dragRef.current = null; setDragging(false); }}
+              onLostPointerCapture={() => { dragRef.current = null; setDragging(false); }}
+              onDoubleClick={() => setInputWidth(50)}
+              onKeyDown={event => {
+                const step = event.shiftKey ? 10 : 2;
+                if (event.key === 'ArrowLeft') resizeInput(inputWidth - step);
+                else if (event.key === 'ArrowRight') resizeInput(inputWidth + step);
+                else if (event.key === 'Home') resizeInput(20);
+                else if (event.key === 'End') resizeInput(80);
+                else return;
+                event.preventDefault();
+              }}
+              className={`group hidden cursor-col-resize touch-none select-none items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-rose-400 md:flex ${dragging ? 'bg-rose-50' : 'hover:bg-gray-50'}`}
+            >
+              <span className={`h-12 w-1 rounded-full ${dragging ? 'bg-rose-400' : 'bg-gray-200 group-hover:bg-gray-400'}`} />
+            </div>
+            <div className="flex min-w-0 flex-col gap-2 h-full">
               {/* Clear rides the preview label rather than taking a row of its
                   own; the input label row already ends in the file button. */}
               <div className={labelRowClass}>
