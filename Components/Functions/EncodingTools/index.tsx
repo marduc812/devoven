@@ -512,7 +512,7 @@ export const QuotedPrintableDecode = () => {
   );
 };
 
-export const Base64UrlEncode = () => {
+export const Base64UrlEncode = ({ article }: { article?: React.ReactNode } = {}) => {
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('');
 
@@ -534,7 +534,8 @@ export const Base64UrlEncode = () => {
 
   return (
     <BasicConverter
-      title="Base64URL Encoder"
+      article={article}
+      title="Base64URL encoder"
       description="Encode text to Base64URL format (RFC 4648 §5). Like Base64 but [1 + 2] becomes [1 - 2], [1 / 2] becomes [1 _ 2], and padding is removed. Safe for use in URLs and filenames."
       fromValue={fromValue}
       toValue={toValue}
@@ -547,7 +548,7 @@ export const Base64UrlEncode = () => {
   );
 };
 
-export const Base64UrlDecode = () => {
+export const Base64UrlDecode = ({ article }: { article?: React.ReactNode } = {}) => {
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('');
 
@@ -569,7 +570,8 @@ export const Base64UrlDecode = () => {
 
   return (
     <BasicConverter
-      title="Base64URL Decoder"
+      article={article}
+      title="Base64URL decoder"
       description="Decode Base64URL encoded text (RFC 4648 §5). Handles [1 - 2] and [1 _ 2] characters and missing padding automatically."
       fromValue={fromValue}
       toValue={toValue}

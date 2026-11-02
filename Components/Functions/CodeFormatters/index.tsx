@@ -8,7 +8,7 @@ import { useShareLink } from '@/Components/Functions/ShareLink';
 
 // ─── JSON Formatter ──────────────────────────────────────────────────────────
 
-export function JsonFormatter() {
+export function JsonFormatter({ article }: { article?: React.ReactNode } = {}) {
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const [indent, setIndent] = useState('2');
@@ -53,8 +53,9 @@ export function JsonFormatter() {
 
   return (
     <AdvancedConverter
-      title="JSON Formatter & Validator"
-      description="Format and validate JSON. Paste any JSON and get a pretty-printed, indented result. Invalid JSON shows the exact error. For example, [1 {&quot;name&quot;:&quot;Alice&quot;,&quot;age&quot;:30} 2] becomes a readable multi-line structure."
+      article={article}
+      title="JSON formatter and validator"
+      description={"Pretty-print JSON with 2-space or 4-space indentation. Paste an object, array, or other JSON value to check its syntax and format the result."}
       fromValue={input}
       toValue={output}
       setFromValue={setInput}

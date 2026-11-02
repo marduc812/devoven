@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { xmlToJson, jsonToXml, detectXmlOrJson } from './logic';
 
-export function XmlJsonConverter() {
+export function XmlJsonConverter({ article }: { article?: ReactNode } = {}) {
   const [input, setInput] = useState('');
   const [direction, setDirection] = useState<'auto' | 'xml-to-json' | 'json-to-xml'>('auto');
   const [output, setOutput] = useState('');
@@ -49,8 +49,9 @@ export function XmlJsonConverter() {
 
   return (
     <AdvancedConverter
-      title="XML / JSON Converter"
-      description="Convert between XML and JSON formats. XML attributes become [1@attr fields2], text content becomes [1_text field2], repeated elements become [1arrays2]."
+      article={article}
+      title="XML to JSON converter"
+      description={"Convert XML to JSON with attributes stored as [1 @name 2] fields and text as [1 _text 2] when needed. Repeated sibling elements become arrays. The direction selector also supports JSON input."}
       fromValue={input}
       toValue={output}
       setFromValue={setInput}

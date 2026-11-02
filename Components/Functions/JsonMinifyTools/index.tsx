@@ -6,7 +6,7 @@ import { minifyJson, beautifyJson, getJsonStats } from './logic';
 
 type Mode = 'minify' | 'beautify2' | 'beautify4' | 'beautifytab';
 
-export const JsonMinify = () => {
+export const JsonMinify = ({ article }: { article?: React.ReactNode } = {}) => {
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('');
   const [mode, setMode] = useState<Mode>('minify');
@@ -72,15 +72,21 @@ export const JsonMinify = () => {
 
   return (
     <AdvancedConverter
-      title="JSON Minifier / Beautifier"
-      description="Minify [1 JSON 2] to remove all whitespace, or beautify it with configurable indentation."
+      article={article}
+      title="JSON minifier and beautifier"
+      description={"Minify JSON to remove formatting whitespace, or beautify it with 2 spaces, 4 spaces, or tabs. The size report compares compact output with the 2-space version."}
       fromValue={fromValue}
-      toValue={stats ? `${toValue}\n\n— ${stats}` : toValue}
+      toValue={toValue}
       setFromValue={setFromValue}
       fromTitle="Input JSON"
       toTitle="Output"
       backColor="cyan"
-      extraElements={modeSelector}
+      extraElements={
+        <div className="flex flex-col gap-3">
+          {modeSelector}
+          {stats && <p className="text-xs text-gray-600" aria-live="polite">{stats}</p>}
+        </div>
+      }
     />
   );
 };

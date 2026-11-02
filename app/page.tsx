@@ -2,6 +2,7 @@ import HomeLinksListView from '@/Components/MainView/Home/ListView'
 import MainView from '@/Components/MainView/Home/MainView'
 import FeaturedTools from '@/Components/MainView/Home/FeaturedTools'
 import RecentTools from '@/Components/MainView/Home/RecentTools'
+import Faq from '@/Components/MainView/Home/Faq'
 import type { Metadata } from 'next'
 
 // The canonical lives here rather than in the root layout, so that a 404 does
@@ -17,6 +18,7 @@ export default function Home() {
       <RecentTools />
       <FeaturedTools />
       <HomeLinksListView />
+      <Faq />
     </div>
   )
 }

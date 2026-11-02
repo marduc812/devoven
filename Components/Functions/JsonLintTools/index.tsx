@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import BasicConverter from '@/Components/MainView/MainPanel/BasicConverter';
 import { lintJson, formatLintResult } from './logic';
 
-export const JsonLint = () => {
+export const JsonLint = ({ article }: { article?: React.ReactNode } = {}) => {
   const [fromValue, setFromValue] = useState('');
 
   useEffect(() => {
@@ -23,9 +23,10 @@ export const JsonLint = () => {
 
   return (
     <BasicConverter
+      article={article}
       backColor="lime"
-      title="JSON Lint"
-      description="Validate [1JSON2] and get friendly error messages with line and column information. Paste your JSON to check if it's valid."
+      title="JSON lint and syntax checker"
+      description={"Check JSON syntax and read the parser error when input is invalid. The report includes line and column information when the browser error exposes a position."}
       fromTitle="JSON Input"
       toTitle="Validation Result"
       fromValue={fromValue}

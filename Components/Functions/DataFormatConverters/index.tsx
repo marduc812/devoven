@@ -14,7 +14,7 @@ import {
   markdownToHtml, htmlToMarkdown,
 } from './logic';
 
-export const JsonToYaml = () => {
+export const JsonToYaml = ({ article }: { article?: React.ReactNode } = {}) => {
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('');
 
@@ -36,8 +36,9 @@ export const JsonToYaml = () => {
 
   return (
     <BasicConverter
-      title="JSON to YAML Converter"
-      description="Convert JSON to YAML format. Paste your JSON and get the YAML equivalent instantly. For example, [1 {&quot;name&quot;:&quot;Alice&quot;,&quot;age&quot;:30} 2] becomes [1 name: Alice age: 30 2]."
+      article={article}
+      title="JSON to YAML converter"
+      description={"Convert a valid JSON value to YAML. Paste an object or array to generate indented YAML with the same parsed data values."}
       fromValue={fromValue}
       toValue={toValue}
       setFromValue={setFromValue}
@@ -49,7 +50,7 @@ export const JsonToYaml = () => {
   );
 };
 
-export const YamlToJson = () => {
+export const YamlToJson = ({ article }: { article?: React.ReactNode } = {}) => {
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('');
 
@@ -71,8 +72,9 @@ export const YamlToJson = () => {
 
   return (
     <BasicConverter
-      title="YAML to JSON Converter"
-      description="Convert YAML to JSON format. Paste your YAML and get the JSON equivalent instantly. For example, [1 name: Alice age: 30 2] becomes [1 {&quot;name&quot;:&quot;Alice&quot;,&quot;age&quot;:30} 2]."
+      article={article}
+      title="YAML to JSON converter"
+      description={"Parse a YAML document and convert its values to indented JSON. Mappings become objects, sequences become arrays, and quoted numeric text stays a string."}
       fromValue={fromValue}
       toValue={toValue}
       setFromValue={setFromValue}
@@ -84,7 +86,7 @@ export const YamlToJson = () => {
   );
 };
 
-export const JsonToXml = () => {
+export const JsonToXml = ({ article }: { article?: React.ReactNode } = {}) => {
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('');
 
@@ -106,8 +108,9 @@ export const JsonToXml = () => {
 
   return (
     <BasicConverter
-      title="JSON to XML Converter"
-      description="Convert JSON to XML format. Paste your JSON and get valid XML instantly. The JSON is wrapped in a [1 root 2] element."
+      article={article}
+      title="JSON to XML converter"
+      description={"Convert JSON to indented XML with a root wrapper and an XML declaration. Object keys become element names, and arrays become repeated elements."}
       fromValue={fromValue}
       toValue={toValue}
       setFromValue={setFromValue}
@@ -119,7 +122,7 @@ export const JsonToXml = () => {
   );
 };
 
-export const JsonToCsv = () => {
+export const JsonToCsv = ({ article }: { article?: React.ReactNode } = {}) => {
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('');
 
@@ -141,8 +144,9 @@ export const JsonToCsv = () => {
 
   return (
     <BasicConverter
-      title="JSON to CSV Converter"
-      description="Convert a JSON array of objects to CSV format. For example, [1 [{&quot;name&quot;:&quot;Alice&quot;,&quot;age&quot;:30}] 2] becomes [1 name,age Alice,30 2]."
+      article={article}
+      title="JSON to CSV converter"
+      description={"Convert a nonempty JSON array of flat objects to comma-separated rows. The first object supplies the column names. Prepare matching keys in every row before converting."}
       fromValue={fromValue}
       toValue={toValue}
       setFromValue={setFromValue}
@@ -154,7 +158,7 @@ export const JsonToCsv = () => {
   );
 };
 
-export const CsvToJson = () => {
+export const CsvToJson = ({ article }: { article?: React.ReactNode } = {}) => {
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('');
 
@@ -176,8 +180,9 @@ export const CsvToJson = () => {
 
   return (
     <BasicConverter
-      title="CSV to JSON Converter"
-      description="Convert CSV data to a JSON array of objects. The first row is treated as headers. For example, [1 name,age Alice,30 2] becomes [1 [{&quot;name&quot;:&quot;Alice&quot;,&quot;age&quot;:&quot;30&quot;}] 2]."
+      article={article}
+      title="CSV to JSON converter"
+      description={"Convert comma-separated data to a JSON array of objects. The first row supplies the keys, and cell values remain strings. Use one record per line."}
       fromValue={fromValue}
       toValue={toValue}
       setFromValue={setFromValue}

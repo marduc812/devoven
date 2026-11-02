@@ -10,7 +10,7 @@ import { textToBinary, binaryToString, hexToBinary, trackToolError, urlEncodeAll
 import { stringToHex, hexToString, numberToHex, hexToNumber } from 'web3-utils'
 import { Switch } from '@/Components/UI/Switch'
 
-export const URLDecode = () => {
+export const URLDecode = ({ article }: { article?: React.ReactNode } = {}) => {
 
   const [fromValue, setFromValue] = useState<string>('');
   const [toValue, setToValue] = useState<string>('');
@@ -42,9 +42,10 @@ export const URLDecode = () => {
 
   return (
     <BasicConverter
-      title="URL Decoder"
+      article={article}
+      title="URL decoder"
       swapLink="/encoding/url-encode"
-      description="URL decoding is a method to decode arbitrary data from a Uniform Resource Identifier (URI) that's been encoded using only the limited US-ASCII characters legal within a URI. For example, the string [1 Hello%2C%20World%21 2] becomes [1 Hello, World! 2]. The non-standard Unicode form [1 %u0048%u0065 2] is decoded as well."
+      description={"Decode percent-encoded text such as [1 Hello%2C%20World%21 2] into [1 Hello, World! 2]. The decoder also accepts legacy %uXXXX sequences. A literal plus stays a plus."}
       fromValue={fromValue}
       toValue={toValue}
       setFromValue={setFromValue}
@@ -57,7 +58,7 @@ export const URLDecode = () => {
 }
 
 
-export const URLEncode = ({ defaultMode = 'standard' }: { defaultMode?: URLEncodeMode } = {}) => {
+export const URLEncode = ({ defaultMode = 'standard', article }: { defaultMode?: URLEncodeMode; article?: React.ReactNode } = {}) => {
 
   const [fromValue, setFromValue] = useState<string>('');
   const [toValue, setToValue] = useState<string>('');
@@ -107,9 +108,12 @@ export const URLEncode = ({ defaultMode = 'standard' }: { defaultMode?: URLEncod
 
   return (
     <AdvancedConverter
-      title={defaultMode === 'unicode' ? 'Unicode URL Encoder' : 'URL Encoder'}
+      article={article}
+      title={defaultMode === 'unicode' ? 'Unicode URL encoder' : 'URL encoder'}
       swapLink="/encoding/url-decode"
-      description="URL encoding, is a method to encode arbitrary data in a Uniform Resource Identifier (URI) using only the limited US-ASCII characters legal within a URI. Standard encodes only the characters that are unsafe in a URI, so [1 Hello, World! 2] becomes [1 Hello%2C%20World%21 2]. All Characters percent-encodes every character, dots and letters included, turning [1 a.b 2] into [1 %61%2E%62 2]. Unicode uses the non-standard [1 %uXXXX 2] form, so [1 a.b 2] becomes [1 %u0061%u002E%u0062 2]."
+      description={defaultMode === 'unicode'
+        ? 'Convert text to legacy %uXXXX escapes, one per UTF-16 code unit. For example, [1 a.b 2] becomes [1 %u0061%u002E%u0062 2]. Switch to Standard for UTF-8 percent encoding.'
+        : 'Percent-encode text for a URL component. Standard mode uses encodeURIComponent, so [1 a b&c 2] becomes [1 a%20b%26c 2]. Choose All Characters to encode every byte, or Unicode for legacy %uXXXX output.'}
       fromValue={fromValue}
       toValue={toValue}
       setFromValue={setFromValue}
@@ -122,7 +126,7 @@ export const URLEncode = ({ defaultMode = 'standard' }: { defaultMode?: URLEncod
 }
 
 
-export const HTMLEncode = () => {
+export const HTMLEncode = ({ article }: { article?: React.ReactNode } = {}) => {
 
   const [fromValue, setFromValue] = useState<string>('');
   const [toValue, setToValue] = useState<string>('');
@@ -148,9 +152,10 @@ export const HTMLEncode = () => {
 
   return (
     <BasicConverter
-      title="HTML Encoder"
+      article={article}
+      title="HTML entity encoder"
       swapLink="/encoding/html-decode"
-      description="HTML encoding is a method to encode arbitrary data into a format suitable for inclusion within HTML content. For example, the string [1 <script>alert(1)</script> 2] becomes [1 &amp;lt;script&amp;gt;alert(1)&amp;lt;/script&amp;gt; 2]."
+      description={"Escape [1 & 2], [1 < 2], [1 > 2], and both quote characters as HTML character references. For example, [1 <p>Hello</p> 2] becomes [1 &lt;p&gt;Hello&lt;/p&gt; 2]."}
       fromValue={fromValue}
       toValue={toValue}
       setFromValue={setFromValue}
@@ -208,7 +213,7 @@ export const HTMLDecode = ({ article }: { article?: React.ReactNode } = {}) => {
 }
 
 
-export const Base64Encode = () => {
+export const Base64Encode = ({ article }: { article?: React.ReactNode } = {}) => {
 
   const [fromValue, setFromValue] = useState<string>('');
   const [toValue, setToValue] = useState<string>('');
@@ -253,9 +258,10 @@ export const Base64Encode = () => {
 
   return (
     <AdvancedConverter
-      title="Base64 Encode"
+      article={article}
+      title="Base64 encoder"
       swapLink="/encoding/base64-decode"
-      description="Base64 encoding is a method to encode arbitrary data into a format that consists of plain text characters. This encoding helps to ensure that the data remains intact without modification during transport. For example, the string [1 admin 2] becomes [1 YWRtaW4= 2]."
+      description={"Encode text to Base64 using UTF-8, UTF-16LE, or ASCII. Choose HEX to encode hexadecimal bytes. For example, [1 admin 2] becomes [1 YWRtaW4= 2] with UTF-8."}
       fromValue={fromValue}
       toValue={toValue}
       setFromValue={setFromValue}
@@ -269,7 +275,7 @@ export const Base64Encode = () => {
 
 
 
-export const Base64Decode = () => {
+export const Base64Decode = ({ article }: { article?: React.ReactNode } = {}) => {
 
   const [fromValue, setFromValue] = useState<string>('');
   const [toValue, setToValue] = useState<string>('');
@@ -327,9 +333,10 @@ export const Base64Decode = () => {
 
   return (
     <AdvancedConverter
-      title="Base64 Decode"
+      article={article}
+      title="Base64 decoder"
       swapLink="/encoding/base64-encode"
-      description="Base64 encoding is a method to encode arbitrary data into a format that consists of plain text characters. This encoding helps to ensure that the data remains intact without modification during transport. For example, the string [1 YWRtaW4= 2] becomes [1 admin 2]."
+      description={"Decode Base64 into UTF-8, UTF-16LE, or ASCII text, or select HEX to inspect the decoded bytes. For example, [1 YWRtaW4= 2] becomes [1 admin 2] with UTF-8."}
       fromValue={fromValue}
       toValue={toValue}
       setFromValue={setFromValue}
