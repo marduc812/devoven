@@ -11,7 +11,7 @@ const DB_OPTIONS: { value: DbType; label: string; defaultPort: string }[] = [
   { value: 'redis', label: 'Redis', defaultPort: '6379' },
 ];
 
-export function ConnectionStringBuilder() {
+export function ConnectionStringBuilder({ article }: { article?: React.ReactNode } = {}) {
   const [dbType, setDbType] = useState<DbType>('postgresql');
   const [host, setHost] = useState('localhost');
   const [port, setPort] = useState('5432');
@@ -47,8 +47,9 @@ export function ConnectionStringBuilder() {
 
   return (
     <Panel
-      title="Connection String Builder"
-      description="Build database [1 connection strings 2] for [1 PostgreSQL 2], [1 MySQL 2], [1 MongoDB 2], and [1 Redis 2] in multiple formats: URI, SQLAlchemy, JDBC, Go, Node.js, and ORM-specific."
+      article={article}
+      title="Database connection string builder"
+      description="Build database [1 connection strings 2] for PostgreSQL, MySQL, MongoDB, and Redis. Copy Python formats for SQLAlchemy and database drivers, or choose URI, JDBC, Go, and Node.js formats."
       backColor="lime"
       extraElements={
         <div className="flex flex-col gap-6">

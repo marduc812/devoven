@@ -4,7 +4,7 @@ import Panel from '@/Components/MainView/MainPanel/Panel';
 import { parseDimensions, simplifyRatio, findCommonName, COMMON_WIDTHS } from './logic';
 import { useShareLink } from '@/Components/Functions/ShareLink';
 
-export function AspectRatioCalc() {
+export function AspectRatioCalc({ article }: { article?: React.ReactNode } = {}) {
   const [input, setInput] = useState('1920x1080');
 
   useEffect(() => {
@@ -33,7 +33,8 @@ export function AspectRatioCalc() {
 
   return (
     <Panel
-      title="Aspect Ratio Calculator"
+      article={article}
+      title="Aspect ratio generator and calculator"
       description="Enter width and height in any format: [1 1920x1080 2], [1 1920 1080 2], or [1 16:9 2]. Get simplified ratio, common name, and equivalent pixel sizes at common breakpoints."
       backColor="lime"
       extraElements={

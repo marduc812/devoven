@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { TX_TYPES, calculateFees, type TxType } from './logic';
 
-export const TxFeeCalculator = () => {
+export const TxFeeCalculator = ({ article }: { article?: React.ReactNode } = {}) => {
   const [selectedType, setSelectedType] = useState<TxType>('eth-transfer');
   const [customSize, setCustomSize] = useState('');
 
@@ -34,8 +34,9 @@ export const TxFeeCalculator = () => {
 
   return (
     <Panel
-      title="Transaction Fee Calculator"
-      description="Estimate [1 Ethereum 2] or [1 Bitcoin 2] transaction fees at various network speeds. Select a common transaction type or enter a custom gas limit / vbyte size."
+      article={article}
+      title="Crypto gas fee calculator"
+      description="Compare Ethereum gas fees and Bitcoin transaction fees using [1 fixed example rates 2]. Select a transaction type or enter custom gas units or vbytes. These scenarios do not use live network rates."
       backColor="lime"
       extraElements={
         <div className="flex flex-col gap-5">

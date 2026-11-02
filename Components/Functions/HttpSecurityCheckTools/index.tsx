@@ -85,7 +85,7 @@ const headerTitle = (name: string) =>
     .map(part => (/^(xss|csp)$/i.test(part) ? part.toUpperCase() : part.charAt(0).toUpperCase() + part.slice(1)))
     .join('-');
 
-export const HttpSecurityCheck = () => {
+export const HttpSecurityCheck = ({ article }: { article?: React.ReactNode } = {}) => {
   const [raw, setRaw] = useState('');
 
   const audit = useMemo(() => (raw.trim() ? analyzeSecurityHeaders(raw) : null), [raw]);
@@ -93,8 +93,9 @@ export const HttpSecurityCheck = () => {
 
   return (
     <Panel
-      title="HTTP Security Headers Checker"
-      description="Paste raw [1 HTTP response headers 2] — from [1 curl -I 2] or the browser network tab — to see which security headers are missing and, just as importantly, which ones are present but set to a value that does nothing. Covers CSP, HSTS, X-Frame-Options, cookie flags, CORS and version disclosure."
+      article={article}
+      title="HTTP security headers test"
+      description="Run a security headers test by pasting raw [1 HTTP response headers 2] from [1 curl -I 2] or your browser's Network panel. Check missing headers and weak values for CSP, HSTS, X-Frame-Options, cookie flags, CORS, and version disclosure."
       backColor="lime"
       extraElements={
         <div className="flex flex-col gap-6">

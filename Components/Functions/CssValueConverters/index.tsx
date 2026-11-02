@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import AdvancedConverter from '@/Components/MainView/MainPanel/AdvancedConverter';
 import { convertPxToRemBatch, convertRemToPxBatch } from './logic';
 
-export const CssValueConverters = () => {
+export const CssValueConverters = ({ article }: { article?: React.ReactNode } = {}) => {
   const [fromValue, setFromValue] = useState('');
   const [toValue, setToValue] = useState('');
   const [mode, setMode] = useState<'px-to-rem' | 'rem-to-px'>('px-to-rem');
@@ -61,8 +61,9 @@ export const CssValueConverters = () => {
 
   return (
     <AdvancedConverter
-      title="Pixel ↔ REM Converter"
-      description="Convert between [1 px 2] and [1 rem 2] values. Enter one value per line. Supports [1 16px 2] and [1 1rem 2] formats. Customize the base font size (default 16px)."
+      article={article}
+      title="Px to rem converter"
+      description="Convert px to rem or rem to px. At a 16px root font size, [1 12px = 0.75rem 2]. Enter one value per line and set Base to match your page's root font size."
       fromValue={fromValue}
       toValue={toValue}
       setFromValue={setFromValue}

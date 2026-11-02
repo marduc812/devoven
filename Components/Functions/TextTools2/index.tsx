@@ -28,7 +28,7 @@ const labelClass = 'text-xs text-gray-500 uppercase tracking-wider';
 
 // ─── 1. Line Numberer ─────────────────────────────────────────────────────────
 
-export function LineNumberer() {
+export function LineNumberer({ article }: { article?: React.ReactNode } = {}) {
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const [mode, setMode] = useState('add');
@@ -59,7 +59,8 @@ export function LineNumberer() {
 
   return (
     <AdvancedConverter
-      title="Line Numberer"
+      article={article}
+      title="Line numberer"
       description="Add or remove line numbers from text. For example, [1 apple\nbanana 2] becomes [1 1. apple\n2. banana 2] when adding numbers."
       fromValue={input}
       toValue={output}

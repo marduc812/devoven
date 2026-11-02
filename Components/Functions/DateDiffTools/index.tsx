@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import BasicConverter from '@/Components/MainView/MainPanel/BasicConverter';
 import { dateDiff } from './logic';
 
-export function DateDiffCalculator() {
+export function DateDiffCalculator({ article }: { article?: React.ReactNode } = {}) {
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
 
@@ -29,7 +29,8 @@ export function DateDiffCalculator() {
 
   return (
     <BasicConverter
-      title="Date Difference Calculator"
+      article={article}
+      title="Date difference calculator"
       description="Enter two dates (one per line) in [1 YYYY-MM-DD 2] format to calculate the difference in days, weeks, months, and years."
       fromValue={input}
       toValue={output}

@@ -22,7 +22,7 @@ const STATUS_STYLE: Record<TraceStatus, { box: string; letter: string; note: str
 
 const DEFAULT_NAMES = 'Robert\nRupert\nRubin\nAshcraft\nAshcroft\nTymczak\nPfister\nHoneyman';
 
-export function SoundexConverter() {
+export function SoundexConverter({ article }: { article?: React.ReactNode } = {}) {
   const [input, setInput] = useState(DEFAULT_NAMES);
   const [selected, setSelected] = useState(0);
 
@@ -55,8 +55,9 @@ export function SoundexConverter() {
 
   return (
     <Panel
-      title="Soundex Code"
-      description="Generate [1 Soundex phonetic codes 2] for names — one per line. Similar-sounding names like [1 Robert 2] and [1 Rupert 2] collapse to the same code, which is what makes Soundex useful for fuzzy name matching and genealogy. Select any name to see letter by letter how its code was built."
+      article={article}
+      title="Soundex calculator"
+      description="Calculate [1 Soundex codes 2] for names, one per line. Compare [1 Robert 2] and [1 Rupert 2], which both produce R163. Select a name to inspect the steps and review names that share a code."
       backColor="lime"
       extraElements={
         <div className="flex flex-col gap-5">

@@ -88,7 +88,7 @@ export const FakeDataGenerator = () => {
 
 // ─── C3. Color Shades Generator ───────────────────────────────────────────────
 
-export const ColorShadesGenerator = () => {
+export const ColorShadesGenerator = ({ article }: { article?: React.ReactNode } = {}) => {
   const [hex, setHex] = useState('#3B82F6');
   const [copied, setCopied] = useState<string | null>(null);
 
@@ -108,8 +108,9 @@ export const ColorShadesGenerator = () => {
 
   return (
     <Panel
-      title="Color Shades Generator"
-      description="Generate a Tailwind-style palette of 10 light-to-dark shades from any hex color. Enter a color like [1 #3B82F6 2] to see shades from 50 to 950."
+      article={article}
+      title="Color shade creator"
+      description="Create 10 light-to-dark color shades from a HEX color such as [1 #3B82F6 2]. Preview each swatch, inspect its HEX and HSL values, and copy colors for your palette."
       backColor="lime"
       extraElements={
         <div className="flex flex-col gap-4">

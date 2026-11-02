@@ -8,7 +8,7 @@ import { useShareLink } from "@/Components/Functions/ShareLink";
 import CryptoJS from 'crypto-js'
 
 
-export const HmacMD5 = () => {
+export const HmacMD5 = ({ article }: { article?: React.ReactNode } = {}) => {
 
     const [fromValue, setFromValue] = useState<string>('');
     const [toValue, setToValue] = useState<string>('');
@@ -45,8 +45,9 @@ export const HmacMD5 = () => {
 
     return (
         <AdvancedConverter
-            title="HMAC MD5 Hashing"
-            description="HMAC-MD5 is a specific type of message authentication code (MAC) involving a cryptographic hash function in combination with a secret cryptographic key. For example, the string [1 admin 2] with a key of [1 pass 2] becomes [1 7b45e706ab14ae5891c3fa37cfaf8d9b 2]."
+            article={article}
+            title="HMAC-MD5 generator"
+            description="Calculate [1 HMAC-MD5 2] from a message and secret key for legacy protocol compatibility. Both inputs use UTF-8 text, and the result is a 32-character hexadecimal code. For new integrations, see the HMAC-SHA256 generator linked below."
             fromValue={fromValue}
             toValue={toValue}
             setFromValue={setFromValue}

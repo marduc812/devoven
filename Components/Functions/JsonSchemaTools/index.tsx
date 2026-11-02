@@ -5,7 +5,7 @@ import { FileTextArea } from '@/Components/View/FileInput';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import { validateSchema, formatValidationResult } from './logic';
 
-export function JsonSchemaValidator() {
+export function JsonSchemaValidator({ article }: { article?: React.ReactNode } = {}) {
   const [schema, setSchema] = useState('{\n  "type": "object",\n  "required": ["name"],\n  "properties": {\n    "name": { "type": "string" },\n    "age": { "type": "number", "minimum": 0 }\n  }\n}');
   const [data, setData] = useState('{\n  "name": "Alice",\n  "age": 30\n}');
   const [output, setOutput] = useState('');
@@ -21,8 +21,9 @@ export function JsonSchemaValidator() {
 
   return (
     <Panel
-      title="JSON Schema Validator"
-      description="Validate a JSON document against a JSON Schema (draft-07). Enter your schema on the left and the data on the right, then click Validate."
+      article={article}
+      title="JSON Schema validator online"
+      description="Validate JSON against a schema using a subset of draft-07 keywords. Enter your schema on the left and your data on the right, then click Validate. See the supported keywords and limits below."
       backColor="lime"
       extraElements={
         <div className="flex flex-col gap-4">

@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CryptoJS from 'crypto-js'
 
-export const RIPEMD160 = () => {
+export const RIPEMD160 = ({ article }: { article?: React.ReactNode } = {}) => {
 
     const [fromValue, setFromValue] = useState<string>('');
     const [toValue, setToValue] = useState<string>('');
@@ -35,8 +35,9 @@ export const RIPEMD160 = () => {
 
     return (
         <BasicConverter
-            title="RIPEMD160 Hashing"
-            description="RIPEMD160 (RACE Integrity Primitives Evaluation Message Digest) is a cryptographic hash function designed by the EU project RIPE (RACE Integrity Primitives Evaluation) in 1996. RIPEMD160 hashing is a method to convert arbitrary data into a fixed-size sequence of characters, which typically represents a checksum or fingerprint of the original data. It produces a 160-bit hash value, often rendered as a 40-digit hexadecimal number. For example, the string [1 Hello, World! 2] becomes [1 527a6a4b9a6da75607546842e0e00105350b1aaf 2]."
+            article={article}
+            title="RIPEMD160 hash generator"
+            description="Generate a [1 RIPEMD160 2] hash from UTF-8 text. The output is a 160-bit digest shown as 40 hexadecimal characters. Letter case, spaces, and line breaks affect the result. This tool hashes text directly and does not perform Bitcoin HASH160."
             fromValue={fromValue}
             toValue={toValue}
             setFromValue={setFromValue}

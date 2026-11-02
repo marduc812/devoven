@@ -162,7 +162,7 @@ export const HTMLEncode = () => {
 }
 
 
-export const HTMLDecode = () => {
+export const HTMLDecode = ({ article }: { article?: React.ReactNode } = {}) => {
 
   const [fromValue, setFromValue] = useState<string>('');
   const [toValue, setToValue] = useState<string>('');
@@ -193,9 +193,10 @@ export const HTMLDecode = () => {
 
   return (
     <BasicConverter
-      title="HTML Decoder"
+      article={article}
+      title="HTML entity decoder"
       swapLink="/encoding/html-encode"
-      description="HTML decoding is a method to decode arbitrary data from a format used within HTML content back to its original form. For example, the string [1 &amp;lt;script&amp;gt;alert(1)&amp;lt;/script&amp;gt; 2] becomes [1 <script>alert(1)</script> 2]."
+      description={'Decode HTML online to replace named and numeric character references with readable text. For example, [1 &amp; 2] becomes [1 & 2] and [1 &lt;p&gt;Hello&lt;/p&gt; 2] becomes [1 <p>Hello</p> 2]. The decoder performs one pass.'}
       fromValue={fromValue}
       toValue={toValue}
       setFromValue={setFromValue}

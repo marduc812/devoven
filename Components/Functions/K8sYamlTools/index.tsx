@@ -6,7 +6,7 @@ import { generateK8sYaml, K8sResourceType, K8S_EXAMPLE } from './logic'
 
 const RESOURCE_TYPES: K8sResourceType[] = ['Deployment', 'Service', 'Ingress', 'ConfigMap', 'Secret']
 
-export const K8sYamlGenerator = () => {
+export const K8sYamlGenerator = ({ article }: { article?: React.ReactNode } = {}) => {
   const [fromValue, setFromValue] = useState(K8S_EXAMPLE)
   const [toValue, setToValue] = useState('')
   const [resourceType, setResourceType] = useState<K8sResourceType>('Deployment')
@@ -33,8 +33,9 @@ export const K8sYamlGenerator = () => {
 
   return (
     <AdvancedConverter
+      article={article}
       backColor="lime"
-      title="Kubernetes YAML Generator"
+      title="Kubernetes YAML generator"
       description="Generate Kubernetes resource YAML from key=value options. Supports [1Deployment2], [1Service2], [1Ingress2], [1ConfigMap2], and [1Secret2]."
       fromTitle="Options (key=value)"
       toTitle="YAML output"

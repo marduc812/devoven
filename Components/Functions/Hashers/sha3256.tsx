@@ -5,7 +5,7 @@ import { sha3_256 } from "js-sha3";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export const SHA3256 = () => {
+export const SHA3256 = ({ article }: { article?: React.ReactNode } = {}) => {
 
     const [fromValue, setFromValue] = useState<string>('');
     const [toValue, setToValue] = useState<string>('');
@@ -35,8 +35,9 @@ export const SHA3256 = () => {
 
     return (
         <BasicConverter
-            title="SHA3-256 Hashing"
-            description="SHA-3 (Secure Hash Algorithm 3) is the latest member of the Secure Hash Algorithm family of standards, released by NIST on August 5, 2015. SHA3-256 hashing is a method to convert arbitrary data into a fixed-size sequence of characters, which typically represents a checksum or fingerprint of the original data. For example, the string [1 Hello, World! 2] becomes [1 1af17a664e3fa8e419b8ba05c2a173169df76162a5a286e0c405b460d478f7ef 2]."
+            article={article}
+            title="SHA3-256 hash generator"
+            description="Generate a [1 SHA3-256 2] hash from UTF-8 text and copy the 64-character hexadecimal digest. SHA3-256 produces different results from SHA-256 and Keccak-256. Match the exact input, including spaces and line endings, when checking a digest."
             fromValue={fromValue}
             toValue={toValue}
             setFromValue={setFromValue}

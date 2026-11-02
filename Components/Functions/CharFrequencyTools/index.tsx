@@ -16,7 +16,7 @@ const CATEGORY_STYLE: Record<CharCategory, { bar: string; text: string; label: s
   other:       { bar: 'bg-indigo-400',  text: 'text-indigo-500',  label: 'other' },
 };
 
-export const CharFrequencyTools = () => {
+export const CharFrequencyTools = ({ article }: { article?: React.ReactNode } = {}) => {
   const [text, setText] = useState('');
   const [ignoreCase, setIgnoreCase] = useState(false);
   const [ignoreWhitespace, setIgnoreWhitespace] = useState(false);
@@ -45,8 +45,9 @@ export const CharFrequencyTools = () => {
 
   return (
     <Panel
-      title="Character Frequency Counter"
-      description="Paste any text to see which characters carry it. Gives a ranked [1 frequency table 2] with counts and percentages, a breakdown by character class, and an A–Z map — the starting point for a [1 substitution cipher 2] or for spotting stray control characters."
+      article={article}
+      title="Letter frequency calculator"
+      description="Calculate [1 letter frequency 2] in any text. See character counts and percentages, an A-Z chart, and a breakdown of letters, digits, punctuation, and whitespace. Choose whether to combine letter case or ignore whitespace."
       backColor="lime"
       extraElements={
         <div className="flex flex-col gap-5">

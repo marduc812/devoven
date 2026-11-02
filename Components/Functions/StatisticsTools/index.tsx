@@ -27,7 +27,7 @@ const PRESETS = [
   { label: 'Measurements', value: '10.2, 10.5, 9.8, 10.1, 10.4, 9.9, 10.3, 10.0' },
 ];
 
-export function StatisticsCalculator() {
+export function StatisticsCalculator({ article }: { article?: React.ReactNode } = {}) {
   const [input, setInput] = useState('');
 
   useEffect(() => {
@@ -53,7 +53,8 @@ export function StatisticsCalculator() {
 
   return (
     <Panel
-      title="Statistics Calculator"
+      article={article}
+      title="Statistics calculator"
       description="Paste comma or newline separated numbers. Computes count, sum, min, max, mean, median, mode, variance, standard deviation, quartiles [1 Q1, Q2, Q3 2], IQR and a full frequency distribution."
       backColor="lime"
       extraElements={
