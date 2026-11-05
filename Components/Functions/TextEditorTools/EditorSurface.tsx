@@ -68,6 +68,11 @@ const EditorSurface = ({
   height,
   onHeightChange,
 }: Props) => {
+  const [cursors, setCursors] = useState<Match[]>([]);
+  const pendingSelection = useRef<Match | null>(null);
+  const history = useRef<{ value: string; cursors: Match[] }[]>([]);
+  const future = useRef<{ value: string; cursors: Match[] }[]>([]);
+  const [cursorRects, setCursorRects] = useState<{ left: number; top: number; width: number; height: number }[]>([]);
   const highlightRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [nativeHighlights, setNativeHighlights] = useState<boolean | null>(null);
@@ -75,6 +80,108 @@ const EditorSurface = ({
   const boxRef = useRef<HTMLDivElement>(null);
   const gutterContentRef = useRef<HTMLDivElement>(null);
   const [lineHeights, setLineHeights] = useState<number[]>([]);
+
+  const selections = () => {
+    const input = textareaRef.current!;
+    return [...cursors, { start: input.selectionStart, end: input.selectionEnd }]
+      .sort((a, b) => a.start - b.start || a.end - b.end)
+      .filter((item, i, all) => i === 0 || (item.start >= all[i - 1].end && (item.start !== all[i - 1].start || item.end !== all[i - 1].end)));
+  };
+
+  const commit = (text: string, ranges: Match[]) => {
+    const primary = ranges[ranges.length - 1];
+    pendingSelection.current = primary;
+    setCursors(ranges.slice(0, -1));
+    onChange(text);
+  };
+
+  const editSelections = (insert: string, deletion?: 'backward' | 'forward') => {
+    const input = textareaRef.current!;
+    history.current.push({ value, cursors: [...cursors, { start: input.selectionStart, end: input.selectionEnd }] });
+    future.current = [];
+    const ranges = selections().map((range) => {
+      if (range.start !== range.end || !deletion) return range;
+      const step = deletion === 'backward' ? (value.codePointAt(range.start - 2)! > 0xffff ? 2 : 1) : (value.codePointAt(range.end)! > 0xffff ? 2 : 1);
+      return deletion === 'backward'
+        ? { start: Math.max(0, range.start - step), end: range.end }
+        : { start: range.start, end: Math.min(value.length, range.end + step) };
+    });
+    let text = value;
+    let delta = 0;
+    const next: Match[] = [];
+    let previousEnd = -1;
+    for (const range of ranges) {
+      if (range.start < previousEnd) continue;
+      const position = range.start + delta;
+      text = text.slice(0, position) + insert + text.slice(range.end + delta);
+      delta += insert.length - (range.end - range.start);
+      next.push({ start: position + insert.length, end: position + insert.length });
+      previousEnd = range.end;
+    }
+    commit(text, next);
+  };
+
+  useLayoutEffect(() => {
+    if (pendingSelection.current && textareaRef.current) {
+      const range = pendingSelection.current;
+      textareaRef.current.setSelectionRange(range.start, range.end);
+      pendingSelection.current = null;
+    }
+  });
+
+  useLayoutEffect(() => {
+    const input = textareaRef.current;
+    if (!input) return;
+    const beforeInput = (event: InputEvent) => {
+      if (!cursors.length || event.isComposing) return;
+      if (event.inputType === 'insertText' || event.inputType === 'insertLineBreak' || event.inputType === 'insertParagraph') {
+        event.preventDefault();
+        editSelections(event.inputType === 'insertText' ? event.data ?? '' : '\n');
+      } else if (event.inputType === 'deleteContentBackward' || event.inputType === 'deleteContentForward') {
+        event.preventDefault();
+        editSelections('', event.inputType === 'deleteContentBackward' ? 'backward' : 'forward');
+      }
+    };
+    input.addEventListener('beforeinput', beforeInput);
+    return () => input.removeEventListener('beforeinput', beforeInput);
+  });
+
+  const onEditorKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const input = event.currentTarget;
+    const mod = event.metaKey || event.ctrlKey;
+    if (mod && event.key.toLowerCase() === 'd') {
+      event.preventDefault();
+      let start = input.selectionStart;
+      let end = input.selectionEnd;
+      if (start === end) {
+        while (start > 0 && /[\w$]/.test(value[start - 1])) start--;
+        while (end < value.length && /[\w$]/.test(value[end])) end++;
+        input.setSelectionRange(start, end);
+        return;
+      }
+      const query = value.slice(start, end);
+      const existing = selections();
+      const candidates = [value.indexOf(query, end), value.indexOf(query)];
+      let next = candidates[0];
+      while (next >= 0 && existing.some((range) => next < range.end && next + query.length > range.start)) next = value.indexOf(query, next + query.length);
+      if (next < 0) next = candidates[1];
+      if (next >= 0 && !existing.some((range) => next < range.end && next + query.length > range.start)) {
+        setCursors(existing);
+        input.setSelectionRange(next, next + query.length);
+      }
+    } else if (mod && event.key.toLowerCase() === 'z' && (history.current.length || future.current.length)) {
+      event.preventDefault();
+      const source = event.shiftKey ? future.current : history.current;
+      const target = event.shiftKey ? history.current : future.current;
+      const snapshot = source.pop();
+      if (snapshot) {
+        target.push({ value, cursors: [...cursors, { start: input.selectionStart, end: input.selectionEnd }] });
+        commit(snapshot.value, snapshot.cursors);
+      }
+    } else if (event.key === 'Escape' || event.key.startsWith('Arrow') || event.key === 'Home' || event.key === 'End' || (mod && event.key.toLowerCase() === 'a')) {
+      setCursors([]);
+    }
+  };
 
   // Counting separators is much cheaper than materialising an array of lines,
   // and on a large buffer this runs on every keystroke.
@@ -86,7 +193,7 @@ const EditorSurface = ({
 
   const freshMatches = value === highlightText ? matches : NO_MATCHES;
   const segments = useMemo(
-    () => buildSegments(value, value === highlightText && nativeHighlights === false ? matches : [], currentMatchIndex),
+    () => buildSegments(value, value !== highlightText ? NO_MATCHES : nativeHighlights === false ? matches : matches.filter((match) => match.start === match.end), currentMatchIndex),
     [value, highlightText, nativeHighlights, matches, currentMatchIndex]
   );
   const lines = useMemo(() => wrap ? value.split('\n') : [], [wrap, value]);
@@ -152,6 +259,15 @@ const EditorSurface = ({
       range.setEnd(to.node, to.offset);
       return range;
     };
+    const measureCursors = () => {
+      if (!content.getBoundingClientRect || !Range.prototype.getBoundingClientRect) return;
+      const box = content.getBoundingClientRect();
+      setCursorRects(cursors.flatMap((cursor) => {
+        const range = rangeFor(cursor.start, cursor.end);
+        const rects = cursor.start === cursor.end ? [range.getBoundingClientRect()] : Array.from(range.getClientRects());
+        return rects.map((rect) => ({ left: rect.left - box.left, top: rect.top - box.top, width: Math.max(2, rect.width), height: rect.height || 24 }));
+      }));
+    };
     const ranges = freshMatches.map((match) => rangeFor(match.start, match.end));
     matchRangesRef.current = ranges;
 
@@ -163,6 +279,7 @@ const EditorSurface = ({
 
     const measure = () => {
       syncScroll();
+      measureCursors();
       if (!wrap || !showLineNumbers || !rangeFor(0, 0).getBoundingClientRect) {
         setLineHeights([]);
         return;
@@ -188,7 +305,7 @@ const EditorSurface = ({
         CSS.highlights.delete('text-editor-matches');
       }
     };
-  }, [value, freshMatches, nativeHighlights, wrap, showLineNumbers, lines, syncScroll, textareaRef]);
+  }, [value, freshMatches, nativeHighlights, wrap, showLineNumbers, lines, syncScroll, textareaRef, cursors]);
 
   // Mount only. A background tab's buffer can shrink while it is unmounted — a
   // Replace all across every tab does exactly that — so the stored offsets are
@@ -304,14 +421,15 @@ const EditorSurface = ({
           <div ref={highlightRef} aria-hidden="true" className="absolute inset-0 overflow-hidden pointer-events-none">
             <div
               ref={contentRef}
-              className={`${TEXT_METRICS} ${whitespace} text-gray-900`}
+              className={`${TEXT_METRICS} ${whitespace} text-gray-900 relative`}
             >
               {segments.map((segment, i) =>
                 segment.match ? (
                   <span
                     key={i}
                     data-current-match={segment.current || undefined}
-                    className={segment.current ? 'text-editor-current' : 'text-editor-match'}
+                    className={`${segment.current ? 'text-editor-current' : 'text-editor-match'}${segment.text === '' ? ' text-editor-zero-match' : ''}`}
+                    data-zero-width={segment.text === '' || undefined}
                   >
                     {segment.text}
                   </span>
@@ -321,13 +439,26 @@ const EditorSurface = ({
               )}
               {/* A final row exists in a textarea even when the buffer ends in a newline. */}
               {'\u200b'}
+              {cursorRects.map((rect, i) => <span key={`cursor-${i}`} data-secondary-cursor="true" className="text-editor-secondary-cursor" style={{ position: 'absolute', ...rect }} />)}
             </div>
           </div>
 
           <textarea
             ref={textareaRef}
             value={value}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={(e) => { setCursors([]); history.current = []; future.current = []; onChange(e.target.value); }}
+            onKeyDown={onEditorKeyDown}
+            onMouseDown={(e) => {
+              if (e.altKey) {
+                const input = e.currentTarget;
+                setCursors((previous) => [...previous, { start: input.selectionStart, end: input.selectionEnd }]);
+              } else setCursors([]);
+            }}
+            onCompositionStart={() => setCursors([])}
+            onPaste={(e) => { if (cursors.length) { e.preventDefault(); editSelections(e.clipboardData.getData('text/plain')); } }}
+            onCopy={(e) => { if (cursors.length) { e.preventDefault(); e.clipboardData.setData('text/plain', selections().map((range) => value.slice(range.start, range.end)).join('\n')); } }}
+            onCut={(e) => { if (cursors.length) { e.preventDefault(); e.clipboardData.setData('text/plain', selections().map((range) => value.slice(range.start, range.end)).join('\n')); editSelections(''); } }}
+            aria-description="Alt+click to add cursors. Ctrl+D or Cmd+D to select the next occurrence. Escape clears extra cursors."
             onScroll={syncScroll}
             spellCheck={false}
             wrap={wrap ? 'soft' : 'off'}
@@ -358,6 +489,7 @@ const EditorSurface = ({
       >
         <div className={`h-0.5 w-8 rounded-full ${dragging ? 'bg-gray-400' : 'bg-gray-300 group-hover:bg-gray-400'}`} />
       </div>
+      <p className="mt-1 text-xs text-gray-500">Alt+click adds a cursor. Cmd/Ctrl+D selects the next occurrence. Escape clears extra cursors.</p>
     </>
   );
 };

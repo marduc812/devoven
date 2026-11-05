@@ -453,3 +453,20 @@ body {
   35%  { opacity: .8; }
   100% { transform: translateY(-12px) scaleY(1.2); opacity: 0; }
 }
+
+.text-editor-zero-match {
+  display: inline-block;
+  position: relative;
+  width: 0;
+}
+.text-editor-zero-match::after {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: -1em;
+  height: 1.2em;
+  width: 3px;
+  background: #d97706;
+}
+.text-editor-zero-match[data-current-match]::after { background: #ea580c; }
+.text-editor-secondary-cursor { background: #3b82f655; border-left: 2px solid #2563eb; }

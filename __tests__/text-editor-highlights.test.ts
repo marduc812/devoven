@@ -190,3 +190,54 @@ it('passes all worker results through the editor and clears decorations when fin
   expect(container.querySelector('input[aria-label="Find"]')).toBeNull();
   expect(highlights.get('text-editor-matches')?.size).toBe(0);
 });
+
+it.each([false, true])('marks zero-width anchors without changing text offsets, native=%s', async (native) => {
+  if (native) enableNativeHighlights();
+  const value = 'one\n\nlast\n';
+  const matches = findMatches(value, '^|$', { regex: true });
+  await render({ value, highlightText: value, matches, currentMatchIndex: 0 });
+  expect(content().querySelectorAll('[data-zero-width]')).toHaveLength(matches.length);
+  expect(content().querySelector('[data-zero-width]')?.hasAttribute('data-current-match')).toBe(true);
+  expect(content().textContent).toBe(value + '\u200b');
+  await render({ value: 'changed' });
+  expect(content().querySelectorAll('[data-zero-width]')).toHaveLength(0);
+});
+
+async function key(key: string, options: KeyboardEventInit = {}) {
+  await act(async () => { input().dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...options })); });
+}
+
+it('selects repeated words and edits, undoes, and redoes all selections together', async () => {
+  const value = 'cat cat cat';
+  await render({ value, highlightText: value });
+  input().setSelectionRange(1, 1);
+  await key('d', { ctrlKey: true });
+  expect([input().selectionStart, input().selectionEnd]).toEqual([0, 3]);
+  await key('d', { ctrlKey: true });
+  await key('d', { ctrlKey: true });
+  expect([input().selectionStart, input().selectionEnd]).toEqual([8, 11]);
+  await act(async () => {
+    input().dispatchEvent(new InputEvent('beforeinput', { inputType: 'insertText', data: 'dog', bubbles: true, cancelable: true }));
+  });
+  expect(props.onChange).toHaveBeenLastCalledWith('dog dog dog');
+  await render({ value: 'dog dog dog' });
+  await key('z', { ctrlKey: true });
+  expect(props.onChange).toHaveBeenLastCalledWith(value);
+  await render({ value });
+  await key('z', { ctrlKey: true, shiftKey: true });
+  expect(props.onChange).toHaveBeenLastCalledWith('dog dog dog');
+});
+
+it('adds a cursor with Alt+click and clears extra cursors with Escape', async () => {
+  await render({ value: 'ab\ncd', highlightText: 'ab\ncd' });
+  input().setSelectionRange(1, 1);
+  await act(async () => { input().dispatchEvent(new MouseEvent('mousedown', { altKey: true, bubbles: true })); });
+  input().setSelectionRange(4, 4);
+  await act(async () => { input().dispatchEvent(new InputEvent('beforeinput', { inputType: 'insertText', data: '!', bubbles: true, cancelable: true })); });
+  expect(props.onChange).toHaveBeenLastCalledWith('a!b\nc!d');
+  await render({ value: 'a!b\nc!d' });
+  await key('Escape');
+  const event = new InputEvent('beforeinput', { inputType: 'insertText', data: '?', bubbles: true, cancelable: true });
+  await act(async () => { input().dispatchEvent(event); });
+  expect(event.defaultPrevented).toBe(false);
+});
