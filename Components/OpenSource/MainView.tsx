@@ -75,7 +75,7 @@ const OpenSourceMainView = () => {
                 </div>
                 <p className='text-gray-500 dark:text-zinc-400 text-xs leading-relaxed'>
                     react-icons bundles icon sets that carry their own licenses, listed in its
-                    repository. gmp-wasm and web3-utils are LGPL: you are free to replace either
+                    repository. gmp-wasm is LGPL: you are free to replace it
                     with your own build, and the source you need to do that is in the repository
                     above.
                 </p>

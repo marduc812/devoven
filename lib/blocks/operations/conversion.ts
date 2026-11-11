@@ -1,5 +1,5 @@
 import { keccak_256 } from 'js-sha3';
-import { hexToBytes, stringToHex, hexToString, numberToHex, hexToNumber } from 'web3-utils';
+import { hexToBytes, stringToHex, hexToString, numberToHex, hexToNumber } from '@/lib/hex-conversions';
 import { hexToRgb, textToBinary, binaryToString, hexToBinary as hexToBinaryFn } from '@/Components/Functions/Utils';
 import { generateColorScheme } from '@/Components/Functions/ColorSchemeTools/logic';
 import { toEIP55Checksum } from '@/Components/Functions/EthChecksumTools/logic';

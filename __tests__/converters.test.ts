@@ -1,5 +1,6 @@
 import { hexToRgb, rgbToHex } from '../Components/Functions/Utils';
 import { keccak_256 } from 'js-sha3';
+import { hexToBytes } from '@/lib/hex-conversions';
 
 // --- Hex to RGB / RGB to Hex (covered in utils.test.ts — one cross-check here) ---
 
@@ -71,7 +72,6 @@ describe('CMYK to RGB', () => {
 // --- ETH Public Key to Address ---
 // Logic extracted from Converters.tsx ETHPubToAddr
 const ethPubToAddr = (pubKey: string): string => {
-  const { hexToBytes } = require('web3-utils');
   const userInput = pubKey.replace('0x', '');
   let formatted = userInput.replace(/^04/, '');
   if (formatted.length % 2 !== 0) {

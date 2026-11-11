@@ -56,6 +56,5 @@ export const THIRD_PARTY_LIBRARIES: ThirdPartyLibrary[] = [
     { name: 'turndown', license: 'MIT', url: 'https://github.com/mixmark-io/turndown', used: 'HTML to Markdown' },
     { name: 'ulid', license: 'MIT', url: 'https://github.com/ulid/javascript', used: 'ULID generation' },
     { name: 'uuid', license: 'MIT', url: 'https://github.com/uuidjs/uuid', used: 'UUID generation' },
-    { name: 'web3-utils', license: 'LGPL-3.0', url: 'https://github.com/ChainSafe/web3.js', used: 'Ethereum hex and unit conversion' },
     { name: 'zod', license: 'MIT', url: 'https://github.com/colinhacks/zod', used: 'Message validation inside the MCP SDK' },
 ];

@@ -306,7 +306,7 @@ call the result something else.
 Every npm dependency that ships in the bundle is credited at
 [/open-source](https://www.devoven.com/open-source). The list lives in
 `lib/third-party-licenses.ts`, and a test keeps it in step with `package.json`.
-Two of them are LGPL (`gmp-wasm` and `web3-utils`); everything else is MIT, BSD,
+The `gmp-wasm` library is LGPL; everything else is MIT, BSD,
 ISC or Apache-2.0. Separately, `public/Templates/nmapreport.html` embeds jQuery
 3.7.0, DataTables 1.13.8 and the Gabarito typeface, each under its own license
 with the upstream notice left intact in the file.

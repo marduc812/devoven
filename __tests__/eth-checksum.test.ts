@@ -1,4 +1,3 @@
-import { toChecksumAddress } from 'web3-utils';
 import { toEIP55Checksum } from '@/Components/Functions/EthChecksumTools/logic';
 
 // The reference vectors from EIP-55 itself, in their checksummed form.
@@ -82,12 +81,14 @@ describe('Ethereum EIP-55 Checksum', () => {
       expect(result.upperCount).toBe(body.replace(/[^A-F]/g, '').length);
     });
 
-    it('agrees with web3-utils across random addresses', () => {
+    it('is idempotent across random addresses', () => {
       const hex = '0123456789abcdef';
       for (let n = 0; n < 200; n++) {
         let addr = '0x';
         for (let i = 0; i < 40; i++) addr += hex[Math.floor(Math.random() * 16)];
-        expect(toEIP55Checksum(addr).checksummed).toBe(toChecksumAddress(addr));
+        const checksummed = toEIP55Checksum(addr).checksummed!;
+        expect(toEIP55Checksum(checksummed).checksummed).toBe(checksummed);
+        expect(checksummed.toLowerCase()).toBe(addr);
       }
     });
 

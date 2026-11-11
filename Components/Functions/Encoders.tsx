@@ -7,7 +7,7 @@ import { useShareLink } from '@/Components/Functions/ShareLink'
 import { Buffer } from 'buffer'
 import AdvancedConverter from '../MainView/MainPanel/AdvancedConverter'
 import { textToBinary, binaryToString, hexToBinary, trackToolError, urlEncodeAll, urlEncodeUnicode, urlDecodeWithUnicode, urlEncodeModes, URLEncodeMode } from './Utils'
-import { stringToHex, hexToString, numberToHex, hexToNumber } from 'web3-utils'
+import { stringToHex, hexToString, numberToHex, hexToNumber } from '@/lib/hex-conversions'
 import { Switch } from '@/Components/UI/Switch'
 
 export const URLDecode = ({ article }: { article?: React.ReactNode } = {}) => {

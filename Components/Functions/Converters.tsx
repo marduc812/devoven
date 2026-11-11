@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Switch } from '@/Components/UI/Switch';
 import { keccak_256 } from 'js-sha3';
-import { hexToBytes } from 'web3-utils';
+import { hexToBytes } from '@/lib/hex-conversions';
 import BasicConverter from '../MainView/MainPanel/BasicConverter';
 import AdvancedConverter from '../MainView/MainPanel/AdvancedConverter';
 import Panel from '../MainView/MainPanel/Panel';
