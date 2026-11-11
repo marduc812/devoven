@@ -10,7 +10,7 @@ Updated compatible releases in the existing major version ranges, including Next
 
 Removed web3-utils, which pulls in web3-validator and a vulnerable Zod 3 release. Its five conversion functions now use local byte, UTF-8 and BigInt helpers. Thirty-seven compatibility vectors captured from web3-utils 4.3.3 cover Unicode, NUL handling, malformed input, signed numbers and integers beyond JavaScript's safe number range. Existing EIP-55 reference-vector tests remain; the random-address check now verifies checksum idempotence and address preservation.
 
-Added targeted overrides for glob 14.0.4 and minimatch 11.0.8 in affected dependency ranges, and postcss-selector-parser 6.1.6 under the typography plugin. These overrides cross the version ranges requested by some development dependencies, so the full tests and production build are required compatibility checks.
+Added overrides for glob 14.0.4 and minimatch 11.0.8 throughout the dependency tree, and postcss-selector-parser 6.1.6 under the typography plugin. These overrides cross the version ranges requested by some development dependencies, so the full tests and production build are required compatibility checks.
 
 The CI dependency audit now fails for moderate or higher advisories across production and development dependencies. Previously it checked only high-severity production advisories and allowed the job to fail without failing CI.
 
@@ -41,3 +41,11 @@ All checks used Node.js 22.23.4 for application execution.
 - `npm audit --audit-level=moderate`: passes, with the five low-severity affected packages described above.
 
 These checks establish that the tested local production build runs. They do not exercise every tool interaction or verify a remote deployment.
+
+## Clean-install correction
+
+The first verification used an existing installation with npm 11 and missed a clean-install failure under CI's npm 10.9.9. The version-qualified glob and minimatch overrides produced a lockfile npm 11 accepted but npm 10 rejected with missing nested dependencies. Reproducing with Node 22.23.4 and npm 10.9.9 confirmed the failure.
+
+Changed glob and minimatch to unconditional overrides, preserving the patched versions for every installed copy. Regenerated the lockfile with npm 10.9.9. The package engines now require npm 10.9.9 or newer within npm 10, and packageManager records npm 10.9.9. Dependency updates must pass a real `npm ci` with that toolchain before the tests and build.
+
+The correction passed a real clean install using Node 22.23.4 and npm 10.9.9, followed by all 421 test suites and 8,865 tests, the production build and its 632 static-page generation steps, and HTTP checks for all 627 public prerendered routes. The production dependency audit remains clean and the full audit passes the moderate-severity threshold. A dry-run install with npm 11 now fails the package engine check before it can regenerate the lockfile.

@@ -25,6 +25,10 @@ within Node 22. `.nvmrc` selects 22.23.4 for development and CI. If you do not
 use nvm, install a supported Node 22 release yourself. npm rejects unsupported
 versions, and Next.js checks the runtime again when it loads its configuration.
 
+Use npm 10.9.9 or newer within npm 10, as selected by the package engines.
+The lockfile uses npm 10's handling of security overrides. Generate dependency
+updates with npm 10, and run `npm ci` before testing or building an update.
+
 This minimum includes the [October 21, 2026 Node security fixes](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases),
 including CVE-2026-111497 in the Brotli decoder. Updating npm packages alone
 does not patch Node's bundled decoder. Self-hosters must upgrade the Node
