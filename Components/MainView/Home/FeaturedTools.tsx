@@ -3,15 +3,15 @@ import Link from 'next/link';
 import { IoArrowForward } from 'react-icons/io5';
 
 const featured = [
-    { name: 'Memory Address Calculator', link: '/tools/memory-addr',           category: 'Binary',   color: 'bg-lime-400' },
+    { name: 'CRX Downloader',            link: '/tools/crx-downloader',        category: 'Developer',color: 'bg-sky-400' },
     { name: 'Tic-Tac-Toe Analyzer',      link: '/tools/tic-tac-toe',           category: 'Games',    color: 'bg-fuchsia-400' },
     { name: 'Google Maps API Scanner',   link: '/tools/gmaps-api-scanner',     category: 'Security', color: 'bg-emerald-400' },
-    { name: 'CRX Downloader',            link: '/tools/crx-downloader',        category: 'Developer',color: 'bg-sky-400' },
+    { name: 'Memory Address Calculator', link: '/tools/memory-addr',           category: 'Binary',   color: 'bg-lime-400' },
+    { name: 'Online Text Editor',        link: '/text/text-editor',            category: 'Text',     color: 'bg-amber-400' },
     { name: 'HMAC-SHA256',               link: '/hashing/hmac-sha256',         category: 'Hashing',  color: 'bg-teal-400' },
-    { name: 'Bytes32 to String',         link: '/converting/bytes32-to-string',category: 'Web3',     color: 'bg-indigo-400' },
-    { name: 'String to Bytes32',         link: '/converting/string-to-bytes32',category: 'Web3',     color: 'bg-indigo-400' },
-    { name: 'Week Number Calculator',    link: '/converting/week-number-calculator', category: 'Date', color: 'bg-cyan-400' },
+    { name: 'Ethereum Public Key to Address', link: '/converting/eth-public-to-address', category: 'Web3', color: 'bg-indigo-400' },
     { name: 'Nmap Viewer',               link: '/tools/nmap-viewer',           category: 'Security', color: 'bg-emerald-400' },
+    { name: 'Morse Code Decode',         link: '/encoding/morse-decode',       category: 'Encoding', color: 'bg-violet-400' },
 ];
 
 const FeaturedTools = () => {
