@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import { IoChevronDownOutline, IoReorderFourOutline } from 'react-icons/io5';
 import {
   dedupeLines,
   removeEmptyLines,
@@ -68,9 +69,11 @@ const LinesMenu = ({ settings, setSettings, run }: Props) => {
         onClick={() => setOpen(!open)}
         aria-expanded={open}
         aria-haspopup="menu"
-        className="border border-gray-300 bg-white text-gray-900 px-3 py-1.5 text-sm hover:bg-gray-100"
+        className="inline-flex items-center gap-1.5 border border-gray-300 bg-white text-gray-900 px-3 py-1.5 text-sm hover:bg-gray-100"
       >
-        Lines ▾
+        <IoReorderFourOutline className="w-4 h-4 shrink-0" aria-hidden />
+        Lines
+        <IoChevronDownOutline className="w-3 h-3 shrink-0" aria-hidden />
       </button>
 
       {open && (

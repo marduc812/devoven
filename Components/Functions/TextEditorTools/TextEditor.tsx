@@ -2,6 +2,15 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
+import {
+  IoDocumentOutline,
+  IoDownloadOutline,
+  IoFolderOpenOutline,
+  IoListOutline,
+  IoReturnDownBackOutline,
+  IoSaveOutline,
+  IoSearchOutline,
+} from 'react-icons/io5';
 import Panel from '@/Components/MainView/MainPanel/Panel';
 import EditorSurface from './EditorSurface';
 import FindBar from './FindBar';
@@ -70,7 +79,18 @@ const NO_RESULTS: FileMatches[] = [];
 const LINE_HEIGHT_PX = 24; // must match `leading-6` on the editor surface
 
 const buttonClass =
-  'border border-gray-300 bg-white text-gray-900 px-3 py-1.5 text-sm hover:bg-gray-100 disabled:opacity-40 disabled:hover:bg-white';
+  'inline-flex items-center gap-1.5 border border-gray-300 bg-white text-gray-900 px-3 py-1.5 text-sm hover:bg-gray-100 disabled:opacity-40 disabled:hover:bg-white';
+
+// Square toggle that matches buttonClass. Off reads as disabled (flat, dimmed);
+// on reads as pressed (darker border, inset ring).
+const toggleClass = (on: boolean) =>
+  `inline-flex items-center gap-1.5 border px-3 py-1.5 text-sm ${
+    on
+      ? 'border-gray-500 bg-gray-100 text-gray-900 ring-1 ring-inset ring-gray-400 hover:bg-gray-200'
+      : 'border-gray-300 bg-white text-gray-900 opacity-50 hover:opacity-80'
+  }`;
+
+const iconClass = 'w-4 h-4 shrink-0';
 
 const DEFAULT_DEDUPE: DedupeSettings = { caseInsensitive: false, trim: false, adjacentOnly: false };
 
@@ -828,6 +848,7 @@ const TextEditor = () => {
 
       <div className="flex flex-wrap items-center gap-2 mb-3">
         <button type="button" onClick={doNew} disabled={!canAddTab(tabs)} className={buttonClass}>
+          <IoDocumentOutline className={iconClass} aria-hidden />
           New
         </button>
         <button
@@ -836,14 +857,17 @@ const TextEditor = () => {
           disabled={!isReusable(active) && !canAddTab(tabs)}
           className={buttonClass}
         >
+          <IoFolderOpenOutline className={iconClass} aria-hidden />
           Open
         </button>
         {canWriteBack && (
           <button type="button" onClick={() => void doSave()} className={buttonClass}>
+            <IoSaveOutline className={iconClass} aria-hidden />
             Save
           </button>
         )}
         <button type="button" onClick={() => void doSaveAs()} className={buttonClass}>
+          <IoDownloadOutline className={iconClass} aria-hidden />
           Save as
         </button>
 
@@ -854,17 +878,28 @@ const TextEditor = () => {
           onClick={() => patchActiveFind({ open: true, showReplace: true })}
           className={buttonClass}
         >
+          <IoSearchOutline className={iconClass} aria-hidden />
           Find &amp; replace
         </button>
 
-        <label className="flex items-center gap-1.5 text-sm text-gray-700 ml-auto">
-          <input type="checkbox" checked={showLineNumbers} onChange={(e) => setShowLineNumbers(e.target.checked)} />
+        <button
+          type="button"
+          aria-pressed={showLineNumbers}
+          onClick={() => setShowLineNumbers(!showLineNumbers)}
+          className={`${toggleClass(showLineNumbers)} ml-auto`}
+        >
+          <IoListOutline className={iconClass} aria-hidden />
           Line numbers
-        </label>
-        <label className="flex items-center gap-1.5 text-sm text-gray-700">
-          <input type="checkbox" checked={wrap} onChange={(e) => setWrap(e.target.checked)} />
+        </button>
+        <button
+          type="button"
+          aria-pressed={wrap}
+          onClick={() => setWrap(!wrap)}
+          className={toggleClass(wrap)}
+        >
+          <IoReturnDownBackOutline className={iconClass} aria-hidden />
           Wrap
-        </label>
+        </button>
       </div>
 
       <TabBar tabs={tabs} activeId={activeId} onSelect={onSelectTab} onClose={doCloseTab} onNew={doNew} />
