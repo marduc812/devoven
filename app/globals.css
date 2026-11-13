@@ -358,6 +358,20 @@ body {
   border-radius: 50%;
 }
 
+/* Yellow scrollbars and form pickers, everywhere. The default gray thumb       */
+/* disappears on the dark background. amber-400 matches the Encoding accent.   */
+html, * {
+  scrollbar-color: #fbbf24 transparent;
+}
+
+/* Beats the per-tool accent-* utilities (0-1-0) on specificity (0-1-1). */
+input[type="range"],
+input[type="checkbox"],
+input[type="radio"],
+progress {
+  accent-color: #fbbf24;
+}
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;

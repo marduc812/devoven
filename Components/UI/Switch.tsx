@@ -14,9 +14,9 @@ export function Switch({ checked, onChange, label, className = '' }: SwitchProps
         role="switch"
         aria-checked={checked}
         onClick={() => onChange(!checked)}
-        className={`relative w-10 h-5 rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500
+        className={`relative w-10 h-5 rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-amber-400
           ${checked
-            ? 'bg-blue-600 dark:bg-blue-500'
+            ? 'bg-amber-400'
             : 'bg-gray-300 dark:bg-gray-600'
           }`}
       >
