@@ -919,6 +919,7 @@ const TextEditor = () => {
           canSearchAllTabs={tabs.length > 1}
           matchCount={matchCount}
           matchFileCount={matchFileCount}
+          activeMatchCount={activeMatches.length}
           currentMatchIndex={safeIndex}
           error={searchError}
           onNext={() => step(1)}

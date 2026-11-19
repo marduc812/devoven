@@ -4,6 +4,7 @@ import { act, createElement, createRef, type ComponentProps, type ReactNode } fr
 import { createRoot, type Root } from 'react-dom/client';
 import EditorSurface from '@/Components/Functions/TextEditorTools/EditorSurface';
 import TextEditor from '@/Components/Functions/TextEditorTools/TextEditor';
+import { HIGHLIGHT_LIMIT } from '@/Components/Functions/TextEditorTools/highlightLimit';
 import { findMatches } from '@/Components/Functions/TextEditorTools/logic';
 
 jest.mock('../Components/MainView/MainPanel/Panel', () => ({
@@ -112,13 +113,13 @@ it('moves the mirror and gutter with the input without a second scroll clamp', a
   expect((gutter.firstElementChild as HTMLElement).style.transform).toBe('translateY(-96px)');
 });
 
-it('decorates every result past 2,000 without adding a DOM node for each match', async () => {
+it('bounds native decorations while keeping a result beyond the limit selectable', async () => {
   const highlights = enableNativeHighlights();
   const value = 'target\n'.repeat(3001);
   const matches = findMatches(value, 'target');
   await render({ value, highlightText: value, matches, currentMatchIndex: 0 });
   const all = highlights.get('text-editor-matches')!;
-  expect(all.size).toBe(3001);
+  expect(all.size).toBe(HIGHLIGHT_LIMIT);
   expect(content().querySelectorAll('span')).toHaveLength(0);
   expect(Array.from(all).every((range) => range.toString() === 'target')).toBe(true);
 
@@ -127,7 +128,8 @@ it('decorates every result past 2,000 without adding a DOM node for each match',
   const current = highlights.get('text-editor-current')!;
   expect(current.size).toBe(1);
   expect(current.priority).toBeGreaterThan(all.priority);
-  expect(Array.from(current)[0]).toBe(Array.from(all)[3000]);
+  expect(Array.from(current)[0].toString()).toBe('target');
+  expect((Array.from(current)[0] as Range).startOffset).toBe(3000 * 'target\n'.length);
 
   await render({ matches: [], currentMatchIndex: -1 });
   expect(highlights.get('text-editor-matches')?.size).toBe(0);
@@ -166,7 +168,7 @@ it('reveals the measured wrapped row and horizontal position without taking focu
   find.remove();
 });
 
-it('passes all worker results through the editor and clears decorations when find closes', async () => {
+it('counts every worker result while bounding decorations and clears them when find closes', async () => {
   jest.useFakeTimers();
   const highlights = enableNativeHighlights();
   await act(async () => root.render(createElement(TextEditor)));
@@ -184,7 +186,8 @@ it('passes all worker results through the editor and clears decorations when fin
     query.dispatchEvent(new Event('input', { bubbles: true }));
   });
   await act(async () => { jest.advanceTimersByTime(200); });
-  expect(highlights.get('text-editor-matches')?.size).toBe(3001);
+  expect(highlights.get('text-editor-matches')?.size).toBe(HIGHLIGHT_LIMIT);
+  expect(container.textContent).toContain('Only the first 1,000 matches');
   expect(container.textContent).toContain('1 of 3001');
   await act(async () => { query.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); });
   expect(container.querySelector('input[aria-label="Find"]')).toBeNull();
@@ -240,4 +243,50 @@ it('adds a cursor with Alt+click and clears extra cursors with Escape', async ()
   const event = new InputEvent('beforeinput', { inputType: 'insertText', data: '?', bubbles: true, cancelable: true });
   await act(async () => { input().dispatchEvent(event); });
   expect(event.defaultPrevented).toBe(false);
+});
+
+it.each([false, true])('bounds 5,500 single-character decorations and navigates to the last match, native=%s', async (native) => {
+  const highlights = native ? enableNativeHighlights() : null;
+  const value = 'x '.repeat(5500);
+  const matches = findMatches(value, 'x');
+  const createRange = jest.spyOn(document, 'createRange');
+  await render({ value, highlightText: value, matches, currentMatchIndex: 0 });
+  // Includes both the initial feature-detection render and the configured render.
+  expect(createRange.mock.calls.length).toBeLessThan(2 * HIGHLIGHT_LIMIT + 10);
+  expect(content().textContent).toBe(value + '\u200b');
+  expect(content().querySelectorAll('span').length).toBeLessThanOrEqual(HIGHLIGHT_LIMIT);
+
+  await render({ currentMatchIndex: 5499 });
+  if (highlights) {
+    expect(highlights.get('text-editor-matches')?.size).toBe(HIGHLIGHT_LIMIT);
+    const range = Array.from(highlights.get('text-editor-current')!)[0] as Range;
+    expect(range.startOffset).toBe(10998);
+    expect(range.toString()).toBe('x');
+  } else {
+    expect(content().querySelectorAll('span')).toHaveLength(HIGHLIGHT_LIMIT + 1);
+    expect(content().querySelector('[data-current-match]')?.textContent).toBe('x');
+  }
+
+  await render({ value: 'edited' });
+  expect(content().querySelectorAll('span')).toHaveLength(0);
+  expect(highlights?.get('text-editor-current')?.size ?? 0).toBe(0);
+});
+
+it.each([false, true])('bounds zero-width marks and marks the selected anchor beyond the limit, native=%s', async (native) => {
+  if (native) enableNativeHighlights();
+  const value = 'x\n'.repeat(5500);
+  const matches = findMatches(value, '^', { regex: true });
+  await render({ value, highlightText: value, matches, currentMatchIndex: 5500 });
+  expect(content().querySelectorAll('[data-zero-width]')).toHaveLength(HIGHLIGHT_LIMIT + 1);
+  expect(content().querySelectorAll('[data-current-match]')).toHaveLength(1);
+  expect(content().textContent).toBe(value + '\u200b');
+});
+
+it('marks the correct zero-width result when native highlights filter out nonempty results', async () => {
+  enableNativeHighlights();
+  const value = 'x\ny';
+  await render({ value, highlightText: value, matches: findMatches(value, 'x|$', { regex: true }), currentMatchIndex: 1 });
+  const marks = content().querySelectorAll('[data-zero-width]');
+  expect(marks[0].hasAttribute('data-current-match')).toBe(true);
+  expect(marks[1].hasAttribute('data-current-match')).toBe(false);
 });

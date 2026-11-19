@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import type { FindOptions } from './logic';
+import { HIGHLIGHT_LIMIT } from './highlightLimit';
 
 const inputClass =
   'border border-gray-300 bg-white text-gray-900 px-2 py-1 text-sm font-mono focus:outline-none focus:border-gray-900';
@@ -25,6 +26,8 @@ type Props = {
   matchCount: number;
   /** How many files those matches are spread over. */
   matchFileCount: number;
+  /** Matches in the visible tab, where the decoration limit applies. */
+  activeMatchCount: number;
   /** Position within the visible tab's matches, or -1 when it has none. */
   currentMatchIndex: number;
   error: string | null;
@@ -209,6 +212,11 @@ const FindBar = (props: Props) => {
         </div>
       )}
 
+      {props.activeMatchCount > HIGHLIGHT_LIMIT && (
+        <p className="text-xs text-gray-500">
+          Only the first {HIGHLIGHT_LIMIT.toLocaleString('en-US')} matches and the selected match are highlighted in this tab. Find, copy, and replace still use all results.
+        </p>
+      )}
       {props.error && <p className="text-xs text-red-600">{props.error}</p>}
     </div>
   );

@@ -4,6 +4,7 @@ import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from '
 import type { Match } from './logic';
 import type { TabView } from './tabs';
 import { HEIGHT_STEP, clampEditorHeight } from './editorHeight';
+import { HIGHLIGHT_LIMIT } from './highlightLimit';
 
 // The textarea and the highlight layer must lay text out identically or the
 // highlights drift. Every metric that affects layout lives in this one string.
@@ -35,18 +36,18 @@ type Props = {
 type Segment = { text: string; match: boolean; current: boolean };
 
 // Inline marks share the visible text's layout. They add no padding or borders.
-function buildSegments(text: string, matches: Match[], currentMatchIndex: number): Segment[] {
+function buildSegments(text: string, matches: Match[], currentMatch: Match | undefined): Segment[] {
   const segments: Segment[] = [];
   let cursor = 0;
 
-  matches.forEach((match, i) => {
+  matches.forEach((match) => {
     if (match.start > cursor) {
       segments.push({ text: text.slice(cursor, match.start), match: false, current: false });
     }
     segments.push({
       text: text.slice(match.start, match.end),
       match: true,
-      current: i === currentMatchIndex,
+      current: match === currentMatch,
     });
     cursor = Math.max(cursor, match.end);
   });
@@ -77,6 +78,8 @@ const EditorSurface = ({
   const contentRef = useRef<HTMLDivElement>(null);
   const [nativeHighlights, setNativeHighlights] = useState<boolean | null>(null);
   const matchRangesRef = useRef<Range[]>([]);
+  const rangeForRef = useRef<((start: number, end: number) => Range) | null>(null);
+  const currentRangeRef = useRef<Range | null>(null);
   const boxRef = useRef<HTMLDivElement>(null);
   const gutterContentRef = useRef<HTMLDivElement>(null);
   const [lineHeights, setLineHeights] = useState<number[]>([]);
@@ -192,9 +195,18 @@ const EditorSurface = ({
   }, [value]);
 
   const freshMatches = value === highlightText ? matches : NO_MATCHES;
+  // Search results remain complete. Only browser decorations have a budget.
+  const backgroundMatches = useMemo(() => freshMatches.slice(0, HIGHLIGHT_LIMIT), [freshMatches]);
+  const currentMatch = freshMatches[currentMatchIndex];
+  const extraInlineMatch = currentMatchIndex >= HIGHLIGHT_LIMIT &&
+    (nativeHighlights === false || currentMatch?.start === currentMatch?.end) ? currentMatch : undefined;
+  const inlineMatches = useMemo(() => {
+    const decorated = extraInlineMatch ? [...backgroundMatches, extraInlineMatch] : backgroundMatches;
+    return nativeHighlights === false ? decorated : decorated.filter((match) => match.start === match.end);
+  }, [backgroundMatches, extraInlineMatch, nativeHighlights]);
   const segments = useMemo(
-    () => buildSegments(value, value !== highlightText ? NO_MATCHES : nativeHighlights === false ? matches : matches.filter((match) => match.start === match.end), currentMatchIndex),
-    [value, highlightText, nativeHighlights, matches, currentMatchIndex]
+    () => buildSegments(value, inlineMatches, currentMatch),
+    [value, inlineMatches, currentMatch]
   );
   const lines = useMemo(() => wrap ? value.split('\n') : [], [wrap, value]);
 
@@ -259,6 +271,7 @@ const EditorSurface = ({
       range.setEnd(to.node, to.offset);
       return range;
     };
+    rangeForRef.current = rangeFor;
     const measureCursors = () => {
       if (!content.getBoundingClientRect || !Range.prototype.getBoundingClientRect) return;
       const box = content.getBoundingClientRect();
@@ -268,7 +281,7 @@ const EditorSurface = ({
         return rects.map((rect) => ({ left: rect.left - box.left, top: rect.top - box.top, width: Math.max(2, rect.width), height: rect.height || 24 }));
       }));
     };
-    const ranges = freshMatches.map((match) => rangeFor(match.start, match.end));
+    const ranges = backgroundMatches.map((match) => rangeFor(match.start, match.end));
     matchRangesRef.current = ranges;
 
     if (nativeHighlights) {
@@ -301,11 +314,12 @@ const EditorSurface = ({
     if (textarea) observer.observe(textarea);
     return () => {
       observer.disconnect();
+      rangeForRef.current = null;
       if (nativeHighlights) {
         CSS.highlights.delete('text-editor-matches');
       }
     };
-  }, [value, freshMatches, nativeHighlights, wrap, showLineNumbers, lines, syncScroll, textareaRef, cursors]);
+  }, [value, backgroundMatches, inlineMatches, nativeHighlights, wrap, showLineNumbers, lines, syncScroll, textareaRef, cursors]);
 
   // Mount only. A background tab's buffer can shrink while it is unmounted — a
   // Replace all across every tab does exactly that — so the stored offsets are
@@ -323,18 +337,21 @@ const EditorSurface = ({
   }, []);
 
   useLayoutEffect(() => {
+    const range = currentMatch
+      ? matchRangesRef.current[currentMatchIndex] ?? rangeForRef.current?.(currentMatch.start, currentMatch.end) ?? null
+      : null;
+    currentRangeRef.current = range;
     if (!nativeHighlights) return;
     const current = new Highlight();
-    const range = matchRangesRef.current[currentMatchIndex];
     if (range) current.add(range);
     current.priority = 1;
     CSS.highlights.set('text-editor-current', current);
     return () => { CSS.highlights.delete('text-editor-current'); };
-  }, [value, freshMatches, currentMatchIndex, nativeHighlights, wrap, showLineNumbers]);
+  }, [value, backgroundMatches, inlineMatches, currentMatch, currentMatchIndex, nativeHighlights, wrap, showLineNumbers]);
 
   useLayoutEffect(() => {
     const textarea = textareaRef.current;
-    const range = matchRangesRef.current[currentMatchIndex];
+    const range = currentRangeRef.current;
     if (!textarea || !range?.getBoundingClientRect) return;
     const rect = range.getClientRects?.()[0] ?? range.getBoundingClientRect();
     const box = textarea.getBoundingClientRect();
