@@ -80,6 +80,7 @@ export const JsonMinify = ({ article }: { article?: React.ReactNode } = {}) => {
       setFromValue={setFromValue}
       fromTitle="Input JSON"
       toTitle="Output"
+      outputLanguage="json"
       backColor="cyan"
       extraElements={
         <div className="flex flex-col gap-3">

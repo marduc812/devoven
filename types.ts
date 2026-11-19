@@ -32,6 +32,7 @@ export type BasicPlaceholderType = {
 }
 
 export type AdvancedCoversionType = {
+    outputLanguage?: 'json';
     title: string;
     swapLink?: string;
     description: string;

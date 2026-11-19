@@ -61,6 +61,7 @@ export function JsonFormatter({ article }: { article?: React.ReactNode } = {}) {
       setFromValue={setInput}
       fromTitle="Input JSON"
       toTitle="Formatted JSON"
+      outputLanguage="json"
       backColor="lime"
       extraElements={extraElements}
     />

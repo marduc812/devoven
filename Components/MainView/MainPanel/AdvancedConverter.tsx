@@ -11,6 +11,7 @@ import ShareLinkButton from './ShareLinkButton'
 import FavoriteButton from './FavoriteButton'
 import { useShareLink } from '@/Components/Functions/ShareLink'
 import { FileDropZone } from '@/Components/View/FileInput'
+import JsonOutput from './JsonOutput'
 
 
 const categoryAccent: Record<string, string> = {
@@ -113,12 +114,14 @@ const AdvancedConverter = (props: AdvancedCoversionType) => {
                 </div>
 
                 <TextAreaAnalytics title={props.toTitle} userInput={props.toValue} output={true} color={props.backColor} />
-                <textarea
+                {props.outputLanguage === 'json' ? (
+                    <JsonOutput value={props.toValue} label={props.toTitle} />
+                ) : <textarea
                     className="bg-gray-50 text-gray-900 p-3 w-full border border-gray-300 cursor-default resize-y font-mono text-sm"
                     rows={5}
                     value={props.toValue}
                     readOnly
-                />
+                />}
 
                 {props.belowOutput}
             </div>
