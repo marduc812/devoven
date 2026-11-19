@@ -23,10 +23,10 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.devoven.com'),
   title: 'DevOven | Online Tool Collection',
-  description: 'A collection of JavaScript tools, for your daily work.',
+  description: 'A free collection of browser-based developer tools: encoders, hashers, converters, network and text utilities, and more. Nothing to install, no signup.',
   openGraph: {
     title: 'DevOven',
-    description: 'A collection of JavaScript tools, for your daily work',
+    description: 'A free collection of browser-based developer tools: encoders, hashers, converters, network and text utilities, and more.',
     url: 'https://www.devoven.com',
     siteName: 'DevOven',
     images: [
@@ -45,7 +45,6 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
-    nocache: true,
     googleBot: {
       index: true,
       follow: true,
